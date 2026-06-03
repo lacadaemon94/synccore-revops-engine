@@ -1,0 +1,13 @@
+{
+  "name": "synccore-revops-engine",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Demo-first event-driven RevOps engine built with n8n, Next.js, and Supabase/Postgres.",
+  "scripts": {
+    "dev": "pnpm --filter @synccore/dashboard dev",
+    "build": "pnpm --filter @synccore/dashboard build",
+    "lint": "pnpm --filter @synccore/dashboard lint",
+    "typecheck": "pnpm --filter @synccore/dashboard typecheck"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
