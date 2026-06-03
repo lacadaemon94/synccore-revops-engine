@@ -1,0 +1,31 @@
+{
+  "name": "03 - Dead Letter Retry Worker",
+  "active": false,
+  "nodes": [
+    {
+      "name": "Scheduled Retry Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "notes": "Runs periodically to find pending DLQ items with next_retry_at due."
+    },
+    {
+      "name": "Load Pending DLQ Items",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Select pending or retrying items from dead_letter_queue."
+    },
+    {
+      "name": "Retry Target Operation",
+      "type": "n8n-nodes-base.httpRequest",
+      "notes": "Retry the original target operation using stored payload_json."
+    },
+    {
+      "name": "Resolve Or Escalate",
+      "type": "n8n-nodes-base.switch",
+      "notes": "Mark resolved on success; increment retry_count; escalate after max_retries."
+    }
+  ],
+  "connections": {},
+  "settings": {},
+  "staticData": null,
+  "pinData": {},
+  "versionId": "placeholder-dead-letter-retry-worker"
+}
