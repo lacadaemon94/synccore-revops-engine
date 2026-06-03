@@ -1,0 +1,31 @@
+{
+  "name": "01 - Subscription Lifecycle Sync",
+  "active": false,
+  "nodes": [
+    {
+      "name": "Load Subscription Event",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Read normalized subscription event from event_log."
+    },
+    {
+      "name": "Calculate Revenue Metrics",
+      "type": "n8n-nodes-base.code",
+      "notes": "Calculate MRR, ARR, LTV, and expansion revenue."
+    },
+    {
+      "name": "Upsert Account And Subscription",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Update accounts and subscriptions tables."
+    },
+    {
+      "name": "Sync CRM Adapter",
+      "type": "n8n-nodes-base.httpRequest",
+      "notes": "Call mock CRM adapter first; real HubSpot adapter later."
+    }
+  ],
+  "connections": {},
+  "settings": {},
+  "staticData": null,
+  "pinData": {},
+  "versionId": "placeholder-subscription-lifecycle-sync"
+}
