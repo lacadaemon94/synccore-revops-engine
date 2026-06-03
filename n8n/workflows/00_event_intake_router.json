@@ -1,0 +1,31 @@
+{
+  "name": "00 - Event Intake Router",
+  "active": false,
+  "nodes": [
+    {
+      "name": "Billing Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "notes": "Receives Stripe or demo billing events. Verify signatures when real Stripe mode is enabled."
+    },
+    {
+      "name": "Normalize Event Payload",
+      "type": "n8n-nodes-base.code",
+      "notes": "Normalize email casing, provider IDs, subscription fields, amount values, currency, and metadata."
+    },
+    {
+      "name": "Write Event Log",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Insert into event_log with idempotency on provider_event_id before any side effects."
+    },
+    {
+      "name": "Route By Event Type",
+      "type": "n8n-nodes-base.switch",
+      "notes": "Route subscription updates, failed payments, paid invoices, and unknown events."
+    }
+  ],
+  "connections": {},
+  "settings": {},
+  "staticData": null,
+  "pinData": {},
+  "versionId": "placeholder-event-intake-router"
+}
