@@ -1,0 +1,31 @@
+{
+  "name": "04 - Reconciler Job",
+  "active": false,
+  "nodes": [
+    {
+      "name": "Scheduled Reconciliation Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "notes": "Runs on a schedule to compare billing truth with CRM truth."
+    },
+    {
+      "name": "Load Billing State",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Read accounts and subscriptions from Postgres."
+    },
+    {
+      "name": "Load CRM State",
+      "type": "n8n-nodes-base.httpRequest",
+      "notes": "Use mock CRM adapter first; real HubSpot adapter later."
+    },
+    {
+      "name": "Write Discrepancies",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Insert open discrepancy rows for status, MRR, tier, lifecycle stage, and ownership mismatches."
+    }
+  ],
+  "connections": {},
+  "settings": {},
+  "staticData": null,
+  "pinData": {},
+  "versionId": "placeholder-reconciler-job"
+}
