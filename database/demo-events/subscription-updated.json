@@ -1,0 +1,29 @@
+{
+  "id": "evt_demo_subscription_updated_001",
+  "type": "customer.subscription.updated",
+  "livemode": false,
+  "created": 1780502400,
+  "data": {
+    "object": {
+      "id": "sub_norte_starter",
+      "customer": "cus_norte_cloud",
+      "status": "active",
+      "metadata": {
+        "account_domain": "norte.cloud",
+        "crm_company_id": "crm_norte_cloud"
+      },
+      "items": {
+        "data": [
+          {
+            "price": {
+              "nickname": "Starter",
+              "unit_amount": 35000,
+              "currency": "usd",
+              "recurring": { "interval": "month" }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
