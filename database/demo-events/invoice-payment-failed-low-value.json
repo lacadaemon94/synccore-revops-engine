@@ -1,0 +1,25 @@
+{
+  "id": "evt_demo_invoice_failed_002",
+  "type": "invoice.payment_failed",
+  "livemode": false,
+  "created": 1780502600,
+  "data": {
+    "object": {
+      "id": "in_norte_failed_001",
+      "customer": "cus_norte_cloud",
+      "subscription": "sub_norte_starter",
+      "amount_due": 35000,
+      "currency": "usd",
+      "attempt_count": 1,
+      "last_payment_error": {
+        "code": "insufficient_funds",
+        "message": "The payment method has insufficient funds."
+      },
+      "metadata": {
+        "account_domain": "norte.cloud",
+        "crm_company_id": "crm_norte_cloud",
+        "usage_density": "41"
+      }
+    }
+  }
+}
