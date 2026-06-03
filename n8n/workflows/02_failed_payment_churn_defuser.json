@@ -1,0 +1,31 @@
+{
+  "name": "02 - Failed Payment Churn Defuser",
+  "active": false,
+  "nodes": [
+    {
+      "name": "Load Failed Payment Event",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Load invoice.payment_failed event and related account state."
+    },
+    {
+      "name": "Classify Churn Risk",
+      "type": "n8n-nodes-base.code",
+      "notes": "Use MRR, usage density, lifecycle stage, and payment history to classify risk."
+    },
+    {
+      "name": "Create CRM Task Or Normal Dunning",
+      "type": "n8n-nodes-base.switch",
+      "notes": "High-value accounts route to AE task and ops alert; lower-value accounts route to automated recovery."
+    },
+    {
+      "name": "Write Notification Outbox",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Write mock Slack-style alert to notification_outbox in demo mode."
+    }
+  ],
+  "connections": {},
+  "settings": {},
+  "staticData": null,
+  "pinData": {},
+  "versionId": "placeholder-failed-payment-churn-defuser"
+}
