@@ -1,33 +1,47 @@
+export type EventStatus = "received" | "processed" | "failed" | "routed_to_dlq" | "pending" | "retrying" | "resolved";
+export type QueueStatus = "pending" | "retrying" | "resolved" | "failed";
+export type DiscrepancySeverity = "low" | "medium" | "high";
+export type DiscrepancyStatus = "open" | "reviewing" | "resolved";
+export type RevenueRiskLevel = "stable" | "watch" | "urgent";
+
 export type Account = {
   id: string;
   name: string;
   domain: string;
   lifecycleStage: string;
+  segment: string;
+  owner: string;
   mrr: number;
   arr: number;
   ltv: number;
   healthScore: number;
   usageDensity: number;
+  revenueAtRisk: number;
+  riskLevel: RevenueRiskLevel;
+  nextRenewalAt: string;
 };
 
 export type RevOpsEvent = {
   id: string;
+  provider: string;
   providerEventId: string;
   eventType: string;
   accountId: string;
   accountName: string;
-  status: "received" | "processed" | "routed_to_dlq" | "failed";
+  status: EventStatus;
   receivedAt: string;
   retryCount: number;
   amount?: number;
+  summary: string;
 };
 
 export type QueueItem = {
   id: string;
   eventId: string;
+  accountId: string;
   accountName: string;
   targetSystem: string;
-  status: "pending" | "retrying" | "resolved" | "failed";
+  status: QueueStatus;
   retryCount: number;
   maxRetries: number;
   nextRetryAt: string;
@@ -43,8 +57,10 @@ export type Discrepancy = {
   fieldName: string;
   sourceAValue: string;
   sourceBValue: string;
-  severity: "low" | "medium" | "high";
-  status: "open" | "reviewing" | "resolved";
+  severity: DiscrepancySeverity;
+  status: DiscrepancyStatus;
+  scenario: string;
+  impact: string;
   suggestedAction: string;
 };
 
@@ -52,4 +68,5 @@ export type Metric = {
   label: string;
   value: string;
   helper: string;
+  tone?: "default" | "positive" | "warning" | "danger";
 };

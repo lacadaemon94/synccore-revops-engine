@@ -1,19 +1,41 @@
 import type { ReactNode } from "react";
+import { EmptyState } from "./empty-state";
 
 export type Column<T> = {
   key: string;
   header: string;
   render: (row: T) => ReactNode;
+  align?: "left" | "right";
 };
 
-export function DataTable<T>({ rows, columns }: { rows: T[]; columns: Column<T>[] }) {
+export function DataTable<T>({
+  rows,
+  columns,
+  getRowKey,
+  emptyTitle = "No rows to show",
+  emptyDescription = "Demo data will appear here when SyncCore has activity to display."
+}: {
+  rows: T[];
+  columns: Column<T>[];
+  getRowKey?: (row: T, index: number) => string;
+  emptyTitle?: string;
+  emptyDescription?: string;
+}) {
+  if (!rows.length) {
+    return (
+      <div className="table-shell">
+        <EmptyState title={emptyTitle} description={emptyDescription} />
+      </div>
+    );
+  }
+
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-      <table className="w-full border-collapse text-left text-sm">
-        <thead className="bg-slate-900 text-slate-400">
+    <div className="table-shell">
+      <table className="data-table">
+        <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.key} className="border-b border-slate-800 px-4 py-3 font-medium">
+              <th key={column.key} className={column.align === "right" ? "is-right" : ""}>
                 {column.header}
               </th>
             ))}
@@ -21,9 +43,9 @@ export function DataTable<T>({ rows, columns }: { rows: T[]; columns: Column<T>[
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <tr key={index} className="border-b border-slate-800 last:border-0">
+            <tr key={getRowKey?.(row, index) ?? index.toString()}>
               {columns.map((column) => (
-                <td key={column.key} className="px-4 py-3 text-slate-200">
+                <td key={column.key} className={column.align === "right" ? "is-right" : ""}>
                   {column.render(row)}
                 </td>
               ))}

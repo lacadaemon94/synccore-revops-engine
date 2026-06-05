@@ -1,11 +1,31 @@
 import type { Metric } from "../lib/types";
+import { Badge } from "./badge";
+
+const toneLabelMap = {
+  default: "steady",
+  positive: "healthy",
+  warning: "watchlist",
+  danger: "attention"
+} as const;
+
+const toneBadgeMap = {
+  default: "neutral",
+  positive: "positive",
+  warning: "warning",
+  danger: "danger"
+} as const;
 
 export function MetricCard({ metric }: { metric: Metric }) {
+  const tone = metric.tone ?? "default";
+
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-      <p className="text-sm text-slate-400">{metric.label}</p>
-      <p className="mt-3 text-3xl font-semibold text-white">{metric.value}</p>
-      <p className="mt-2 text-sm text-emerald-300">{metric.helper}</p>
+    <div className="metric-card">
+      <div className="metric-card__header">
+        <p className="metric-card__label">{metric.label}</p>
+        <Badge tone={toneBadgeMap[tone]}>{toneLabelMap[tone]}</Badge>
+      </div>
+      <p className="metric-card__value">{metric.value}</p>
+      <p className="metric-card__helper">{metric.helper}</p>
     </div>
   );
 }

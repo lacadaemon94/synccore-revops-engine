@@ -1,28 +1,82 @@
 import { forceRetry } from "../../actions/force-retry";
 import { AppShell } from "../../components/app-shell";
+import { Badge } from "../../components/badge";
+import { EmptyState } from "../../components/empty-state";
+import { PageHeader } from "../../components/page-header";
+import { SectionHeader } from "../../components/section-header";
+import { StatusBadge } from "../../components/status-badge";
 import { queueItems } from "../../lib/demo-data";
+import { formatDateTime } from "../../lib/format";
 
 export default function QueuePage() {
   return (
     <AppShell>
-      <h2 className="text-3xl font-semibold">Dead-letter queue</h2>
-      <p className="mt-2 text-slate-400">Retryable workflow failures waiting for automated or manual recovery.</p>
-      <div className="mt-6 space-y-4">
-        {queueItems.map((item) => (
-          <form key={item.id} action={async () => { "use server"; await forceRetry(item.id); }} className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="text-lg font-semibold">{item.accountName}</p>
-                <p className="mt-1 text-sm text-slate-400">{item.targetSystem} · {item.lastError}</p>
-                <p className="mt-1 text-sm text-slate-500">Retry {item.retryCount} of {item.maxRetries} · Next: {item.nextRetryAt}</p>
-              </div>
-              <button className="rounded-xl border border-emerald-400 px-4 py-2 text-sm font-medium text-emerald-200" type="submit">
-                Force Retry Now
-              </button>
+      <PageHeader
+        eyebrow="Recovery queue"
+        title="Dead-letter queue"
+        description="Retryable workflow failures are isolated here until SyncCore can recover them automatically or an operator intervenes."
+      >
+        <div className="badge-row">
+          <Badge tone="warning">force retry uses mock server action</Badge>
+        </div>
+      </PageHeader>
+
+      <section>
+        <SectionHeader
+          title="DLQ workload"
+          description="Each item shows the blocked downstream system, current retry posture, and the last observed error."
+        />
+        <p className="section-note">The Force Retry button currently triggers a demo-only mock server action. No live provider calls are made in Phase 1.</p>
+        <div className="card-grid">
+          {queueItems.length ? (
+            queueItems.map((item) => (
+              <form
+                key={item.id}
+                action={async () => {
+                  "use server";
+                  await forceRetry(item.id);
+                }}
+                className="queue-card"
+              >
+                <div className="queue-card__header">
+                  <div className="cell-stack">
+                    <p className="queue-card__title">{item.accountName}</p>
+                    <p className="cell-subtle">{item.targetSystem}</p>
+                  </div>
+                  <StatusBadge status={item.status} />
+                </div>
+                <div className="queue-card__grid">
+                  <div className="detail-pair">
+                    <span className="detail-pair__label">Retry count</span>
+                    <span className="detail-pair__value">{item.retryCount} / {item.maxRetries}</span>
+                  </div>
+                  <div className="detail-pair">
+                    <span className="detail-pair__label">Next retry</span>
+                    <span className="detail-pair__value">{formatDateTime(item.nextRetryAt)}</span>
+                  </div>
+                  <div className="detail-pair detail-pair--wide">
+                    <span className="detail-pair__label">Last error</span>
+                    <span className="detail-pair__value detail-pair__value--muted">{item.lastError}</span>
+                  </div>
+                </div>
+                <div className="queue-card__footer">
+                  <p className="cell-subtle">Mock manual replay for demo validation.</p>
+                  <button className="button button--primary" type="submit">
+                    Force Retry
+                  </button>
+                </div>
+              </form>
+            ))
+          ) : (
+            <div className="table-shell">
+              <EmptyState
+                title="No blocked retries"
+                description="When the demo recovery queue is empty, all retryable failures have already been cleared."
+              />
             </div>
-          </form>
-        ))}
-      </div>
+          )}
+        </div>
+      </section>
     </AppShell>
   );
 }
