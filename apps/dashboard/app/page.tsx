@@ -1,23 +1,36 @@
 import Link from "next/link";
 import { AppShell } from "../components/app-shell";
 import { Badge } from "../components/badge";
-import { MetricCard } from "../components/metric-card";
 import { DataTable } from "../components/data-table";
+import { MetricCard } from "../components/metric-card";
 import { PageHeader } from "../components/page-header";
 import { Panel } from "../components/panel";
 import { SectionHeader } from "../components/section-header";
 import { SeverityBadge } from "../components/severity-badge";
 import { StatusBadge } from "../components/status-badge";
-import { accounts, discrepancies, events, metrics, queueItems } from "../lib/demo-data";
+import { getAccounts } from "../lib/data/accounts";
+import { getDiscrepancies } from "../lib/data/discrepancies";
+import { getEvents } from "../lib/data/events";
+import { getOverviewMetrics } from "../lib/data/metrics";
+import { getQueueItems } from "../lib/data/queue";
 import { formatCompactCurrency, formatCurrency, formatDate, formatDateTime, formatPercent, titleCase } from "../lib/format";
 
-export default function OverviewPage() {
+export default async function OverviewPage() {
+  const [accounts, discrepancies, events, metrics, queueItems] = await Promise.all([
+    getAccounts(),
+    getDiscrepancies(),
+    getEvents(),
+    getOverviewMetrics(),
+    getQueueItems()
+  ]);
+
   const recentEvents = events.slice(0, 5);
   const queuePreview = queueItems.slice(0, 3);
   const atRiskAccounts = accounts
     .filter((account) => account.revenueAtRisk > 0)
     .sort((left, right) => right.revenueAtRisk - left.revenueAtRisk);
   const openDiscrepancies = discrepancies.filter((item) => item.status !== "resolved");
+  const firstAccount = accounts[0] ?? null;
 
   return (
     <AppShell>
@@ -27,8 +40,8 @@ export default function OverviewPage() {
         description="SyncCore turns billing events, workflow retries, and CRM drift into one operational surface for revenue teams."
       >
         <div className="badge-row">
-          <Badge tone="info">DEMO_MODE=true</Badge>
-          <Badge tone="positive">local demo data only</Badge>
+          <Badge tone="info">DEMO_MODE decides source</Badge>
+          <Badge tone="positive">{accounts.length ? "dashboard data loaded" : "waiting on data"}</Badge>
         </div>
       </PageHeader>
 
@@ -48,7 +61,7 @@ export default function OverviewPage() {
             </div>
             <div>
               <p className="hero-band__stat-label">Retry recovery</p>
-              <p className="hero-band__stat-value">{formatPercent(98.7)}</p>
+              <p className="hero-band__stat-value">{metrics.find((metric) => metric.label === "Retry success rate")?.value ?? formatPercent(100)}</p>
             </div>
           </div>
         </div>
@@ -110,7 +123,7 @@ export default function OverviewPage() {
               }
             ]}
             emptyTitle="No recent events yet"
-            emptyDescription="When the demo stream is quiet, new billing and workflow events will show up here."
+            emptyDescription="When the event stream is quiet, new billing and workflow events will show up here."
           />
         </div>
         <div>
@@ -158,7 +171,7 @@ export default function OverviewPage() {
         <div>
           <SectionHeader
             title="Revenue risk panel"
-            description="Accounts currently carrying revenue exposure in the demo environment."
+            description="Accounts currently carrying revenue exposure in the current data source."
           />
           <Panel>
             {atRiskAccounts.length ? (
@@ -183,7 +196,7 @@ export default function OverviewPage() {
             ) : (
               <div className="empty-inline">
                 <p className="empty-inline__title">No revenue at risk</p>
-                <p className="empty-inline__description">The demo portfolio is fully healthy right now.</p>
+                <p className="empty-inline__description">The current snapshot does not show any accounts with direct revenue exposure.</p>
               </div>
             )}
           </Panel>
@@ -193,7 +206,7 @@ export default function OverviewPage() {
           <SectionHeader
             title="Account health panel"
             description="Commercial health, usage density, and mismatch pressure for monitored accounts."
-            action={<Link className="text-link" href={`/accounts/${accounts[0]?.id ?? ""}`}>Inspect an account</Link>}
+            action={firstAccount ? <Link className="text-link" href={`/accounts/${firstAccount.id}`}>Inspect an account</Link> : null}
           />
           <Panel>
             {accounts.length ? (
@@ -227,7 +240,7 @@ export default function OverviewPage() {
             ) : (
               <div className="empty-inline">
                 <p className="empty-inline__title">No accounts loaded</p>
-                <p className="empty-inline__description">Add demo accounts to inspect health and revenue risk here.</p>
+                <p className="empty-inline__description">When accounts are available from Supabase or demo mode, health and risk will appear here.</p>
               </div>
             )}
           </Panel>
@@ -270,7 +283,7 @@ export default function OverviewPage() {
             }
           ]}
           emptyTitle="No discrepancies detected"
-          emptyDescription="Billing and CRM are currently aligned in the demo workspace."
+          emptyDescription="Billing and CRM are currently aligned for the active data source."
         />
       </section>
     </AppShell>

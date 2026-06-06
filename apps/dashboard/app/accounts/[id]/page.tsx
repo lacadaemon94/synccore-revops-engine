@@ -1,27 +1,33 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "../../../components/app-shell";
-import { DataTable } from "../../../components/data-table";
 import { Badge } from "../../../components/badge";
+import { DataTable } from "../../../components/data-table";
 import { PageHeader } from "../../../components/page-header";
 import { Panel } from "../../../components/panel";
 import { SectionHeader } from "../../../components/section-header";
 import { SeverityBadge } from "../../../components/severity-badge";
 import { StatusBadge } from "../../../components/status-badge";
-import { accounts, discrepancies, events } from "../../../lib/demo-data";
+import { getAccountById } from "../../../lib/data/accounts";
+import { getDiscrepancies } from "../../../lib/data/discrepancies";
+import { getEvents } from "../../../lib/data/events";
 import { formatCompactCurrency, formatCurrency, formatDate, formatDateTime, formatPercent, titleCase } from "../../../lib/format";
 
 export default async function AccountPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const account = accounts.find((item) => item.id === id);
+  const [account, accountEvents, accountDiscrepancies] = await Promise.all([
+    getAccountById(id),
+    getEvents(),
+    getDiscrepancies()
+  ]);
 
   if (!account) {
     notFound();
   }
 
-  const accountEvents = events.filter((event) => event.accountId === account.id);
-  const accountDiscrepancies = discrepancies.filter((item) => item.accountId === account.id && item.status !== "resolved");
-  const latestEvent = accountEvents[0];
+  const scopedEvents = accountEvents.filter((event) => event.accountId === account.id);
+  const scopedDiscrepancies = accountDiscrepancies.filter((item) => item.accountId === account.id && item.status !== "resolved");
+  const latestEvent = scopedEvents[0];
 
   return (
     <AppShell>
@@ -80,7 +86,7 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
             </div>
             <div className="list-row">
               <span className="cell-title">Open discrepancies</span>
-              <span className="cell-subtle">{accountDiscrepancies.length}</span>
+              <span className="cell-subtle">{scopedDiscrepancies.length}</span>
             </div>
             <div className="list-row">
               <span className="cell-title">Latest event</span>
@@ -94,12 +100,12 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
           <h2 className="panel__title">What needs attention for this account</h2>
           <p className="panel__copy">
             {account.revenueAtRisk > 0
-              ? `${account.name} has ${formatCurrency(account.revenueAtRisk)} of revenue exposure in the demo workspace. Recovery depends on clearing open workflow issues and making sure CRM matches the billing source of truth.`
-              : `${account.name} has no direct revenue exposure in the current demo state, but the account still stays visible for lifecycle and discrepancy monitoring.`}
+              ? `${account.name} has ${formatCurrency(account.revenueAtRisk)} of revenue exposure in the current data source. Recovery depends on clearing open workflow issues and making sure CRM matches the billing source of truth.`
+              : `${account.name} has no direct revenue exposure in the current snapshot, but the account still stays visible for lifecycle and discrepancy monitoring.`}
           </p>
-          {accountDiscrepancies.length ? (
+          {scopedDiscrepancies.length ? (
             <div className="badge-row">
-              {accountDiscrepancies.map((item) => (
+              {scopedDiscrepancies.map((item) => (
                 <SeverityBadge key={item.id} severity={item.severity} />
               ))}
             </div>
@@ -113,7 +119,7 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
           description="The most recent operational changes linked to this account."
         />
         <DataTable
-          rows={accountEvents}
+          rows={scopedEvents}
           getRowKey={(row) => row.id}
           columns={[
             {
@@ -144,7 +150,7 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
             }
           ]}
           emptyTitle="No recent events for this account"
-          emptyDescription="When new demo events land for this account, they will appear here."
+          emptyDescription="When new events land for this account, they will appear here."
         />
       </section>
 
@@ -155,7 +161,7 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
           action={<Link className="text-link" href="/reconciler">Back to reconciler</Link>}
         />
         <DataTable
-          rows={accountDiscrepancies}
+          rows={scopedDiscrepancies}
           getRowKey={(row) => row.id}
           columns={[
             {

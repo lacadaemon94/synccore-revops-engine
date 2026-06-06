@@ -7,10 +7,11 @@ import { Panel } from "../../components/panel";
 import { SectionHeader } from "../../components/section-header";
 import { SeverityBadge } from "../../components/severity-badge";
 import { StatusBadge } from "../../components/status-badge";
-import { discrepancies } from "../../lib/demo-data";
+import { getDiscrepancies } from "../../lib/data/discrepancies";
 import { titleCase } from "../../lib/format";
 
-export default function ReconcilerPage() {
+export default async function ReconcilerPage() {
+  const discrepancies = await getDiscrepancies();
   const highSeverityCount = discrepancies.filter((item) => item.severity === "high" && item.status !== "resolved").length;
   const mrrMismatchCount = discrepancies.filter((item) => item.fieldName === "mrr").length;
   const tierMismatchCount = discrepancies.filter((item) => item.fieldName === "plan_tier").length;
@@ -34,22 +35,22 @@ export default function ReconcilerPage() {
           <p className="panel__kicker">Why this matters</p>
           <h2 className="panel__title">CRM and billing drift quietly compounds.</h2>
           <p className="panel__copy">
-            A status mismatch can create churn false-positives, an MRR gap can understate live revenue, and a tier mismatch can route the wrong coverage model. The demo reconciler makes these breaks visible instead of letting them hide in system boundaries.
+            A status mismatch can create churn false-positives, an MRR gap can understate live revenue, and a tier mismatch can route the wrong coverage model. The reconciler keeps these breaks visible instead of letting them hide in system boundaries.
           </p>
         </Panel>
         <Panel>
-          <p className="panel__kicker">Demo examples in this phase</p>
+          <p className="panel__kicker">Live examples in this phase</p>
           <div className="badge-row">
             <SeverityBadge severity="high" />
-            <span className="cell-subtle">Stripe active / CRM cancelled</span>
+            <span className="cell-subtle">Status mismatches that change lifecycle handling</span>
           </div>
           <div className="badge-row">
             <SeverityBadge severity="medium" />
-            <span className="cell-subtle">Billing MRR higher than CRM MRR</span>
+            <span className="cell-subtle">MRR mismatches that distort revenue visibility</span>
           </div>
           <div className="badge-row">
             <SeverityBadge severity="low" />
-            <span className="cell-subtle">Enterprise tier in billing but scale tier in CRM</span>
+            <span className="cell-subtle">Tier mismatches that skew coverage and packaging</span>
           </div>
         </Panel>
       </section>
@@ -119,7 +120,7 @@ export default function ReconcilerPage() {
             }
           ]}
           emptyTitle="No discrepancies open"
-          emptyDescription="Billing and CRM currently agree for every tracked field in the demo workspace."
+          emptyDescription="Billing and CRM currently agree for every tracked field in the active data source."
         />
       </section>
     </AppShell>

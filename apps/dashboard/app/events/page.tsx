@@ -5,10 +5,12 @@ import { PageHeader } from "../../components/page-header";
 import { Panel } from "../../components/panel";
 import { SectionHeader } from "../../components/section-header";
 import { StatusBadge } from "../../components/status-badge";
-import { events } from "../../lib/demo-data";
+import { getEvents } from "../../lib/data/events";
 import { formatCurrency, formatDateTime } from "../../lib/format";
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const events = await getEvents();
+
   return (
     <AppShell>
       <PageHeader
@@ -106,7 +108,7 @@ export default function EventsPage() {
             }
           ]}
           emptyTitle="No events received yet"
-          emptyDescription="As soon as demo events flow through SyncCore, they will be logged here before any side effects run."
+          emptyDescription="As soon as events flow through SyncCore, they will be logged here before any side effects run."
         />
       </section>
     </AppShell>

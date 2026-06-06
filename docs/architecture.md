@@ -1,6 +1,6 @@
 # Architecture
 
-SyncCore uses a demo-first event-driven architecture.
+SyncCore uses a demo-first event-driven architecture with a staged persistence model.
 
 ## Core flow
 
@@ -13,6 +13,49 @@ Billing event or demo event
   -> dashboard, CRM adapter, notification outbox
 ```
 
+## Operating modes
+
+### Demo data mode
+
+This is the default experience:
+
+```env
+DEMO_MODE=true
+```
+
+In demo mode, the dashboard reads from local TypeScript demo fixtures and does not require Supabase credentials.
+
+### Supabase persistence mode
+
+When:
+
+```env
+DEMO_MODE=false
+```
+
+and Supabase env vars are present, the dashboard reads from Supabase/Postgres through a server-side data access layer.
+
+If Supabase is not configured correctly, the dashboard gracefully falls back to demo data instead of failing closed.
+
+## Why the data access layer exists now
+
+Before adding real Stripe, HubSpot, or Slack integrations, SyncCore now abstracts reads behind dedicated modules:
+
+```txt
+lib/data/accounts.ts
+lib/data/events.ts
+lib/data/queue.ts
+lib/data/discrepancies.ts
+lib/data/metrics.ts
+```
+
+That gives the project a stable application contract first:
+
+1. UI code does not need to know whether data came from demo fixtures or Supabase.
+2. Shared database tables can be read safely without forcing schema churn immediately.
+3. Future provider integrations can write into Postgres while the dashboard continues to read through the same typed interface.
+4. Derived UI-only fields can live in mappers until SyncCore is ready for isolated schema extensions.
+
 ## Design rules
 
 1. Store every incoming event before side effects.
@@ -21,6 +64,19 @@ Billing event or demo event
 4. Treat external API failures as retryable when possible.
 5. Store failures in `dead_letter_queue`.
 6. Keep a dashboard-level view of discrepancies and revenue risk.
+7. Preserve demo mode as the default path until the persistence workflow is solid.
+
+## Current persistence scope
+
+Phase 2 reads from the existing operational tables only:
+
+- `accounts`
+- `subscriptions`
+- `event_log`
+- `dead_letter_queue`
+- `discrepancies`
+
+For the shared `tests-n-stuff` database, this phase is intentionally read-only from the dashboard side and does not modify existing tables or business logic.
 
 ## Default systems
 

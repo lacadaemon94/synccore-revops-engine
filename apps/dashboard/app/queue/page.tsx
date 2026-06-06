@@ -5,10 +5,12 @@ import { EmptyState } from "../../components/empty-state";
 import { PageHeader } from "../../components/page-header";
 import { SectionHeader } from "../../components/section-header";
 import { StatusBadge } from "../../components/status-badge";
-import { queueItems } from "../../lib/demo-data";
+import { getQueueItems } from "../../lib/data/queue";
 import { formatDateTime } from "../../lib/format";
 
-export default function QueuePage() {
+export default async function QueuePage() {
+  const queueItems = await getQueueItems();
+
   return (
     <AppShell>
       <PageHeader
@@ -26,7 +28,7 @@ export default function QueuePage() {
           title="DLQ workload"
           description="Each item shows the blocked downstream system, current retry posture, and the last observed error."
         />
-        <p className="section-note">The Force Retry button currently triggers a demo-only mock server action. No live provider calls are made in Phase 1.</p>
+        <p className="section-note">The Force Retry button currently triggers a demo-only mock server action. No live provider calls are made in Phase 2.</p>
         <div className="card-grid">
           {queueItems.length ? (
             queueItems.map((item) => (
@@ -71,7 +73,7 @@ export default function QueuePage() {
             <div className="table-shell">
               <EmptyState
                 title="No blocked retries"
-                description="When the demo recovery queue is empty, all retryable failures have already been cleared."
+                description="When the recovery queue is empty, all retryable failures have already been cleared."
               />
             </div>
           )}
