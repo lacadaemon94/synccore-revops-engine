@@ -1,0 +1,31 @@
+{
+  "id": "evt_demo_subscription_deleted_001",
+  "type": "customer.subscription.deleted",
+  "livemode": false,
+  "created": 1780502900,
+  "data": {
+    "object": {
+      "id": "sub_acme_scale",
+      "customer": "cus_acme_ai",
+      "status": "canceled",
+      "currency": "usd",
+      "metadata": {
+        "account_domain": "acme.ai",
+        "crm_company_id": "crm_acme_ai",
+        "usage_density": "35"
+      },
+      "items": {
+        "data": [
+          {
+            "price": {
+              "nickname": "Scale",
+              "unit_amount": 120000,
+              "currency": "usd",
+              "recurring": { "interval": "month" }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

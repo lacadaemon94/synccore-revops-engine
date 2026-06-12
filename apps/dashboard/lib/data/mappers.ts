@@ -214,6 +214,10 @@ function buildEventSummary(row: EventLogRow) {
     return "Successful payment captured cleanly from the billing stream.";
   }
 
+  if (row.event_type === "customer.subscription.deleted") {
+    return "Subscription cancellation was captured before any CRM or lifecycle side effects fired.";
+  }
+
   if (row.status === "failed") {
     return row.error_message ?? "Workflow execution failed after the event was recorded.";
   }
@@ -324,7 +328,8 @@ export function mapEventRowToRevOpsEvent({
   row: EventLogRow;
   account?: Pick<Account, "id" | "mrr" | "name">;
 }): RevOpsEvent {
-  const normalizedAmount = readJsonNumber(row.normalized_json, "mrr");
+  const normalizedAmount = readJsonNumber(row.normalized_json, "amount");
+  const normalizedMrr = readJsonNumber(row.normalized_json, "mrr");
   const payloadAmount = readJsonNumber(row.payload_json, "mrr");
 
   return {
@@ -337,7 +342,7 @@ export function mapEventRowToRevOpsEvent({
     status: mapEventStatus(row.status),
     receivedAt: row.received_at,
     retryCount: row.retry_count ?? 0,
-    amount: normalizedAmount ?? payloadAmount ?? account?.mrr,
+    amount: normalizedAmount ?? normalizedMrr ?? payloadAmount ?? account?.mrr,
     summary: buildEventSummary(row)
   };
 }

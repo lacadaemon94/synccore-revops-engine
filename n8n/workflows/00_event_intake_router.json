@@ -1,26 +1,39 @@
 {
   "name": "00 - Event Intake Router",
   "active": false,
+  "meta": {
+    "description": "Documented placeholder for the first SyncCore intake workflow. Realistic Phase 3 flow: Webhook trigger -> Normalize payload -> HTTP request to /api/events/ingest or future direct Postgres insert -> Switch by event type -> Execute downstream workflow placeholder."
+  },
   "nodes": [
     {
       "name": "Billing Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
-      "notes": "Receives Stripe or demo billing events. Verify signatures when real Stripe mode is enabled."
+      "notes": "Receives Stripe-like demo billing events first. Later this can verify real provider signatures."
     },
     {
       "name": "Normalize Event Payload",
       "type": "n8n-nodes-base.code",
-      "notes": "Normalize email casing, provider IDs, subscription fields, amount values, currency, and metadata."
+      "notes": "Normalize provider_event_id, event_type, customer, subscription, amount, currency, account_domain, crm_company_id, usage_density, and timestamps."
     },
     {
-      "name": "Write Event Log",
-      "type": "n8n-nodes-base.postgres",
-      "notes": "Insert into event_log with idempotency on provider_event_id before any side effects."
+      "name": "HTTP Request to Dashboard Ingest",
+      "type": "n8n-nodes-base.httpRequest",
+      "notes": "Preferred Phase 3 bridge. POST the normalized payload to /api/events/ingest so the dashboard app owns the idempotent event_log write."
     },
     {
       "name": "Route By Event Type",
       "type": "n8n-nodes-base.switch",
-      "notes": "Route subscription updates, failed payments, paid invoices, and unknown events."
+      "notes": "Route customer.subscription.updated, customer.subscription.deleted, invoice.payment_failed, invoice.paid, and unknown events."
+    },
+    {
+      "name": "Direct Postgres Insert (Future Option)",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Optional future path if SyncCore later decides n8n should insert directly into Postgres."
+    },
+    {
+      "name": "Downstream Workflow Placeholder",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "notes": "Represents the next lifecycle sync, churn defuser, or reconciliation workflow after event_log has been written."
     }
   ],
   "connections": {},

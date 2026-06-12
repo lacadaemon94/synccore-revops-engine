@@ -7,7 +7,8 @@
     "dev": "pnpm --filter @synccore/dashboard dev",
     "build": "pnpm --filter @synccore/dashboard build",
     "lint": "pnpm --filter @synccore/dashboard lint",
-    "typecheck": "pnpm --filter @synccore/dashboard typecheck"
+    "typecheck": "pnpm --filter @synccore/dashboard typecheck",
+    "replay:event": "node scripts/replay-demo-event.mjs"
   },
   "packageManager": "pnpm@9.15.0"
 }

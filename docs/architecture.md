@@ -7,6 +7,7 @@ SyncCore uses a demo-first event-driven architecture with a staged persistence m
 ```txt
 Billing event or demo event
   -> n8n Event Intake Router
+  -> dashboard ingest API bridge (Phase 3)
   -> Postgres event_log
   -> specialized workflow
   -> Postgres operational tables
@@ -56,6 +57,27 @@ That gives the project a stable application contract first:
 3. Future provider integrations can write into Postgres while the dashboard continues to read through the same typed interface.
 4. Derived UI-only fields can live in mappers until SyncCore is ready for isolated schema extensions.
 
+## Phase 3 ingestion bridge
+
+Phase 3 introduces the first real event ingestion path:
+
+```txt
+Stripe-like demo event
+  -> POST /api/events/ingest
+  -> validation
+  -> normalization
+  -> idempotent event_log insert
+  -> dashboard visibility
+```
+
+For now:
+
+1. The Next.js API route acts as the ingestion bridge.
+2. n8n can call that route from a Webhook workflow or HTTP Request node.
+3. `event_log` remains the source of truth before downstream side effects.
+4. Idempotency is enforced with `provider_event_id`.
+5. Later, n8n can write directly to Postgres if that becomes the preferred operating model.
+
 ## Design rules
 
 1. Store every incoming event before side effects.
@@ -68,7 +90,7 @@ That gives the project a stable application contract first:
 
 ## Current persistence scope
 
-Phase 2 reads from the existing operational tables only:
+Phase 2 and Phase 3 read from the existing operational tables only:
 
 - `accounts`
 - `subscriptions`

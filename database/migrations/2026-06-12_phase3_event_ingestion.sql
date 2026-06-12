@@ -1,0 +1,14 @@
+-- SyncCore Phase 3
+-- Event ingestion route
+--
+-- This migration is intentionally a documented no-op.
+--
+-- Reason:
+-- Phase 3 uses the existing event_log and accounts schema that already exists
+-- in database/schema.sql. The implementation adds application-layer webhook
+-- ingestion, normalization, idempotency, and account linking without changing
+-- the shared database structure.
+--
+-- Do not apply schema changes automatically against shared remote databases.
+-- If a future phase requires dedicated SyncCore-only schema additions, create
+-- a new isolated migration then.

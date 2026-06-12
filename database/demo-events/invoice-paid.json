@@ -1,0 +1,21 @@
+{
+  "id": "evt_demo_invoice_paid_002",
+  "type": "invoice.paid",
+  "livemode": false,
+  "created": 1780502800,
+  "data": {
+    "object": {
+      "id": "in_beta_paid_002",
+      "customer": "cus_beta_ops",
+      "subscription": "sub_beta_enterprise",
+      "amount_paid": 210000,
+      "currency": "usd",
+      "status": "paid",
+      "metadata": {
+        "account_domain": "betaops.io",
+        "crm_company_id": "crm_beta_ops",
+        "usage_density": "92"
+      }
+    }
+  }
+}
