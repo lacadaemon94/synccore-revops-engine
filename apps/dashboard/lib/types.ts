@@ -3,6 +3,8 @@ export type QueueStatus = "pending" | "retrying" | "resolved" | "failed";
 export type DiscrepancySeverity = "low" | "medium" | "high";
 export type DiscrepancyStatus = "open" | "reviewing" | "resolved";
 export type RevenueRiskLevel = "stable" | "watch" | "urgent";
+export type ChurnRiskLevel = "low" | "medium" | "high" | "critical";
+export type ChurnDefuserActionStatus = "simulated" | "queued" | "existing" | "skipped";
 
 export type Account = {
   id: string;
@@ -69,4 +71,22 @@ export type Metric = {
   value: string;
   helper: string;
   tone?: "default" | "positive" | "warning" | "danger";
+};
+
+export type ChurnDefuserAction = {
+  id: string;
+  accountId: string;
+  accountName: string;
+  title: string;
+  body: string;
+  providerEventId: string;
+  eventType: string;
+  riskLevel: ChurnRiskLevel;
+  recommendedAction: string;
+  recommendedOwner: string;
+  requiresHumanTask: boolean;
+  shouldNotifyOps: boolean;
+  gracePeriodRecommendation: string;
+  status: ChurnDefuserActionStatus;
+  createdAt: string;
 };

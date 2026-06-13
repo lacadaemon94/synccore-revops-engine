@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { env } from "../../../../lib/env";
+import { runChurnDefuser } from "../../../../lib/data/churn-defuser";
 import { ingestBillingEvent, canPersistBillingEvents } from "../../../../lib/data/ingest-events";
 import { normalizeBillingEvent } from "../../../../lib/events/normalize-billing-event";
 import { validateDemoBillingEventPayload } from "../../../../lib/events/validators";
@@ -35,12 +36,18 @@ export async function POST(request: Request) {
   const normalizedEvent = normalizeBillingEvent(validation.value);
 
   if (env.demoMode) {
+    const churnDefuser = await runChurnDefuser({
+      normalizedEvent,
+      persistSideEffects: false
+    });
+
     return NextResponse.json({
       ok: true,
       mode: "demo",
       persisted: false,
       message: "Event validated and normalized, but DEMO_MODE=true so no database write was attempted.",
-      normalizedEvent
+      normalizedEvent,
+      churnDefuser
     });
   }
 
@@ -59,6 +66,12 @@ export async function POST(request: Request) {
       normalizedEvent,
       payload: validation.value
     });
+    const churnDefuser = await runChurnDefuser({
+      normalizedEvent,
+      linkedAccountId: result.linkedAccountId,
+      eventLogId: result.eventLog.id,
+      persistSideEffects: !result.duplicate
+    });
 
     return NextResponse.json({
       ok: true,
@@ -72,7 +85,8 @@ export async function POST(request: Request) {
       message: result.duplicate
         ? "Duplicate provider_event_id detected. Returning the existing event log row."
         : "Event stored successfully in event_log.",
-      normalizedEvent
+      normalizedEvent,
+      churnDefuser
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown ingestion failure.";

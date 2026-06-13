@@ -123,6 +123,8 @@ export async function ingestBillingEvent({
         crm_company_id: normalizedEvent.crmCompanyId,
         currency: normalizedEvent.currency,
         customer_id: normalizedEvent.customerId,
+        failure_reason: normalizedEvent.failureReason,
+        payment_attempt_count: normalizedEvent.paymentAttemptCount,
         subscription_id: normalizedEvent.subscriptionId,
         usage_density: normalizedEvent.usageDensity
       },

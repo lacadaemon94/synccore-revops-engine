@@ -12,7 +12,11 @@ Connect the dashboard to Supabase/Postgres and replace static demo data with dat
 
 Implement the event intake router, event logging, idempotency, and workflow routing.
 
-## Phase 4: Optional real adapters
+## Phase 4A: Failed payment churn defuser
+
+Classify failed payment risk, stage mock operational responses, and surface the response plan in the dashboard before adding real integrations.
+
+## Phase 4B: Optional real adapters
 
 Add optional adapters for Stripe test mode, HubSpot CRM, and Slack notifications.
 

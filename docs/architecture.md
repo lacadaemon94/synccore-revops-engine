@@ -9,6 +9,7 @@ Billing event or demo event
   -> n8n Event Intake Router
   -> dashboard ingest API bridge (Phase 3)
   -> Postgres event_log
+  -> churn defuser classifier (Phase 4A for failed payments)
   -> specialized workflow
   -> Postgres operational tables
   -> dashboard, CRM adapter, notification outbox
@@ -78,6 +79,28 @@ For now:
 4. Idempotency is enforced with `provider_event_id`.
 5. Later, n8n can write directly to Postgres if that becomes the preferred operating model.
 
+## Phase 4A failed payment churn defuser
+
+When the ingest route receives `invoice.payment_failed`, SyncCore now does one more pass before any real external integration exists:
+
+```txt
+failed payment event
+  -> normalization
+  -> event_log insert
+  -> churn-risk classification
+  -> mock operational response
+  -> notification_outbox write (Supabase mode only)
+  -> optional discrepancy write for high-risk lifecycle drift
+```
+
+Current behavior:
+
+1. Demo mode still skips database writes and returns a simulated classification payload.
+2. Supabase mode writes the failed-payment event to `event_log` first.
+3. The churn defuser then stages a mock notification in `notification_outbox`.
+4. For high or critical failed payments, SyncCore can also create a discrepancy when billing is effectively `past_due` while the account lifecycle is still customer-like in CRM.
+5. No real Slack, HubSpot, or Stripe side effects are triggered yet.
+
 ## Design rules
 
 1. Store every incoming event before side effects.
@@ -90,15 +113,16 @@ For now:
 
 ## Current persistence scope
 
-Phase 2 and Phase 3 read from the existing operational tables only:
+The dashboard and ingestion workflow now use these existing operational tables:
 
 - `accounts`
 - `subscriptions`
 - `event_log`
 - `dead_letter_queue`
 - `discrepancies`
+- `notification_outbox`
 
-For the shared `tests-n-stuff` database, this phase is intentionally read-only from the dashboard side and does not modify existing tables or business logic.
+For the shared `tests-n-stuff` database, this phase does not apply migrations automatically or alter existing table logic. The only opt-in writes are event ingestion records plus mock outbox and discrepancy rows when `DEMO_MODE=false` and the operator explicitly replays events.
 
 ## Default systems
 

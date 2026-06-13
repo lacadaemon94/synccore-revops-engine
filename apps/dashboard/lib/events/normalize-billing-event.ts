@@ -7,6 +7,8 @@ export type NormalizedBillingEvent = {
   crmCompanyId: null | string;
   currency: null | string;
   customerId: null | string;
+  failureReason: null | string;
+  paymentAttemptCount: null | number;
   provider: "stripe-demo";
   providerEventId: string;
   receivedAt: string;
@@ -96,6 +98,16 @@ function deriveSubscriptionId(type: SupportedBillingEventType, object: BillingEv
   return readString(object.subscription);
 }
 
+function deriveFailureReason(type: SupportedBillingEventType, object: BillingEventObject) {
+  if (type !== "invoice.payment_failed") {
+    return null;
+  }
+
+  const errorObject = isRecord(object.last_payment_error) ? object.last_payment_error : null;
+
+  return readString(errorObject?.code) ?? readString(errorObject?.message);
+}
+
 function deriveStatus(type: SupportedBillingEventType, object: BillingEventObject): EventStatus {
   if (type === "invoice.payment_failed") {
     return "failed";
@@ -130,6 +142,8 @@ export function normalizeBillingEvent(payload: DemoBillingEventPayload): Normali
     crmCompanyId: readString(metadata.crm_company_id),
     currency: readString(object.currency) ?? "usd",
     customerId: readString(object.customer),
+    failureReason: deriveFailureReason(payload.type, object),
+    paymentAttemptCount: readNumber(object.attempt_count),
     provider: "stripe-demo",
     providerEventId: payload.id,
     receivedAt: typeof payload.created === "number" ? new Date(payload.created * 1000).toISOString() : new Date().toISOString(),

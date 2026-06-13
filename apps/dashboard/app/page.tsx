@@ -12,12 +12,30 @@ import { getAccounts } from "../lib/data/accounts";
 import { getDiscrepancies } from "../lib/data/discrepancies";
 import { getEvents } from "../lib/data/events";
 import { getOverviewMetrics } from "../lib/data/metrics";
+import { getRecentChurnDefuserActions } from "../lib/data/notifications";
 import { getQueueItems } from "../lib/data/queue";
 import { formatCompactCurrency, formatCurrency, formatDate, formatDateTime, formatPercent, titleCase } from "../lib/format";
 
+function getRiskTone(riskLevel: "critical" | "high" | "low" | "medium") {
+  if (riskLevel === "critical") {
+    return "danger" as const;
+  }
+
+  if (riskLevel === "high") {
+    return "warning" as const;
+  }
+
+  if (riskLevel === "medium") {
+    return "info" as const;
+  }
+
+  return "positive" as const;
+}
+
 export default async function OverviewPage() {
-  const [accounts, discrepancies, events, metrics, queueItems] = await Promise.all([
+  const [accounts, churnActions, discrepancies, events, metrics, queueItems] = await Promise.all([
     getAccounts(),
+    getRecentChurnDefuserActions(),
     getDiscrepancies(),
     getEvents(),
     getOverviewMetrics(),
@@ -29,6 +47,8 @@ export default async function OverviewPage() {
   const atRiskAccounts = accounts
     .filter((account) => account.revenueAtRisk > 0)
     .sort((left, right) => right.revenueAtRisk - left.revenueAtRisk);
+  const highestPriorityChurnAction =
+    churnActions.find((item) => item.riskLevel === "critical" || item.riskLevel === "high") ?? churnActions[0] ?? null;
   const openDiscrepancies = discrepancies.filter((item) => item.status !== "resolved");
   const firstAccount = accounts[0] ?? null;
 
@@ -79,6 +99,99 @@ export default async function OverviewPage() {
         {metrics.map((metric) => (
           <MetricCard key={metric.label} metric={metric} />
         ))}
+      </section>
+
+      <section className="split-grid split-grid--two">
+        <div>
+          <SectionHeader
+            title="High-value failed payment alert"
+            description="When a failed invoice lands, the churn defuser classifies risk before any real Slack or CRM integrations exist."
+          />
+          <Panel>
+            {highestPriorityChurnAction ? (
+              <div className="alert-panel">
+                <div className="alert-panel__header">
+                  <div className="cell-stack">
+                    <p className="panel__kicker">Mock operational response</p>
+                    <h3 className="panel__title">{highestPriorityChurnAction.title}</h3>
+                    <p className="panel__copy">{highestPriorityChurnAction.body}</p>
+                  </div>
+                  <div className="badge-row">
+                    <Badge tone={getRiskTone(highestPriorityChurnAction.riskLevel)}>{highestPriorityChurnAction.riskLevel} risk</Badge>
+                    <Badge tone={highestPriorityChurnAction.requiresHumanTask ? "warning" : "positive"}>
+                      {highestPriorityChurnAction.requiresHumanTask ? "human task required" : "automated recovery"}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="mini-stats">
+                  <div className="mini-stat">
+                    <p className="mini-stat__label">Account</p>
+                    <Link className="text-link mini-stat__value" href={`/accounts/${highestPriorityChurnAction.accountId}`}>
+                      {highestPriorityChurnAction.accountName}
+                    </Link>
+                  </div>
+                  <div className="mini-stat">
+                    <p className="mini-stat__label">Recommended owner</p>
+                    <p className="mini-stat__value">{highestPriorityChurnAction.recommendedOwner}</p>
+                  </div>
+                  <div className="mini-stat">
+                    <p className="mini-stat__label">Grace window</p>
+                    <p className="mini-stat__value">{highestPriorityChurnAction.gracePeriodRecommendation}</p>
+                  </div>
+                </div>
+                <div className="alert-panel__footer">
+                  <div>
+                    <p className="panel__kicker">Recommended action</p>
+                    <p className="panel__copy">{highestPriorityChurnAction.recommendedAction}</p>
+                  </div>
+                  <span className="cell-subtle">Logged {formatDateTime(highestPriorityChurnAction.createdAt)}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="empty-inline">
+                <p className="empty-inline__title">No failed payment alerts yet</p>
+                <p className="empty-inline__description">When a failed invoice arrives, SyncCore will stage the mock response and investor-friendly risk summary here.</p>
+              </div>
+            )}
+          </Panel>
+        </div>
+
+        <div>
+          <SectionHeader
+            title="Recent churn defuser actions"
+            description="Latest mock notification and human-task decisions generated from failed payment ingestion."
+          />
+          <Panel>
+            {churnActions.length ? (
+              <div className="list">
+                {churnActions.map((action) => (
+                  <div key={action.id} className="list-row list-row--stack-mobile">
+                    <div className="cell-stack">
+                      <Link className="text-link cell-title" href={`/accounts/${action.accountId}`}>
+                        {action.accountName}
+                      </Link>
+                      <span className="cell-subtle">{action.recommendedAction}</span>
+                    </div>
+                    <div className="list-row__meta">
+                      <div className="badge-row">
+                        <Badge tone={getRiskTone(action.riskLevel)}>{action.riskLevel}</Badge>
+                        <Badge tone={action.requiresHumanTask ? "warning" : "positive"}>
+                          {action.requiresHumanTask ? "human follow-up" : "automation first"}
+                        </Badge>
+                      </div>
+                      <span className="cell-subtle">{formatDateTime(action.createdAt)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-inline">
+                <p className="empty-inline__title">No churn actions staged</p>
+                <p className="empty-inline__description">Replay a failed payment event in persistence mode to populate the mock notification outbox.</p>
+              </div>
+            )}
+          </Panel>
+        </div>
       </section>
 
       <section className="split-grid split-grid--two">

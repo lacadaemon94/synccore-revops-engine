@@ -1,4 +1,4 @@
-import type { Account, Discrepancy, Metric, QueueItem, RevOpsEvent } from "./types";
+import type { Account, ChurnDefuserAction, Discrepancy, Metric, QueueItem, RevOpsEvent } from "./types";
 
 export const accounts: Account[] = [
   {
@@ -254,5 +254,42 @@ export const discrepancies: Discrepancy[] = [
     scenario: "Enterprise tier in billing but scale tier in CRM",
     impact: "CS routing, support coverage, and renewal prep can drift from the commercial truth.",
     suggestedAction: "Review the plan mapping, update CRM tier, and verify entitlement labels."
+  }
+];
+
+export const churnDefuserActions: ChurnDefuserAction[] = [
+  {
+    id: "action_demo_churn_001",
+    accountId: accounts[0].id,
+    accountName: accounts[0].name,
+    title: "Critical failed payment on Acme AI Labs",
+    body: "High-usage revenue is exposed, so the mock notifier escalated RevOps and created a human follow-up task.",
+    providerEventId: "evt_demo_invoice_failed_001",
+    eventType: "invoice.payment_failed",
+    riskLevel: "critical",
+    recommendedAction: "Route an owner to confirm payment recovery, protect renewal motion, and review account health today.",
+    recommendedOwner: "RevOps lead",
+    requiresHumanTask: true,
+    shouldNotifyOps: true,
+    gracePeriodRecommendation: "Hold service access for 3 days while a human owner works the recovery path.",
+    status: "simulated",
+    createdAt: "2026-06-04T09:04:30Z"
+  },
+  {
+    id: "action_demo_churn_002",
+    accountId: accounts[1].id,
+    accountName: accounts[1].name,
+    title: "Low-risk failed payment on Norte Cloud",
+    body: "This mock action stays in automated recovery mode and does not require immediate human intervention.",
+    providerEventId: "evt_demo_invoice_failed_002",
+    eventType: "invoice.payment_failed",
+    riskLevel: "low",
+    recommendedAction: "Retry the invoice on schedule, email the billing contact, and re-check if another attempt fails.",
+    recommendedOwner: "Billing automation",
+    requiresHumanTask: false,
+    shouldNotifyOps: false,
+    gracePeriodRecommendation: "Allow a 7-day billing grace period before escalating to a human queue.",
+    status: "simulated",
+    createdAt: "2026-06-04T09:05:10Z"
   }
 ];
