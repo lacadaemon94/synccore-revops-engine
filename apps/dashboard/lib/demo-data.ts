@@ -1,3 +1,4 @@
+import { buildRetrySummary } from "./revops/dead-letter-queue";
 import type { Account, ChurnDefuserAction, Discrepancy, Metric, QueueItem, RevOpsEvent } from "./types";
 
 export const accounts: Account[] = [
@@ -181,22 +182,49 @@ export const queueItems: QueueItem[] = [
     retryCount: 1,
     maxRetries: 3,
     nextRetryAt: "2026-06-04T09:34:00Z",
-    lastError: "Simulated CRM 503 response"
+    lastError: "Simulated CRM 503 response",
+    lastAttemptAt: "2026-06-04T09:19:00Z",
+    createdAt: "2026-06-04T09:04:10Z",
+    failureClass: "availability",
+    escalationRecommended: false,
+    retryOutcomeHint: "resolve"
   },
   {
     id: "dlq_002",
+    eventId: "evt_demo_invoice_failed_dlq_001",
+    accountId: accounts[0].id,
+    accountName: accounts[0].name,
+    targetSystem: "mock-notifications-outbox",
+    status: "retrying",
+    retryCount: 2,
+    maxRetries: 3,
+    nextRetryAt: "2026-06-04T09:41:00Z",
+    lastError: "Downstream notifier is intentionally failing because simulate_downstream_failure=true.",
+    lastAttemptAt: "2026-06-04T09:26:00Z",
+    createdAt: "2026-06-04T09:05:30Z",
+    failureClass: "availability",
+    escalationRecommended: false,
+    retryOutcomeHint: "retryable_failure"
+  },
+  {
+    id: "dlq_003",
     eventId: "wf_demo_failed_007",
     accountId: accounts[3].id,
     accountName: accounts[3].name,
     targetSystem: "mock-notifications-outbox",
-    status: "retrying",
-    retryCount: 2,
-    maxRetries: 5,
-    nextRetryAt: "2026-06-04T09:41:00Z",
-    lastError: "Payload schema mismatch in the demo escalation notifier"
+    status: "escalated",
+    retryCount: 3,
+    maxRetries: 3,
+    nextRetryAt: null,
+    lastError: "Payload schema mismatch in the demo escalation notifier",
+    lastAttemptAt: "2026-06-04T09:40:00Z",
+    createdAt: "2026-06-04T09:18:00Z",
+    failureClass: "validation",
+    escalationRecommended: true,
+    retryOutcomeHint: "non_retryable_failure"
   },
   {
-    id: "dlq_003",
+    id: "dlq_004",
     eventId: "wf_demo_retry_005",
     accountId: accounts[1].id,
     accountName: accounts[1].name,
@@ -204,10 +232,20 @@ export const queueItems: QueueItem[] = [
     status: "resolved",
     retryCount: 2,
     maxRetries: 4,
-    nextRetryAt: "2026-06-04T09:18:00Z",
-    lastError: "Recovered after a transient adapter rate limit"
+    nextRetryAt: null,
+    lastError: "Recovered after a transient adapter rate limit",
+    lastAttemptAt: "2026-06-04T09:18:00Z",
+    resolvedAt: "2026-06-04T09:20:00Z",
+    createdAt: "2026-06-04T09:16:00Z",
+    failureClass: "rate_limit",
+    escalationRecommended: false,
+    retryOutcomeHint: "resolve"
   }
 ];
+
+for (const item of queueItems) {
+  item.retrySummary = buildRetrySummary(item);
+}
 
 export const discrepancies: Discrepancy[] = [
   {

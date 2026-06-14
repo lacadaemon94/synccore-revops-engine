@@ -5,22 +5,27 @@
     {
       "name": "Scheduled Retry Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
-      "notes": "Runs periodically to find pending DLQ items with next_retry_at due."
+      "notes": "Runs every few minutes and picks up DLQ items whose next_retry_at is due."
     },
     {
-      "name": "Load Pending DLQ Items",
+      "name": "Load Due DLQ Items",
       "type": "n8n-nodes-base.postgres",
-      "notes": "Select pending or retrying items from dead_letter_queue."
+      "notes": "Select rows from dead_letter_queue where status is pending or retrying and next_retry_at <= now()."
     },
     {
-      "name": "Retry Target Operation",
+      "name": "Replay Retry Handler",
       "type": "n8n-nodes-base.httpRequest",
-      "notes": "Retry the original target operation using stored payload_json."
+      "notes": "Call a future dashboard retry endpoint with the DLQ item id so the app can apply the same retry and escalation logic used by Force Retry."
     },
     {
       "name": "Resolve Or Escalate",
       "type": "n8n-nodes-base.switch",
-      "notes": "Mark resolved on success; increment retry_count; escalate after max_retries."
+      "notes": "Resolved items stop here. Retryable failures schedule the next retry window. Max-retry or non-retryable failures escalate."
+    },
+    {
+      "name": "Update Queue Row",
+      "type": "n8n-nodes-base.postgres",
+      "notes": "Persist the resolved, pending, failed, or escalated status if the retry endpoint does not already handle the database update."
     }
   ],
   "connections": {},

@@ -1,10 +1,12 @@
-export type EventStatus = "received" | "processed" | "failed" | "routed_to_dlq" | "pending" | "retrying" | "resolved";
-export type QueueStatus = "pending" | "retrying" | "resolved" | "failed";
+export type EventStatus = "received" | "processed" | "failed" | "routed_to_dlq" | "pending" | "retrying" | "resolved" | "escalated";
+export type QueueStatus = "pending" | "retrying" | "resolved" | "failed" | "escalated";
 export type DiscrepancySeverity = "low" | "medium" | "high";
 export type DiscrepancyStatus = "open" | "reviewing" | "resolved";
 export type RevenueRiskLevel = "stable" | "watch" | "urgent";
 export type ChurnRiskLevel = "low" | "medium" | "high" | "critical";
 export type ChurnDefuserActionStatus = "simulated" | "queued" | "existing" | "skipped";
+export type RetryFailureClass = "availability" | "rate_limit" | "timeout" | "validation" | "authentication" | "unknown";
+export type RetryOutcomeHint = "resolve" | "retryable_failure" | "non_retryable_failure";
 
 export type Account = {
   id: string;
@@ -46,8 +48,15 @@ export type QueueItem = {
   status: QueueStatus;
   retryCount: number;
   maxRetries: number;
-  nextRetryAt: string;
+  nextRetryAt: null | string;
   lastError: string;
+  lastAttemptAt?: null | string;
+  resolvedAt?: null | string;
+  createdAt?: string;
+  failureClass?: RetryFailureClass;
+  escalationRecommended?: boolean;
+  retrySummary?: string;
+  retryOutcomeHint?: RetryOutcomeHint;
 };
 
 export type Discrepancy = {

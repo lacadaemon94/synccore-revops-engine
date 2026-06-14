@@ -125,6 +125,7 @@ export async function ingestBillingEvent({
         customer_id: normalizedEvent.customerId,
         failure_reason: normalizedEvent.failureReason,
         payment_attempt_count: normalizedEvent.paymentAttemptCount,
+        simulate_downstream_failure: normalizedEvent.simulateDownstreamFailure,
         subscription_id: normalizedEvent.subscriptionId,
         usage_density: normalizedEvent.usageDensity
       },

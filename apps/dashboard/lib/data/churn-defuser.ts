@@ -4,7 +4,9 @@ import { createSupabaseServerClient } from "../supabase";
 import type { NormalizedBillingEvent } from "../events/normalize-billing-event";
 import { buildChurnResponse, type ChurnOperationalResponse } from "../revops/build-churn-response";
 import { classifyChurnRisk, type ChurnRiskAssessment } from "../revops/classify-churn-risk";
+import type { QueueItem } from "../types";
 import { getAccounts } from "./accounts";
+import { createDeadLetterQueueItem } from "./dead-letter-queue";
 
 type NotificationOutboxRow = {
   id: string;
@@ -19,14 +21,19 @@ export type ChurnDefuserResult = {
   account: Account;
   classification: ChurnRiskAssessment;
   response: ChurnOperationalResponse;
+  deadLetterQueue: {
+    created: boolean;
+    item: null | QueueItem;
+    mode: "persisted" | "simulated" | "skipped";
+  };
   notification: {
     id: null | string;
-    status: "existing" | "queued" | "simulated";
+    status: "deferred-to-dlq" | "existing" | "queued" | "simulated";
   };
   discrepancy: {
     id: null | string;
     created: boolean;
-    status: "created" | "not-needed" | "simulated" | "skipped-existing";
+    status: "created" | "deferred-to-dlq" | "not-needed" | "simulated" | "skipped-existing";
   };
 };
 
@@ -264,12 +271,58 @@ export async function runChurnDefuser({
     assessment: classification,
     normalizedEvent
   });
+  const shouldCreateDeadLetterQueueItem = normalizedEvent.simulateDownstreamFailure;
+
+  if (shouldCreateDeadLetterQueueItem) {
+    const dlqItem = await createDeadLetterQueueItem({
+      accountId: account.id,
+      accountName: account.name,
+      eventId: normalizedEvent.providerEventId,
+      eventLogId,
+      eventType: normalizedEvent.type,
+      lastError: "Simulated downstream failure triggered by metadata.simulate_downstream_failure=true.",
+      maxRetries: 3,
+      payload: {
+        workflow: "churn_defuser",
+        operation: "send_recovery_notification",
+        simulate_downstream_failure: true
+      },
+      retryCount: 1,
+      retryOutcomeHint: "retryable_failure",
+      targetSystem: "mock-notifications-outbox"
+    });
+
+    return {
+      account,
+      classification,
+      response,
+      deadLetterQueue: {
+        created: true,
+        item: dlqItem,
+        mode: persistSideEffects && eventLogId ? "persisted" : "simulated"
+      },
+      notification: {
+        id: null,
+        status: "deferred-to-dlq"
+      },
+      discrepancy: {
+        id: null,
+        created: false,
+        status: "deferred-to-dlq"
+      }
+    };
+  }
 
   if (!persistSideEffects || !eventLogId) {
     return {
       account,
       classification,
       response,
+      deadLetterQueue: {
+        created: false,
+        item: null,
+        mode: "skipped"
+      },
       notification: {
         id: null,
         status: "simulated"
@@ -289,6 +342,11 @@ export async function runChurnDefuser({
       account,
       classification,
       response,
+      deadLetterQueue: {
+        created: false,
+        item: null,
+        mode: "skipped"
+      },
       notification: {
         id: null,
         status: "simulated"
@@ -317,6 +375,11 @@ export async function runChurnDefuser({
     account,
     classification,
     response,
+    deadLetterQueue: {
+      created: false,
+      item: null,
+      mode: "skipped"
+    },
     notification,
     discrepancy
   };

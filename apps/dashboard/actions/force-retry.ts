@@ -1,21 +1,26 @@
 "use server";
 
-import { queueItems } from "../lib/demo-data";
+import type { ForceRetryQueueItemResult } from "../lib/data/dead-letter-queue";
+import { forceRetryQueueItem } from "../lib/data/dead-letter-queue";
 
-export async function forceRetry(queueItemId: string) {
-  const queueItem = queueItems.find((item) => item.id === queueItemId);
+export type ForceRetryActionResult =
+  | ForceRetryQueueItemResult
+  | {
+      ok: false;
+      message: string;
+      queueItemId: string;
+      simulated: boolean;
+    };
 
-  if (!queueItem) {
+export async function forceRetry(queueItemId: string): Promise<ForceRetryActionResult> {
+  try {
+    return await forceRetryQueueItem(queueItemId);
+  } catch (error) {
     return {
       ok: false,
-      message: "Queue item not found."
+      message: error instanceof Error ? error.message : "Force retry failed.",
+      queueItemId,
+      simulated: true
     };
   }
-
-  return {
-    ok: true,
-    message: `Mock retry requested for ${queueItem.accountName}.`,
-    queueItemId,
-    requestedAt: new Date().toISOString()
-  };
 }

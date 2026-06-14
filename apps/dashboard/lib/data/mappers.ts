@@ -52,11 +52,15 @@ export type QueueRow = {
   id: string;
   event_log_id: null | string;
   target_system: string;
+  payload_json?: unknown;
   status: string;
   retry_count: null | number;
   max_retries: null | number;
   next_retry_at: null | string;
+  last_attempt_at?: null | string;
   last_error: null | string;
+  resolved_at?: null | string;
+  created_at?: null | string;
 };
 
 export type DiscrepancyRow = {
@@ -81,6 +85,7 @@ function mapEventStatus(status: string): EventStatus {
     case "retrying":
     case "resolved":
     case "received":
+    case "escalated":
       return status;
     default:
       return "received";
@@ -93,6 +98,7 @@ function mapQueueStatus(status: string): QueueStatus {
     case "resolved":
     case "failed":
     case "pending":
+    case "escalated":
       return status;
     default:
       return "pending";
@@ -166,7 +172,7 @@ function deriveRevenueAtRisk({
     return accountMrr;
   }
 
-  if (latestEventStatus === "failed" || latestEventStatus === "routed_to_dlq") {
+  if (latestEventStatus === "failed" || latestEventStatus === "routed_to_dlq" || latestEventStatus === "escalated") {
     return latestEventAmount ?? accountMrr;
   }
 
@@ -220,6 +226,10 @@ function buildEventSummary(row: EventLogRow) {
 
   if (row.status === "failed") {
     return row.error_message ?? "Workflow execution failed after the event was recorded.";
+  }
+
+  if (row.status === "escalated") {
+    return "A blocked downstream recovery exhausted automatic retries and now needs operator intervention.";
   }
 
   if (row.status === "resolved") {
@@ -366,7 +376,10 @@ export function mapQueueRowToQueueItem({
     retryCount: row.retry_count ?? 0,
     maxRetries: row.max_retries ?? 3,
     nextRetryAt: row.next_retry_at ?? addDaysIso(1),
-    lastError: row.last_error ?? "No downstream error message recorded."
+    lastError: row.last_error ?? "No downstream error message recorded.",
+    lastAttemptAt: row.last_attempt_at ?? null,
+    resolvedAt: row.resolved_at ?? null,
+    createdAt: row.created_at ?? addDaysIso(0)
   };
 }
 

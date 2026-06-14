@@ -14,6 +14,7 @@ POST /api/events/ingest
 - writes to `event_log` when `DEMO_MODE=false` and Supabase is configured
 - classifies `invoice.payment_failed` events for churn risk
 - stages a mock notification response for failed payments
+- creates a DLQ item when `metadata.simulate_downstream_failure=true`
 - skips persistence when `DEMO_MODE=true`
 
 ## Start the dashboard
@@ -53,6 +54,7 @@ Behavior:
 - duplicate events are detected by `provider_event_id`
 - the existing row is returned instead of inserting a duplicate
 - `invoice.payment_failed` also stages a mock `notification_outbox` item
+- deterministic demo failures can persist a `dead_letter_queue` row
 - high or critical failed payments can create a CRM/billing discrepancy row when lifecycle data still looks customer-like
 
 ## Replay a sample event
@@ -73,6 +75,7 @@ Other samples:
 
 ```bash
 pnpm replay:event -- database/demo-events/invoice-payment-failed-low-value.json
+pnpm replay:event -- database/demo-events/invoice-payment-failed-dlq.json
 pnpm replay:event -- database/demo-events/invoice-paid.json
 pnpm replay:event -- database/demo-events/subscription-updated.json
 pnpm replay:event -- database/demo-events/subscription-deleted.json
@@ -91,6 +94,32 @@ Tip:
 
 - `invoice-payment-failed-low-value.json`, `invoice-paid.json`, and `subscription-deleted.json` are the easiest samples to use when you want to see a newly inserted row immediately.
 - some seeded demo payload IDs may already exist and intentionally exercise the duplicate-event path instead.
+
+## Expected DLQ-triggering result
+
+```bash
+pnpm replay:event -- database/demo-events/invoice-payment-failed-dlq.json
+```
+
+Expected result:
+
+- the response should include `deadLetterQueue.created=true`
+- demo mode should return `deadLetterQueue.mode=simulated`
+- Supabase mode should return `deadLetterQueue.mode=persisted`
+- the queue item should target `mock-notifications-outbox`
+- retry 1 should schedule the next attempt 15 minutes later
+- the notification/discrepancy work should be deferred into the DLQ path instead of running immediately
+
+## Force retry check
+
+1. Open `/queue`.
+2. Pick a pending, retrying, or escalated item.
+3. Click `Force Retry`.
+4. Confirm the inline feedback reports either:
+   - recovery and resolution, or
+   - re-queue / escalation behavior with a new retry summary
+
+In demo mode, the result is deterministic from the queue item's retry hint. No external APIs are called.
 
 ## Expected high-value vs low-value results
 
@@ -127,3 +156,4 @@ Expected result:
 - invalid JSON or unsupported event type: returns a `400`
 - duplicate `provider_event_id`: returns the existing event row instead of creating a second one
 - duplicate failed-payment events skip creating a second mock outbox action
+- DLQ force retry can resolve the item, re-queue it, or escalate it after max retries

@@ -12,6 +12,7 @@ export type NormalizedBillingEvent = {
   provider: "stripe-demo";
   providerEventId: string;
   receivedAt: string;
+  simulateDownstreamFailure: boolean;
   status: EventStatus;
   subscriptionId: null | string;
   type: SupportedBillingEventType;
@@ -147,6 +148,7 @@ export function normalizeBillingEvent(payload: DemoBillingEventPayload): Normali
     provider: "stripe-demo",
     providerEventId: payload.id,
     receivedAt: typeof payload.created === "number" ? new Date(payload.created * 1000).toISOString() : new Date().toISOString(),
+    simulateDownstreamFailure: readString(metadata.simulate_downstream_failure) === "true",
     status: deriveStatus(payload.type, object),
     subscriptionId: deriveSubscriptionId(payload.type, object),
     type: payload.type,

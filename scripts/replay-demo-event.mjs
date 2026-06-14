@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const [, , filePath] = process.argv;
+const scriptArgs = process.argv.slice(2).filter((arg) => arg !== "--");
+const [filePath] = scriptArgs;
 
 if (!filePath) {
   console.error("Usage: node scripts/replay-demo-event.mjs <path-to-json-event>");

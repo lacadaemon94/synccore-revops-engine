@@ -51,6 +51,7 @@ export default async function OverviewPage() {
     churnActions.find((item) => item.riskLevel === "critical" || item.riskLevel === "high") ?? churnActions[0] ?? null;
   const openDiscrepancies = discrepancies.filter((item) => item.status !== "resolved");
   const firstAccount = accounts[0] ?? null;
+  const formatOptionalDateTime = (value: null | string) => (value ? formatDateTime(value) : "Manual review");
 
   return (
     <AppShell>
@@ -271,7 +272,7 @@ export default async function OverviewPage() {
               {
                 key: "nextRetry",
                 header: "Next retry",
-                render: (row) => <span className="cell-subtle">{formatDateTime(row.nextRetryAt)}</span>
+                render: (row) => <span className="cell-subtle">{formatOptionalDateTime(row.nextRetryAt)}</span>
               }
             ]}
             emptyTitle="DLQ is clear"

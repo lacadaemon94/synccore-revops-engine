@@ -8,7 +8,8 @@ const statusToneMap: Record<EventStatus | QueueStatus, "neutral" | "positive" | 
   routed_to_dlq: "warning",
   pending: "neutral",
   retrying: "info",
-  resolved: "positive"
+  resolved: "positive",
+  escalated: "danger"
 };
 
 export function StatusBadge({ status }: { status: EventStatus | QueueStatus }) {

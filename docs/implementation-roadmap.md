@@ -16,10 +16,14 @@ Implement the event intake router, event logging, idempotency, and workflow rout
 
 Classify failed payment risk, stage mock operational responses, and surface the response plan in the dashboard before adding real integrations.
 
-## Phase 4B: Optional real adapters
+## Phase 4B: Dead-letter queue retry engine
 
-Add optional adapters for Stripe test mode, HubSpot CRM, and Slack notifications.
+Turn retryable downstream failures into first-class DLQ records with retry scheduling, force replay, resolution, and escalation behavior.
 
-## Phase 5: Public case study polish
+## Phase 5: Optional real adapters
+
+Add optional adapters for Stripe test mode, HubSpot CRM, and Slack notifications only after the demo DLQ and churn-defuser paths are stable.
+
+## Phase 6: Public case study polish
 
 Add screenshots, diagrams, sample events, seed data, and a polished write-up for Iterwave and portfolio use.

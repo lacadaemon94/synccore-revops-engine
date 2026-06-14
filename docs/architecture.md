@@ -11,6 +11,7 @@ Billing event or demo event
   -> Postgres event_log
   -> churn defuser classifier (Phase 4A for failed payments)
   -> specialized workflow
+  -> dead-letter queue retry engine (Phase 4B when needed)
   -> Postgres operational tables
   -> dashboard, CRM adapter, notification outbox
 ```
@@ -100,6 +101,27 @@ Current behavior:
 3. The churn defuser then stages a mock notification in `notification_outbox`.
 4. For high or critical failed payments, SyncCore can also create a discrepancy when billing is effectively `past_due` while the account lifecycle is still customer-like in CRM.
 5. No real Slack, HubSpot, or Stripe side effects are triggered yet.
+
+## Phase 4B dead-letter queue retry engine
+
+Phase 4B turns the DLQ into a first-class recovery loop instead of a passive table.
+
+```txt
+retryable downstream failure
+  -> dead_letter_queue row
+  -> retry schedule (15m, 30m, 60m)
+  -> manual force retry or future n8n worker replay
+  -> resolved, pending again, failed, or escalated
+```
+
+Current behavior:
+
+1. `metadata.simulate_downstream_failure=true` on a failed-payment demo event deterministically creates a DLQ item.
+2. Demo mode returns a simulated queue payload instead of writing to Supabase.
+3. Supabase mode persists the `dead_letter_queue` row and updates the linked `event_log` status to `routed_to_dlq`.
+4. Retry timing is fixed at 15 minutes for retry 1, 30 minutes for retry 2, and 60 minutes for retry 3.
+5. Once `retry_count >= max_retries`, SyncCore marks the item for escalation instead of scheduling another automatic replay.
+6. Force Retry still runs inside the dashboard-only demo engine for this phase, so no paid integrations are required.
 
 ## Design rules
 
