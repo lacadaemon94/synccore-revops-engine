@@ -17,6 +17,14 @@ function mapNotificationStatus(status: string): ChurnDefuserAction["status"] {
   switch (status) {
     case "queued":
       return "queued";
+    case "sent":
+      return "sent";
+    case "acknowledged":
+      return "acknowledged";
+    case "ignored":
+      return "ignored";
+    case "resolved":
+      return "resolved";
     case "existing":
       return "existing";
     default:
@@ -80,6 +88,10 @@ export async function getRecentChurnDefuserActions(): Promise<ChurnDefuserAction
           shouldNotifyOps: readBoolean(payload, "should_notify_ops"),
           gracePeriodRecommendation:
             readJsonString(payload, "grace_period_recommendation") ?? "Keep the standard recovery grace window active.",
+          suggestedNextStep:
+            readJsonString(payload, "suggested_next_step") ??
+            readJsonString(payload, "recommended_action") ??
+            "Review the billing failure and continue the mock recovery sequence.",
           status: mapNotificationStatus(row.status),
           createdAt: row.created_at
         };

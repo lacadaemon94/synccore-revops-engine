@@ -6,9 +6,11 @@ import { MetricCard } from "../components/metric-card";
 import { PageHeader } from "../components/page-header";
 import { Panel } from "../components/panel";
 import { SectionHeader } from "../components/section-header";
+import { SourceBadge } from "../components/source-badge";
 import { SeverityBadge } from "../components/severity-badge";
 import { StatusBadge } from "../components/status-badge";
 import { getAccounts } from "../lib/data/accounts";
+import { getActionCenterData } from "../lib/data/actions";
 import { getDiscrepancies } from "../lib/data/discrepancies";
 import { getEvents } from "../lib/data/events";
 import { getOverviewMetrics } from "../lib/data/metrics";
@@ -33,8 +35,9 @@ function getRiskTone(riskLevel: "critical" | "high" | "low" | "medium") {
 }
 
 export default async function OverviewPage() {
-  const [accounts, churnActions, discrepancies, events, metrics, queueItems] = await Promise.all([
+  const [accounts, actionCenter, churnActions, discrepancies, events, metrics, queueItems] = await Promise.all([
     getAccounts(),
+    getActionCenterData(),
     getRecentChurnDefuserActions(),
     getDiscrepancies(),
     getEvents(),
@@ -44,6 +47,7 @@ export default async function OverviewPage() {
 
   const recentEvents = events.slice(0, 5);
   const queuePreview = queueItems.slice(0, 3);
+  const openOpsActions = actionCenter.openActions.slice(0, 3);
   const atRiskAccounts = accounts
     .filter((account) => account.revenueAtRisk > 0)
     .sort((left, right) => right.revenueAtRisk - left.revenueAtRisk);
@@ -63,6 +67,7 @@ export default async function OverviewPage() {
         <div className="badge-row">
           <Badge tone="info">DEMO_MODE decides source</Badge>
           <Badge tone="positive">{accounts.length ? "dashboard data loaded" : "waiting on data"}</Badge>
+          <Badge tone="danger">{actionCenter.highCriticalCount} high or critical ops actions</Badge>
         </div>
       </PageHeader>
 
@@ -159,26 +164,26 @@ export default async function OverviewPage() {
 
         <div>
           <SectionHeader
-            title="Recent churn defuser actions"
-            description="Latest mock notification and human-task decisions generated from failed payment ingestion."
+            title="Open ops actions"
+            description="The top operator actions that the new action center is surfacing right now."
+            action={<Link className="text-link" href="/actions">Open action center</Link>}
           />
           <Panel>
-            {churnActions.length ? (
+            {openOpsActions.length ? (
               <div className="list">
-                {churnActions.map((action) => (
+                {openOpsActions.map((action) => (
                   <div key={action.id} className="list-row list-row--stack-mobile">
                     <div className="cell-stack">
                       <Link className="text-link cell-title" href={`/accounts/${action.accountId}`}>
                         {action.accountName}
                       </Link>
-                      <span className="cell-subtle">{action.recommendedAction}</span>
+                      <span className="cell-title">{action.title}</span>
+                      <span className="cell-subtle">{action.suggestedNextStep}</span>
                     </div>
                     <div className="list-row__meta">
                       <div className="badge-row">
-                        <Badge tone={getRiskTone(action.riskLevel)}>{action.riskLevel}</Badge>
-                        <Badge tone={action.requiresHumanTask ? "warning" : "positive"}>
-                          {action.requiresHumanTask ? "human follow-up" : "automation first"}
-                        </Badge>
+                        <SeverityBadge severity={action.severity} />
+                        <SourceBadge source={action.source} />
                       </div>
                       <span className="cell-subtle">{formatDateTime(action.createdAt)}</span>
                     </div>
@@ -187,8 +192,8 @@ export default async function OverviewPage() {
               </div>
             ) : (
               <div className="empty-inline">
-                <p className="empty-inline__title">No churn actions staged</p>
-                <p className="empty-inline__description">Replay a failed payment event in persistence mode to populate the mock notification outbox.</p>
+                <p className="empty-inline__title">No ops actions staged</p>
+                <p className="empty-inline__description">Replay a failed payment event to populate the operator action center.</p>
               </div>
             )}
           </Panel>

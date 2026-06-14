@@ -4,7 +4,10 @@ export type DiscrepancySeverity = "low" | "medium" | "high";
 export type DiscrepancyStatus = "open" | "reviewing" | "resolved";
 export type RevenueRiskLevel = "stable" | "watch" | "urgent";
 export type ChurnRiskLevel = "low" | "medium" | "high" | "critical";
-export type ChurnDefuserActionStatus = "simulated" | "queued" | "existing" | "skipped";
+export type ActionSeverity = "low" | "medium" | "high" | "critical";
+export type ActionStatus = "queued" | "sent" | "acknowledged" | "ignored" | "resolved";
+export type ActionSource = "notification_outbox" | "churn_defuser" | "mock_crm_task" | "dlq_escalation";
+export type ChurnDefuserActionStatus = ActionStatus | "simulated" | "existing" | "skipped";
 export type RetryFailureClass = "availability" | "rate_limit" | "timeout" | "validation" | "authentication" | "unknown";
 export type RetryOutcomeHint = "resolve" | "retryable_failure" | "non_retryable_failure";
 
@@ -82,6 +85,51 @@ export type Metric = {
   tone?: "default" | "positive" | "warning" | "danger";
 };
 
+export type NotificationOutboxItem = {
+  id: string;
+  accountId: string;
+  accountName: string;
+  title: string;
+  body: string;
+  source: "notification_outbox";
+  severity: ActionSeverity;
+  status: ActionStatus;
+  recommendedOwner: string;
+  suggestedNextStep: string;
+  createdAt: string;
+  channel?: string;
+  recipient?: string;
+};
+
+export type MockCrmTask = {
+  id: string;
+  accountId: string;
+  accountName: string;
+  title: string;
+  description: string;
+  source: "mock_crm_task";
+  severity: ActionSeverity;
+  status: ActionStatus;
+  recommendedOwner: string;
+  suggestedNextStep: string;
+  createdAt: string;
+};
+
+export type OpsAction = {
+  id: string;
+  accountId: string;
+  accountName: string;
+  title: string;
+  body?: string;
+  description?: string;
+  source: ActionSource;
+  severity: ActionSeverity;
+  status: ActionStatus;
+  recommendedOwner: string;
+  suggestedNextStep: string;
+  createdAt: string;
+};
+
 export type ChurnDefuserAction = {
   id: string;
   accountId: string;
@@ -98,4 +146,5 @@ export type ChurnDefuserAction = {
   gracePeriodRecommendation: string;
   status: ChurnDefuserActionStatus;
   createdAt: string;
+  suggestedNextStep?: string;
 };

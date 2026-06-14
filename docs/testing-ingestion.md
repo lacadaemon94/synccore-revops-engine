@@ -15,6 +15,7 @@ POST /api/events/ingest
 - classifies `invoice.payment_failed` events for churn risk
 - stages a mock notification response for failed payments
 - creates a DLQ item when `metadata.simulate_downstream_failure=true`
+- enriches high and critical cases with mock CRM task and ops-action payloads
 - skips persistence when `DEMO_MODE=true`
 
 ## Start the dashboard
@@ -56,6 +57,7 @@ Behavior:
 - `invoice.payment_failed` also stages a mock `notification_outbox` item
 - deterministic demo failures can persist a `dead_letter_queue` row
 - high or critical failed payments can create a CRM/billing discrepancy row when lifecycle data still looks customer-like
+- the ops action center can read back outbox rows and queue escalations as operator actions
 
 ## Replay a sample event
 
@@ -121,6 +123,28 @@ Expected result:
 
 In demo mode, the result is deterministic from the queue item's retry hint. No external APIs are called.
 
+## Ops action center check
+
+1. Replay the high-value failed payment sample:
+
+```bash
+pnpm replay:event -- database/demo-events/invoice-payment-failed-high-value.json
+```
+
+2. Replay the DLQ-triggering failed payment sample:
+
+```bash
+pnpm replay:event -- database/demo-events/invoice-payment-failed-dlq.json
+```
+
+3. Open `/actions`.
+4. Confirm the page renders:
+   - recent `notification_outbox` items
+   - churn-defuser alerts
+   - mock CRM task recommendations
+   - DLQ escalation alerts
+5. Open an affected account detail page and confirm the relevant action cards show up there as well.
+
 ## Expected high-value vs low-value results
 
 ### High-value failed payment
@@ -157,3 +181,4 @@ Expected result:
 - duplicate `provider_event_id`: returns the existing event row instead of creating a second one
 - duplicate failed-payment events skip creating a second mock outbox action
 - DLQ force retry can resolve the item, re-queue it, or escalate it after max retries
+- the action center keeps working in demo mode even when no Supabase writes are attempted

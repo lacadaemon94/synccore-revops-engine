@@ -1,5 +1,15 @@
 import { buildRetrySummary } from "./revops/dead-letter-queue";
-import type { Account, ChurnDefuserAction, Discrepancy, Metric, QueueItem, RevOpsEvent } from "./types";
+import type {
+  Account,
+  ChurnDefuserAction,
+  Discrepancy,
+  Metric,
+  MockCrmTask,
+  NotificationOutboxItem,
+  OpsAction,
+  QueueItem,
+  RevOpsEvent
+} from "./types";
 
 export const accounts: Account[] = [
   {
@@ -311,7 +321,8 @@ export const churnDefuserActions: ChurnDefuserAction[] = [
     shouldNotifyOps: true,
     gracePeriodRecommendation: "Hold service access for 3 days while a human owner works the recovery path.",
     status: "simulated",
-    createdAt: "2026-06-04T09:04:30Z"
+    createdAt: "2026-06-04T09:04:30Z",
+    suggestedNextStep: "Open the ops action center, assign RevOps, and log a mock CRM follow-up before the next billing retry."
   },
   {
     id: "action_demo_churn_002",
@@ -328,6 +339,139 @@ export const churnDefuserActions: ChurnDefuserAction[] = [
     shouldNotifyOps: false,
     gracePeriodRecommendation: "Allow a 7-day billing grace period before escalating to a human queue.",
     status: "simulated",
-    createdAt: "2026-06-04T09:05:10Z"
+    createdAt: "2026-06-04T09:05:10Z",
+    suggestedNextStep: "Keep the automated recovery sequence running and review only if the next payment attempt fails."
+  }
+];
+
+export const notificationOutboxItems: NotificationOutboxItem[] = [
+  {
+    id: "notify_demo_001",
+    accountId: accounts[0].id,
+    accountName: accounts[0].name,
+    title: "Critical failed payment escalation queued",
+    body: "RevOps should review Acme AI Labs today because the failed payment and usage profile indicate churn risk.",
+    source: "notification_outbox",
+    severity: "critical",
+    status: "queued",
+    recommendedOwner: "RevOps lead",
+    suggestedNextStep: "Acknowledge the escalation, confirm billing outreach, and route the mock CRM task.",
+    createdAt: "2026-06-04T09:04:45Z",
+    channel: "mock-slack",
+    recipient: "revops-escalations"
+  },
+  {
+    id: "notify_demo_002",
+    accountId: accounts[1].id,
+    accountName: accounts[1].name,
+    title: "Billing recovery reminder sent",
+    body: "Automated recovery is still active for Norte Cloud and no human escalation is required yet.",
+    source: "notification_outbox",
+    severity: "medium",
+    status: "sent",
+    recommendedOwner: "Billing automation",
+    suggestedNextStep: "Watch the next payment attempt and only escalate if another failure lands.",
+    createdAt: "2026-06-04T09:06:00Z",
+    channel: "mock-slack",
+    recipient: "billing-recovery"
+  },
+  {
+    id: "notify_demo_003",
+    accountId: accounts[3].id,
+    accountName: accounts[3].name,
+    title: "DLQ escalation acknowledged",
+    body: "The demo notifier schema mismatch has already been seen by ops and is waiting on a manual replay plan.",
+    source: "notification_outbox",
+    severity: "high",
+    status: "acknowledged",
+    recommendedOwner: "Revenue systems",
+    suggestedNextStep: "Review the blocked payload contract and replay the queue item after correcting the mapping.",
+    createdAt: "2026-06-04T09:41:00Z",
+    channel: "mock-slack",
+    recipient: "ops-escalations"
+  }
+];
+
+export const mockCrmTasks: MockCrmTask[] = [
+  {
+    id: "crm_task_demo_001",
+    accountId: accounts[0].id,
+    accountName: accounts[0].name,
+    title: "Mock CRM task: recover Acme AI Labs",
+    description: "Critical failed payment follow-up for Acme AI Labs. Confirm billing contact coverage, protect renewal motion, and document the retention plan.",
+    source: "mock_crm_task",
+    severity: "critical",
+    status: "queued",
+    recommendedOwner: "RevOps lead",
+    suggestedNextStep: "Assign the account owner and log the recovery motion in the mock CRM record.",
+    createdAt: "2026-06-04T09:05:00Z"
+  },
+  {
+    id: "crm_task_demo_002",
+    accountId: accounts[3].id,
+    accountName: accounts[3].name,
+    title: "Mock CRM task: review Helio Commerce escalation",
+    description: "A DLQ escalation blocked the mock notification path, so an operator needs to inspect the payload contract and re-run the workflow safely.",
+    source: "mock_crm_task",
+    severity: "high",
+    status: "acknowledged",
+    recommendedOwner: "Revenue systems",
+    suggestedNextStep: "Validate the action payload and trigger a manual replay from the queue after the review.",
+    createdAt: "2026-06-04T09:41:30Z"
+  }
+];
+
+export const opsActions: OpsAction[] = [
+  {
+    id: "ops_action_demo_001",
+    accountId: accounts[0].id,
+    accountName: accounts[0].name,
+    title: "Critical failed payment on Acme AI Labs",
+    body: "The churn defuser recommends a same-day human follow-up because revenue, usage, and renewal risk are all elevated.",
+    source: "churn_defuser",
+    severity: "critical",
+    status: "queued",
+    recommendedOwner: "RevOps lead",
+    suggestedNextStep: "Open the account, assign recovery ownership, and queue the mock CRM follow-up.",
+    createdAt: "2026-06-04T09:04:30Z"
+  },
+  {
+    id: "ops_action_demo_002",
+    accountId: accounts[0].id,
+    accountName: accounts[0].name,
+    title: notificationOutboxItems[0].title,
+    body: notificationOutboxItems[0].body,
+    source: "notification_outbox",
+    severity: notificationOutboxItems[0].severity,
+    status: notificationOutboxItems[0].status,
+    recommendedOwner: notificationOutboxItems[0].recommendedOwner,
+    suggestedNextStep: notificationOutboxItems[0].suggestedNextStep,
+    createdAt: notificationOutboxItems[0].createdAt
+  },
+  {
+    id: "ops_action_demo_003",
+    accountId: accounts[0].id,
+    accountName: accounts[0].name,
+    title: mockCrmTasks[0].title,
+    description: mockCrmTasks[0].description,
+    source: "mock_crm_task",
+    severity: mockCrmTasks[0].severity,
+    status: mockCrmTasks[0].status,
+    recommendedOwner: mockCrmTasks[0].recommendedOwner,
+    suggestedNextStep: mockCrmTasks[0].suggestedNextStep,
+    createdAt: mockCrmTasks[0].createdAt
+  },
+  {
+    id: "ops_action_demo_004",
+    accountId: accounts[3].id,
+    accountName: accounts[3].name,
+    title: "DLQ escalation needs operator review",
+    body: "Helio Commerce has an escalated dead-letter queue item after the demo notifier payload failed validation at max retries.",
+    source: "dlq_escalation",
+    severity: "high",
+    status: "acknowledged",
+    recommendedOwner: "Revenue systems",
+    suggestedNextStep: "Inspect the blocked queue item, repair the payload contract, and force a controlled replay.",
+    createdAt: "2026-06-04T09:40:30Z"
   }
 ];

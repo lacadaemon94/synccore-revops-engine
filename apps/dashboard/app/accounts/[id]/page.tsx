@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ActionCard } from "../../../components/action-card";
 import { AppShell } from "../../../components/app-shell";
 import { Badge } from "../../../components/badge";
 import { DataTable } from "../../../components/data-table";
@@ -9,14 +10,16 @@ import { SectionHeader } from "../../../components/section-header";
 import { SeverityBadge } from "../../../components/severity-badge";
 import { StatusBadge } from "../../../components/status-badge";
 import { getAccountById } from "../../../lib/data/accounts";
+import { getAccountOpsActions } from "../../../lib/data/actions";
 import { getDiscrepancies } from "../../../lib/data/discrepancies";
 import { getEvents } from "../../../lib/data/events";
 import { formatCompactCurrency, formatCurrency, formatDate, formatDateTime, formatPercent, titleCase } from "../../../lib/format";
 
 export default async function AccountPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [account, accountEvents, accountDiscrepancies] = await Promise.all([
+  const [account, accountActions, accountEvents, accountDiscrepancies] = await Promise.all([
     getAccountById(id),
+    getAccountOpsActions(id),
     getEvents(),
     getDiscrepancies()
   ]);
@@ -111,6 +114,28 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
             </div>
           ) : null}
         </Panel>
+      </section>
+
+      <section>
+        <SectionHeader
+          title="Relevant ops actions"
+          description="Mock notifications, CRM follow-ups, and queue escalations currently tied to this account."
+          action={<Link className="text-link" href="/actions">Open action center</Link>}
+        />
+        {accountActions.length ? (
+          <div className="card-grid">
+            {accountActions.map((action) => (
+              <ActionCard key={action.id} action={action} />
+            ))}
+          </div>
+        ) : (
+          <div className="table-shell">
+            <div className="empty-state">
+              <p className="empty-state__title">No ops actions for this account</p>
+              <p className="empty-state__description">When SyncCore stages notifications or follow-up work for this account, it will appear here.</p>
+            </div>
+          </div>
+        )}
       </section>
 
       <section>

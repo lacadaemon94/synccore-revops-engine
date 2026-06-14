@@ -12,8 +12,9 @@ Billing event or demo event
   -> churn defuser classifier (Phase 4A for failed payments)
   -> specialized workflow
   -> dead-letter queue retry engine (Phase 4B when needed)
+  -> ops action center and notification outbox (Phase 4C)
   -> Postgres operational tables
-  -> dashboard, CRM adapter, notification outbox
+  -> dashboard, mock CRM tasks, notification outbox
 ```
 
 ## Operating modes
@@ -122,6 +123,27 @@ Current behavior:
 4. Retry timing is fixed at 15 minutes for retry 1, 30 minutes for retry 2, and 60 minutes for retry 3.
 5. Once `retry_count >= max_retries`, SyncCore marks the item for escalation instead of scheduling another automatic replay.
 6. Force Retry still runs inside the dashboard-only demo engine for this phase, so no paid integrations are required.
+
+## Phase 4C ops action center and notification outbox
+
+Phase 4C gives operators a dedicated action surface on top of the failed-payment and DLQ work completed earlier.
+
+```txt
+failed payment or DLQ escalation
+  -> churn-defuser recommendation
+  -> notification_outbox payload
+  -> mock CRM task recommendation
+  -> /actions operator view
+```
+
+Current behavior:
+
+1. `notification_outbox` acts as the mock Slack and task-routing layer for SyncCore.
+2. High and critical failed-payment flows include a suggested owner, next action, and a mock CRM task payload.
+3. The `/actions` page surfaces outbox items, churn alerts, mock CRM tasks, and DLQ escalations together.
+4. Demo mode returns action-center fixtures locally without requiring any external service.
+5. Supabase mode reads `notification_outbox` rows back into typed dashboard actions when configured.
+6. Real Slack and HubSpot adapters remain optional future phases, not base requirements for the demo.
 
 ## Design rules
 

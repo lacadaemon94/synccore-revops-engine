@@ -20,6 +20,10 @@ Classify failed payment risk, stage mock operational responses, and surface the 
 
 Turn retryable downstream failures into first-class DLQ records with retry scheduling, force replay, resolution, and escalation behavior.
 
+## Phase 4C: Ops action center and notification outbox
+
+Surface operator-ready recommendations from churn defuser, notification_outbox, mock CRM tasks, and DLQ escalations in a dedicated dashboard view.
+
 ## Phase 5: Optional real adapters
 
 Add optional adapters for Stripe test mode, HubSpot CRM, and Slack notifications only after the demo DLQ and churn-defuser paths are stable.

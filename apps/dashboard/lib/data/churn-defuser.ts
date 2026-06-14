@@ -1,14 +1,15 @@
 import { accounts as demoAccounts } from "../demo-data";
-import type { Account } from "../types";
+import type { Account, MockCrmTask, NotificationOutboxItem, QueueItem } from "../types";
 import { createSupabaseServerClient } from "../supabase";
 import type { NormalizedBillingEvent } from "../events/normalize-billing-event";
+import { buildCrmTask } from "../revops/build-crm-task";
 import { buildChurnResponse, type ChurnOperationalResponse } from "../revops/build-churn-response";
 import { classifyChurnRisk, type ChurnRiskAssessment } from "../revops/classify-churn-risk";
-import type { QueueItem } from "../types";
 import { getAccounts } from "./accounts";
 import { createDeadLetterQueueItem } from "./dead-letter-queue";
 
 type NotificationOutboxRow = {
+  created_at: null | string;
   id: string;
   status: string;
 };
@@ -17,9 +18,16 @@ type DiscrepancyInsertRow = {
   id: string;
 };
 
+type NotificationOutboxInsertResult = {
+  createdAt: null | string;
+  id: string;
+  status: "existing" | "queued";
+};
+
 export type ChurnDefuserResult = {
   account: Account;
   classification: ChurnRiskAssessment;
+  crmTask: MockCrmTask | null;
   response: ChurnOperationalResponse;
   deadLetterQueue: {
     created: boolean;
@@ -28,6 +36,8 @@ export type ChurnDefuserResult = {
   };
   notification: {
     id: null | string;
+    item: NotificationOutboxItem | null;
+    payload: null | Record<string, unknown>;
     status: "deferred-to-dlq" | "existing" | "queued" | "simulated";
   };
   discrepancy: {
@@ -87,13 +97,89 @@ async function resolveAccount(normalizedEvent: NormalizedBillingEvent, linkedAcc
   return demoMatch ?? buildFallbackAccount(normalizedEvent);
 }
 
+function buildNotificationOutboxPayload({
+  account,
+  classification,
+  crmTask,
+  normalizedEvent,
+  response
+}: {
+  account: Account;
+  classification: ChurnRiskAssessment;
+  crmTask: MockCrmTask | null;
+  normalizedEvent: NormalizedBillingEvent;
+  response: ChurnOperationalResponse;
+}) {
+  return {
+    workflow: "churn_defuser",
+    account_id: account.id,
+    account_name: account.name,
+    provider_event_id: normalizedEvent.providerEventId,
+    event_type: normalizedEvent.type,
+    failure_reason: normalizedEvent.failureReason,
+    risk_level: classification.riskLevel,
+    reason_summary: classification.reasonSummary,
+    recommended_action: classification.recommendedAction,
+    recommended_owner: response.recommendedOwner,
+    suggested_next_step: response.suggestedNextStep,
+    requires_human_task: classification.shouldCreateHumanTask,
+    should_notify_ops: classification.shouldNotifyOps,
+    grace_period_recommendation: classification.gracePeriodRecommendation,
+    crm_task: crmTask
+      ? {
+          id: crmTask.id,
+          title: crmTask.title,
+          description: crmTask.description,
+          severity: crmTask.severity,
+          status: crmTask.status,
+          recommended_owner: crmTask.recommendedOwner,
+          suggested_next_step: crmTask.suggestedNextStep,
+          created_at: crmTask.createdAt
+        }
+      : null
+  };
+}
+
+function buildNotificationOutboxItem({
+  account,
+  createdAt,
+  payload,
+  response,
+  status
+}: {
+  account: Account;
+  createdAt: string;
+  payload: Record<string, unknown>;
+  response: ChurnOperationalResponse;
+  status: NotificationOutboxItem["status"];
+}): NotificationOutboxItem {
+  const severity =
+    payload.risk_level === "critical" || payload.risk_level === "high" || payload.risk_level === "medium" || payload.risk_level === "low"
+      ? payload.risk_level
+      : "medium";
+
+  return {
+    id: typeof payload.provider_event_id === "string" ? `notify_${payload.provider_event_id}` : `notify_${account.id}`,
+    accountId: account.id,
+    accountName: account.name,
+    title: response.notificationTitle,
+    body: response.notificationBody,
+    source: "notification_outbox",
+    severity,
+    status,
+    recommendedOwner: response.recommendedOwner,
+    suggestedNextStep: response.suggestedNextStep,
+    createdAt
+  };
+}
+
 async function findExistingNotification(
   client: NonNullable<ReturnType<typeof createSupabaseServerClient>>,
   providerEventId: string
 ) {
   const { data, error } = await client
     .from("notification_outbox")
-    .select("id,status")
+    .select("id,status,created_at")
     .contains("payload_json", { provider_event_id: providerEventId, workflow: "churn_defuser" })
     .limit(1)
     .maybeSingle();
@@ -110,23 +196,25 @@ async function insertNotification(
   {
     account,
     eventLogId,
-    normalizedEvent,
-    assessment,
+    notificationPayload,
     response
   }: {
     account: Account;
     eventLogId: string;
-    normalizedEvent: NormalizedBillingEvent;
-    assessment: ChurnRiskAssessment;
+    notificationPayload: Record<string, unknown>;
     response: ChurnOperationalResponse;
   }
-) {
-  const existing = await findExistingNotification(client, normalizedEvent.providerEventId);
+): Promise<NotificationOutboxInsertResult> {
+  const providerEventId =
+    typeof notificationPayload.provider_event_id === "string" ? notificationPayload.provider_event_id : account.id;
+  const shouldNotifyOps = notificationPayload.should_notify_ops === true;
+  const existing = await findExistingNotification(client, providerEventId);
 
   if (existing) {
     return {
+      createdAt: existing.created_at,
       id: existing.id,
-      status: "existing" as const
+      status: "existing"
     };
   }
 
@@ -135,24 +223,16 @@ async function insertNotification(
     .insert({
       account_id: account.id === "unassigned" ? null : account.id,
       channel: "mock-slack",
-      recipient: assessment.shouldNotifyOps ? "revops-escalations" : "billing-recovery",
+      recipient: shouldNotifyOps ? "revops-escalations" : "billing-recovery",
       title: response.notificationTitle,
       body: response.notificationBody,
       status: "queued",
       payload_json: {
-        workflow: "churn_defuser",
-        event_log_id: eventLogId,
-        provider_event_id: normalizedEvent.providerEventId,
-        event_type: normalizedEvent.type,
-        risk_level: assessment.riskLevel,
-        recommended_action: assessment.recommendedAction,
-        recommended_owner: response.recommendedOwner,
-        requires_human_task: assessment.shouldCreateHumanTask,
-        should_notify_ops: assessment.shouldNotifyOps,
-        grace_period_recommendation: assessment.gracePeriodRecommendation
+        ...notificationPayload,
+        event_log_id: eventLogId
       }
     })
-    .select("id,status")
+    .select("id,status,created_at")
     .single();
 
   if (error) {
@@ -160,8 +240,9 @@ async function insertNotification(
   }
 
   return {
+    createdAt: (data as NotificationOutboxRow).created_at,
     id: (data as NotificationOutboxRow).id,
-    status: "queued" as const
+    status: "queued"
   };
 }
 
@@ -271,6 +352,29 @@ export async function runChurnDefuser({
     assessment: classification,
     normalizedEvent
   });
+  const crmTask = classification.shouldCreateHumanTask
+    ? buildCrmTask({
+        account,
+        assessment: classification,
+        normalizedEvent,
+        recommendedOwner: response.recommendedOwner,
+        suggestedNextStep: response.suggestedNextStep
+      })
+    : null;
+  const notificationPayload = buildNotificationOutboxPayload({
+    account,
+    classification,
+    crmTask,
+    normalizedEvent,
+    response
+  });
+  const simulatedNotificationItem = buildNotificationOutboxItem({
+    account,
+    createdAt: normalizedEvent.receivedAt,
+    payload: notificationPayload,
+    response,
+    status: "queued"
+  });
   const shouldCreateDeadLetterQueueItem = normalizedEvent.simulateDownstreamFailure;
 
   if (shouldCreateDeadLetterQueueItem) {
@@ -295,6 +399,7 @@ export async function runChurnDefuser({
     return {
       account,
       classification,
+      crmTask,
       response,
       deadLetterQueue: {
         created: true,
@@ -303,6 +408,8 @@ export async function runChurnDefuser({
       },
       notification: {
         id: null,
+        item: simulatedNotificationItem,
+        payload: notificationPayload,
         status: "deferred-to-dlq"
       },
       discrepancy: {
@@ -317,6 +424,7 @@ export async function runChurnDefuser({
     return {
       account,
       classification,
+      crmTask,
       response,
       deadLetterQueue: {
         created: false,
@@ -325,6 +433,8 @@ export async function runChurnDefuser({
       },
       notification: {
         id: null,
+        item: simulatedNotificationItem,
+        payload: notificationPayload,
         status: "simulated"
       },
       discrepancy: {
@@ -341,6 +451,7 @@ export async function runChurnDefuser({
     return {
       account,
       classification,
+      crmTask,
       response,
       deadLetterQueue: {
         created: false,
@@ -349,6 +460,8 @@ export async function runChurnDefuser({
       },
       notification: {
         id: null,
+        item: simulatedNotificationItem,
+        payload: notificationPayload,
         status: "simulated"
       },
       discrepancy: {
@@ -362,8 +475,7 @@ export async function runChurnDefuser({
   const notification = await insertNotification(client, {
     account,
     eventLogId,
-    normalizedEvent,
-    assessment: classification,
+    notificationPayload,
     response
   });
   const discrepancy = await maybeCreateDiscrepancy(client, {
@@ -374,13 +486,25 @@ export async function runChurnDefuser({
   return {
     account,
     classification,
+    crmTask,
     response,
     deadLetterQueue: {
       created: false,
       item: null,
       mode: "skipped"
     },
-    notification,
+    notification: {
+      id: notification.id,
+      item: buildNotificationOutboxItem({
+        account,
+        createdAt: notification.createdAt ?? normalizedEvent.receivedAt,
+        payload: notificationPayload,
+        response,
+        status: notification.status === "existing" ? "acknowledged" : "queued"
+      }),
+      payload: notificationPayload,
+      status: notification.status
+    },
     discrepancy
   };
 }
