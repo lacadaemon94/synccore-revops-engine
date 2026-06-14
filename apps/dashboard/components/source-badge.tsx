@@ -9,10 +9,10 @@ const sourceToneMap: Record<ActionSource, "neutral" | "positive" | "warning" | "
 };
 
 const sourceLabelMap: Record<ActionSource, string> = {
-  churn_defuser: "Churn defuser",
-  dlq_escalation: "DLQ escalation",
-  mock_crm_task: "Mock CRM task",
-  notification_outbox: "Notification outbox"
+  churn_defuser: "Churn",
+  dlq_escalation: "DLQ",
+  mock_crm_task: "CRM task",
+  notification_outbox: "Outbox"
 };
 
 export function SourceBadge({ source }: { source: ActionSource }) {

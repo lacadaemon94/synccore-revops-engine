@@ -3,9 +3,9 @@ import { Badge } from "./badge";
 
 const toneLabelMap = {
   default: "steady",
-  positive: "healthy",
-  warning: "watchlist",
-  danger: "attention"
+  positive: "ok",
+  warning: "watch",
+  danger: "alert"
 } as const;
 
 const toneBadgeMap = {

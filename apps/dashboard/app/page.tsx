@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AppShell } from "../components/app-shell";
 import { Badge } from "../components/badge";
+import { CollapsibleRailCard } from "../components/collapsible-rail-card";
 import { DataTable } from "../components/data-table";
 import { MetricCard } from "../components/metric-card";
 import { PageHeader } from "../components/page-header";
@@ -9,6 +10,7 @@ import { SectionHeader } from "../components/section-header";
 import { SourceBadge } from "../components/source-badge";
 import { SeverityBadge } from "../components/severity-badge";
 import { StatusBadge } from "../components/status-badge";
+import { TruncatedText } from "../components/truncated-text";
 import { getAccounts } from "../lib/data/accounts";
 import { getActionCenterData } from "../lib/data/actions";
 import { getDiscrepancies } from "../lib/data/discrepancies";
@@ -80,7 +82,7 @@ export default async function OverviewPage() {
     <AppShell>
       <PageHeader
         eyebrow="Iter command center"
-        title="Revenue operations, retries, and drift in one operational surface"
+        title="Revenue operations command center for retries, risk, and recovery"
         description="Iter SyncCore gives RevOps teams a serious operating layer for billing events, dead-letter retries, discrepancies, and human-in-the-loop action management."
       >
         <div className="badge-row">
@@ -96,58 +98,33 @@ export default async function OverviewPage() {
         </div>
       </PageHeader>
 
-      <section className="hero-band hero-band--overview">
-        <div className="hero-band__copy">
-          <p className="hero-band__eyebrow">Iter SyncCore / RevOps infrastructure</p>
-          <h2 className="hero-band__title">Revenue-critical events, operator actions, and retry posture with infrastructure-grade clarity.</h2>
-          <p className="hero-band__lead">
-            Follow the event log, inspect the queue, and spot commercial drift before it becomes churn, broken CRM state, or missed renewals.
-          </p>
-          <div className="hero-band__stats hero-band__stats--dense">
-            <div>
-              <p className="hero-band__stat-label">Revenue exposed</p>
-              <p className="hero-band__stat-value">{formatCompactCurrency(atRiskAccounts.reduce((total, account) => total + account.revenueAtRisk, 0))}</p>
-            </div>
-            <div>
-              <p className="hero-band__stat-label">Open discrepancies</p>
-              <p className="hero-band__stat-value">{openDiscrepancies.length}</p>
-            </div>
-            <div>
-              <p className="hero-band__stat-label">Retry recovery</p>
-              <p className="hero-band__stat-value">{metrics.find((metric) => metric.label === "Retry success rate")?.value ?? formatPercent(100)}</p>
-            </div>
-          </div>
-        </div>
-        <div className="hero-band__aside">
-          <p className="hero-band__aside-title">What needs attention</p>
-          <div className="attention-list">
-            {attentionItems.length ? (
-              attentionItems.map((item) => (
-                <div key={item.id} className="attention-item">
-                  <Badge tone={item.tone} className="badge--severity" leadingDot>
-                    Attention
-                  </Badge>
-                  <div className="attention-item__copy">
-                    <p className="attention-item__title">{item.title}</p>
-                    <p className="attention-item__description">{item.description}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="attention-item attention-item--empty">
-                <div className="attention-item__copy">
-                  <p className="attention-item__title">No active escalations</p>
-                  <p className="attention-item__description">The queue and action center are quiet in the current snapshot.</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       <section className="content-with-rail">
         <div className="content-main">
-          <section className="metrics-grid">
+          <section className="hero-band hero-band--hero">
+            <div className="hero-band__copy">
+              <p className="hero-band__eyebrow">Iter SyncCore / RevOps infrastructure</p>
+              <h2 className="hero-band__title">Revenue-critical events, operator actions, and retry posture with infrastructure-grade clarity.</h2>
+              <p className="hero-band__lead">
+                Follow the event log, inspect the queue, and spot commercial drift before it becomes churn, broken CRM state, or missed renewals.
+              </p>
+            </div>
+            <div className="hero-kpis">
+              <div className="hero-kpi">
+                <p className="hero-band__stat-label">Revenue exposed</p>
+                <p className="hero-band__stat-value">{formatCompactCurrency(atRiskAccounts.reduce((total, account) => total + account.revenueAtRisk, 0))}</p>
+              </div>
+              <div className="hero-kpi">
+                <p className="hero-band__stat-label">Open discrepancies</p>
+                <p className="hero-band__stat-value">{openDiscrepancies.length}</p>
+              </div>
+              <div className="hero-kpi">
+                <p className="hero-band__stat-label">Retry recovery</p>
+                <p className="hero-band__stat-value">{metrics.find((metric) => metric.label === "Retry success rate")?.value ?? formatPercent(100)}</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="metrics-grid metrics-grid--overview">
             {metrics.map((metric) => (
               <MetricCard key={metric.label} metric={metric} />
             ))}
@@ -275,8 +252,8 @@ export default async function OverviewPage() {
                     header: "Event",
                     render: (row) => (
                       <div className="cell-stack">
-                        <span className="cell-title">{row.eventType}</span>
-                        <span className="cell-subtle">{row.summary}</span>
+                        <TruncatedText className="cell-title">{row.eventType}</TruncatedText>
+                        <TruncatedText className="cell-subtle">{row.summary}</TruncatedText>
                       </div>
                     )
                   },
@@ -284,7 +261,7 @@ export default async function OverviewPage() {
                     key: "account",
                     header: "Account",
                     render: (row) => (
-                      <Link className="text-link" href={`/accounts/${row.accountId}`}>
+                      <Link className="text-link table-link" href={`/accounts/${row.accountId}`} title={row.accountName}>
                         {row.accountName}
                       </Link>
                     )
@@ -297,7 +274,7 @@ export default async function OverviewPage() {
                   {
                     key: "receivedAt",
                     header: "Received",
-                    render: (row) => <span className="cell-subtle">{formatDateTime(row.receivedAt)}</span>
+                    render: (row) => <span className="cell-subtle cell-nowrap">{formatDateTime(row.receivedAt)}</span>
                   }
                 ]}
                 emptyTitle="No recent events yet"
@@ -324,7 +301,7 @@ export default async function OverviewPage() {
                     key: "account",
                     header: "Account",
                     render: (row) => (
-                      <Link className="text-link" href={`/accounts/${row.accountId}`}>
+                      <Link className="text-link table-link" href={`/accounts/${row.accountId}`} title={row.accountName}>
                         {row.accountName}
                       </Link>
                     )
@@ -332,7 +309,7 @@ export default async function OverviewPage() {
                   {
                     key: "system",
                     header: "Target",
-                    render: (row) => <span className="cell-subtle cell-subtle--mono">{row.targetSystem}</span>
+                    render: (row) => <TruncatedText className="cell-subtle cell-subtle--mono">{row.targetSystem}</TruncatedText>
                   },
                   {
                     key: "status",
@@ -342,7 +319,7 @@ export default async function OverviewPage() {
                   {
                     key: "nextRetry",
                     header: "Next retry",
-                    render: (row) => <span className="cell-subtle">{formatOptionalDateTime(row.nextRetryAt)}</span>
+                    render: (row) => <span className="cell-subtle cell-nowrap">{formatOptionalDateTime(row.nextRetryAt)}</span>
                   }
                 ]}
                 emptyTitle="DLQ is clear"
@@ -449,8 +426,8 @@ export default async function OverviewPage() {
                 {
                   key: "account",
                   header: "Account",
-                  render: (row) => (
-                    <Link className="text-link" href={`/accounts/${row.accountId}`}>
+                    render: (row) => (
+                    <Link className="text-link table-link" href={`/accounts/${row.accountId}`} title={row.accountName}>
                       {row.accountName}
                     </Link>
                   )
@@ -458,10 +435,10 @@ export default async function OverviewPage() {
                 {
                   key: "scenario",
                   header: "Scenario",
-                  render: (row) => (
+                    render: (row) => (
                     <div className="cell-stack">
-                      <span className="cell-title">{row.scenario}</span>
-                      <span className="cell-subtle">{row.impact}</span>
+                      <TruncatedText className="cell-title">{row.scenario}</TruncatedText>
+                      <TruncatedText className="cell-subtle">{row.impact}</TruncatedText>
                     </div>
                   )
                 },
@@ -477,8 +454,33 @@ export default async function OverviewPage() {
           </section>
         </div>
 
-        <aside className="content-rail">
-          <div className="rail-card">
+          <aside className="content-rail">
+          <CollapsibleRailCard eyebrow="Attention rail" title="What needs attention">
+            <div className="attention-list attention-list--rail">
+              {attentionItems.length ? (
+                attentionItems.map((item) => (
+                  <div key={item.id} className="attention-item">
+                    <Badge tone={item.tone} className="badge--severity" leadingDot>
+                      Attention
+                    </Badge>
+                    <div className="attention-item__copy">
+                      <p className="attention-item__title">{item.title}</p>
+                      <p className="attention-item__description">{item.description}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="attention-item attention-item--empty">
+                  <div className="attention-item__copy">
+                    <p className="attention-item__title">No active escalations</p>
+                    <p className="attention-item__description">The queue and action center are quiet in the current snapshot.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CollapsibleRailCard>
+
+          <div className="rail-card rail-card--compact">
             <p className="rail-card__eyebrow">System posture</p>
             <h3 className="rail-card__title">What the demo proves</h3>
             <div className="rail-card__list">
@@ -497,8 +499,8 @@ export default async function OverviewPage() {
             </div>
           </div>
 
-          <div className="rail-card">
-            <p className="rail-card__eyebrow">Attention rail</p>
+          <div className="rail-card rail-card--compact">
+            <p className="rail-card__eyebrow">Signal counts</p>
             <h3 className="rail-card__title">Immediate watchlist</h3>
             <div className="rail-card__stack">
               <div className="signal-card">
