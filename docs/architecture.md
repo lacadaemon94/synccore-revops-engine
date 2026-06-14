@@ -145,6 +145,39 @@ Current behavior:
 5. Supabase mode reads `notification_outbox` rows back into typed dashboard actions when configured.
 6. Real Slack and HubSpot adapters remain optional future phases, not base requirements for the demo.
 
+## Phase 4D n8n workflow suite v1
+
+Phase 4D turns the `n8n` folder from documented placeholders into a credible local orchestration layer.
+
+```txt
+local webhook or schedule trigger
+  -> n8n workflow template
+  -> Next.js ingest or force-retry API route
+  -> typed dashboard response
+  -> optional Supabase/Postgres persistence
+  -> operator-visible status in dashboard pages
+```
+
+Current behavior:
+
+1. `00_event_intake_router.json` accepts webhook-style or manual test events, normalizes the event envelope, and posts it to `POST /api/events/ingest`.
+2. `01_subscription_lifecycle_sync.json` models subscription state changes and shows where lifecycle writes or CRM sync logic would live later.
+3. `02_failed_payment_churn_defuser.json` replays a high-value failed payment through the ingest route and summarizes the churn response, action recommendation, and optional DLQ follow-up.
+4. `03_dead_letter_retry_worker.json` demonstrates the future worker loop by loading due queue items and posting `queueItemId` to `POST /api/queue/force-retry`.
+5. `04_reconciler_job.json` sketches a scheduled discrepancy scan between billing and CRM/account state without requiring a real CRM connector.
+6. The templates rely on environment variables such as `SYNC_CORE_INGEST_URL` and `SYNC_CORE_FORCE_RETRY_URL`, so importers can wire local URLs without editing credentials into the JSON.
+7. Demo mode still works end to end because the Next.js routes can simulate churn responses, DLQ creation, and force-retry outcomes without any paid services.
+8. Supabase persistence mode remains optional: when `DEMO_MODE=false` and env vars are configured, the same HTTP routes can write to operational tables while n8n stays provider-agnostic.
+
+## Local orchestration model
+
+The current split of responsibilities is intentional:
+
+1. n8n owns orchestration triggers, routing branches, and scheduled worker cadence.
+2. Next.js owns normalization, typed response payloads, demo behavior, and local retry semantics.
+3. Supabase/Postgres owns operational truth when persistence mode is enabled.
+4. External systems such as Stripe, HubSpot, and Slack remain optional adapters for later phases rather than prerequisites for the base architecture.
+
 ## Design rules
 
 1. Store every incoming event before side effects.

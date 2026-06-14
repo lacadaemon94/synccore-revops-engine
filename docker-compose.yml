@@ -14,5 +14,30 @@ services:
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
 
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: synccore-n8n
+    restart: unless-stopped
+    profiles:
+      - n8n
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: ${N8N_BASIC_AUTH_ACTIVE:-false}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-replace_with_local_value}
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-admin}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-replace_with_local_value}
+      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_PORT: ${N8N_PORT:-5678}
+      N8N_PROTOCOL: ${N8N_PROTOCOL:-http}
+      SYNC_CORE_FORCE_RETRY_URL: ${SYNC_CORE_FORCE_RETRY_URL:-http://host.docker.internal:3000/api/queue/force-retry}
+      SYNC_CORE_INGEST_URL: ${SYNC_CORE_INGEST_URL:-http://host.docker.internal:3000/api/events/ingest}
+      WEBHOOK_URL: ${WEBHOOK_URL:-http://localhost:5678/}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - synccore-n8n-data:/home/node/.n8n
+
 volumes:
   synccore-postgres-data:
+  synccore-n8n-data:

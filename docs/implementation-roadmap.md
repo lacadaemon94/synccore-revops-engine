@@ -24,6 +24,10 @@ Turn retryable downstream failures into first-class DLQ records with retry sched
 
 Surface operator-ready recommendations from churn defuser, notification_outbox, mock CRM tasks, and DLQ escalations in a dedicated dashboard view.
 
+## Phase 4D: n8n workflow suite v1 and local orchestration docs
+
+Turn the documented workflow placeholders into importable local n8n templates, add sample payloads and setup instructions, and keep the orchestration story demo-first without real provider credentials.
+
 ## Phase 5: Optional real adapters
 
 Add optional adapters for Stripe test mode, HubSpot CRM, and Slack notifications only after the demo DLQ and churn-defuser paths are stable.

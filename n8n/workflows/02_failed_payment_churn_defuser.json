@@ -1,31 +1,315 @@
 {
-  "name": "02 - Failed Payment Churn Defuser",
+  "name": "02 - SyncCore Failed Payment Churn Defuser",
   "active": false,
   "nodes": [
     {
-      "name": "Load Failed Payment Event",
-      "type": "n8n-nodes-base.postgres",
-      "notes": "Load invoice.payment_failed event and related account state."
+      "parameters": {
+        "content": "This workflow demonstrates the Phase 4A to 4C path: POST the failed payment to the dashboard, inspect churnDefuser in the response, then branch into a human-owned recovery path or an automation-first summary.",
+        "height": 220,
+        "width": 380,
+        "color": 5
+      },
+      "id": "sticky-churn-overview",
+      "name": "Churn Defuser Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -120
+      ]
     },
     {
-      "name": "Classify Churn Risk",
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = {\n  id: 'evt_demo_invoice_failed_001',\n  type: 'invoice.payment_failed',\n  livemode: false,\n  created: 1780502500,\n  data: {\n    object: {\n      id: 'in_acme_failed_001',\n      customer: 'cus_acme_ai',\n      subscription: 'sub_acme_scale',\n      amount_due: 120000,\n      currency: 'usd',\n      attempt_count: 1,\n      last_payment_error: {\n        code: 'card_declined',\n        message: 'The card was declined.'\n      },\n      metadata: {\n        account_domain: 'acme.ai',\n        crm_company_id: 'crm_acme_ai',\n        usage_density: '87'\n      }\n    }\n  }\n};\n\nreturn [{ json: payload }];"
+      },
+      "id": "load-high-value-failed-payment",
+      "name": "Load High Value Failed Payment",
       "type": "n8n-nodes-base.code",
-      "notes": "Use MRR, usage density, lifecycle stage, and payment history to classify risk."
+      "typeVersion": 2,
+      "position": [
+        -460,
+        160
+      ]
     },
     {
-      "name": "Create CRM Task Or Normal Dunning",
-      "type": "n8n-nodes-base.switch",
-      "notes": "High-value accounts route to AE task and ops alert; lower-value accounts route to automated recovery."
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SYNC_CORE_INGEST_URL || 'http://host.docker.internal:3000/api/events/ingest'}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify($json)}}",
+        "options": {}
+      },
+      "id": "post-failed-payment",
+      "name": "POST Failed Payment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -180,
+        160
+      ],
+      "notes": "The response already contains churnDefuser, notification, crmTask, and DLQ details, so this workflow mostly needs to route and summarize.",
+      "notesInFlow": true
     },
     {
-      "name": "Write Notification Outbox",
-      "type": "n8n-nodes-base.postgres",
-      "notes": "Write mock Slack-style alert to notification_outbox in demo mode."
+      "parameters": {
+        "jsCode": "const churn = $json.churnDefuser ?? {};\nconst classification = churn.classification ?? {};\nconst crmTask = churn.crmTask ?? null;\nconst notification = churn.notification ?? null;\nconst dlq = churn.deadLetterQueue ?? null;\n\nreturn [{\n  json: {\n    accountName: churn.account?.name ?? 'Unknown account',\n    riskLevel: classification.riskLevel ?? 'unknown',\n    requiresHumanTask: classification.shouldCreateHumanTask ?? false,\n    shouldNotifyOps: classification.shouldNotifyOps ?? false,\n    recommendedAction: classification.recommendedAction ?? 'Review the ingest response.',\n    suggestedNextStep: churn.response?.suggestedNextStep ?? 'Inspect the dashboard response.',\n    crmTask,\n    notification,\n    deadLetterQueue: dlq,\n    rawResponse: $json\n  }\n}];"
+      },
+      "id": "extract-churn-summary",
+      "name": "Extract Churn Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.requiresHumanTask}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "requires-human-task",
+      "name": "Requires Human Task?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    severity: $json.riskLevel,\n    accountName: $json.accountName,\n    recommendedAction: $json.recommendedAction,\n    suggestedNextStep: $json.suggestedNextStep,\n    crmTask: $json.crmTask,\n    notification: $json.notification,\n    message: 'High or critical path: route to the Ops Action Center, stage mock CRM follow-up, and keep the outbox payload visible.'\n  }\n}];"
+      },
+      "id": "build-human-owned-summary",
+      "name": "Build Human Owned Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        620,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    severity: $json.riskLevel,\n    accountName: $json.accountName,\n    recommendedAction: $json.recommendedAction,\n    suggestedNextStep: $json.suggestedNextStep,\n    notification: $json.notification,\n    message: 'Automation-first path: keep dunning and monitoring active until another payment attempt fails.'\n  }\n}];"
+      },
+      "id": "build-automation-summary",
+      "name": "Build Automation Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        620,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.deadLetterQueue && $json.deadLetterQueue.created ? true : false}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "created-dlq-item",
+      "name": "Created DLQ Item?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    message: 'Deterministic downstream failure was requested. Review the queued dead-letter item and use the retry worker later.',\n    deadLetterQueue: $json.deadLetterQueue\n  }\n}];"
+      },
+      "id": "dlq-follow-up-note",
+      "name": "DLQ Follow Up Note",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    message: 'No DLQ item was created. Notification outbox and mock CRM task data are still available in the response.'\n  }\n}];"
+      },
+      "id": "no-dlq-note",
+      "name": "No DLQ Note",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        260
+      ]
     }
   ],
-  "connections": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Load High Value Failed Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load High Value Failed Payment": {
+      "main": [
+        [
+          {
+            "node": "POST Failed Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Failed Payment": {
+      "main": [
+        [
+          {
+            "node": "Extract Churn Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Churn Summary": {
+      "main": [
+        [
+          {
+            "node": "Requires Human Task?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Requires Human Task?": {
+      "main": [
+        [
+          {
+            "node": "Build Human Owned Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Automation Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Human Owned Summary": {
+      "main": [
+        [
+          {
+            "node": "Created DLQ Item?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Automation Summary": {
+      "main": [
+        [
+          {
+            "node": "Created DLQ Item?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Created DLQ Item?": {
+      "main": [
+        [
+          {
+            "node": "DLQ Follow Up Note",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No DLQ Note",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
   "settings": {},
   "staticData": null,
   "pinData": {},
-  "versionId": "placeholder-failed-payment-churn-defuser"
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "versionId": "synccore-workflow-suite-v1-failed-payment-churn-defuser"
 }

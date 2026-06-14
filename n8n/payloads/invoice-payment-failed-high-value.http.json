@@ -1,0 +1,25 @@
+{
+  "id": "evt_demo_invoice_failed_001",
+  "type": "invoice.payment_failed",
+  "livemode": false,
+  "created": 1780502500,
+  "data": {
+    "object": {
+      "id": "in_acme_failed_001",
+      "customer": "cus_acme_ai",
+      "subscription": "sub_acme_scale",
+      "amount_due": 120000,
+      "currency": "usd",
+      "attempt_count": 1,
+      "last_payment_error": {
+        "code": "card_declined",
+        "message": "The card was declined."
+      },
+      "metadata": {
+        "account_domain": "acme.ai",
+        "crm_company_id": "crm_acme_ai",
+        "usage_density": "87"
+      }
+    }
+  }
+}

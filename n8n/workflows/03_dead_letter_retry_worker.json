@@ -1,36 +1,340 @@
 {
-  "name": "03 - Dead Letter Retry Worker",
+  "name": "03 - SyncCore Dead Letter Retry Worker",
   "active": false,
   "nodes": [
     {
+      "parameters": {
+        "content": "Retry worker v1. The dashboard still owns the retry policy. Use Manual Trigger with sample queue ids in demo mode, or wire the optional Postgres step when you want n8n to poll due rows in persistence mode.",
+        "height": 240,
+        "width": 380,
+        "color": 5
+      },
+      "id": "sticky-retry-overview",
+      "name": "Retry Worker Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "scheduled-retry-trigger",
       "name": "Scheduled Retry Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
-      "notes": "Runs every few minutes and picks up DLQ items whose next_retry_at is due."
+      "typeVersion": 1.2,
+      "position": [
+        -820,
+        320
+      ]
     },
     {
-      "name": "Load Due DLQ Items",
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -820,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { queueItemId: 'dlq_001', source: 'manual_demo' } },\n  { json: { queueItemId: 'dlq_003', source: 'manual_demo' } }\n];"
+      },
+      "id": "load-demo-retry-requests",
+      "name": "Load Demo Retry Requests",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        100
+      ],
+      "notes": "Use known demo ids so the manual path can show a resolved retry and an escalation scenario.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id as \"queueItemId\" from dead_letter_queue where status in ('pending', 'retrying') and next_retry_at <= now() order by next_retry_at asc limit 10;"
+      },
+      "id": "load-due-queue-items",
+      "name": "Load Due Queue Items (Optional)",
       "type": "n8n-nodes-base.postgres",
-      "notes": "Select rows from dead_letter_queue where status is pending or retrying and next_retry_at <= now()."
+      "typeVersion": 2.6,
+      "position": [
+        -540,
+        320
+      ],
+      "notes": "Only enable this after local Postgres or Supabase credentials are configured in n8n. The query is here as a template, not a guaranteed final production contract.",
+      "notesInFlow": true
     },
     {
-      "name": "Replay Retry Handler",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SYNC_CORE_FORCE_RETRY_URL || 'http://host.docker.internal:3000/api/queue/force-retry'}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({ queueItemId: $json.queueItemId })}}",
+        "options": {}
+      },
+      "id": "post-force-retry-request",
+      "name": "POST Force Retry Request",
       "type": "n8n-nodes-base.httpRequest",
-      "notes": "Call a future dashboard retry endpoint with the DLQ item id so the app can apply the same retry and escalation logic used by Force Retry."
+      "typeVersion": 4.2,
+      "position": [
+        -220,
+        220
+      ],
+      "notes": "The app returns structured JSON with statusBefore, statusAfter, and escalation details. n8n should not reimplement the retry policy itself.",
+      "notesInFlow": true
     },
     {
-      "name": "Resolve Or Escalate",
-      "type": "n8n-nodes-base.switch",
-      "notes": "Resolved items stop here. Retryable failures schedule the next retry window. Max-retry or non-retryable failures escalate."
+      "parameters": {
+        "jsCode": "const result = $json.result ?? {};\nreturn [{\n  json: {\n    queueItemId: result.queueItemId ?? $json.queueItemId,\n    statusBefore: result.statusBefore ?? 'unknown',\n    statusAfter: result.statusAfter ?? 'unknown',\n    escalated: result.escalated ?? false,\n    resolved: result.statusAfter === 'resolved',\n    message: result.message ?? 'No result message returned.',\n    rawResponse: $json\n  }\n}];"
+      },
+      "id": "summarize-retry-result",
+      "name": "Summarize Retry Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        220
+      ]
     },
     {
-      "name": "Update Queue Row",
-      "type": "n8n-nodes-base.postgres",
-      "notes": "Persist the resolved, pending, failed, or escalated status if the retry endpoint does not already handle the database update."
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.resolved}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "resolved-successfully",
+      "name": "Resolved Successfully?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.escalated}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "needs-escalation",
+      "name": "Needs Escalation?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        620,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    outcome: 'resolved',\n    summary: $json.message,\n    queueItemId: $json.queueItemId\n  }\n}];"
+      },
+      "id": "resolved-summary",
+      "name": "Resolved Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        620,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    outcome: 'escalated',\n    summary: $json.message,\n    queueItemId: $json.queueItemId\n  }\n}];"
+      },
+      "id": "escalation-summary",
+      "name": "Escalation Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    outcome: 'requeued',\n    summary: $json.message,\n    queueItemId: $json.queueItemId\n  }\n}];"
+      },
+      "id": "requeue-summary",
+      "name": "Requeue Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        420
+      ]
     }
   ],
-  "connections": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Load Demo Retry Requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scheduled Retry Trigger": {
+      "main": [
+        [
+          {
+            "node": "Load Due Queue Items (Optional)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Demo Retry Requests": {
+      "main": [
+        [
+          {
+            "node": "POST Force Retry Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Due Queue Items (Optional)": {
+      "main": [
+        [
+          {
+            "node": "POST Force Retry Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Force Retry Request": {
+      "main": [
+        [
+          {
+            "node": "Summarize Retry Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Retry Result": {
+      "main": [
+        [
+          {
+            "node": "Resolved Successfully?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolved Successfully?": {
+      "main": [
+        [
+          {
+            "node": "Resolved Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs Escalation?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs Escalation?": {
+      "main": [
+        [
+          {
+            "node": "Escalation Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Requeue Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
   "settings": {},
   "staticData": null,
   "pinData": {},
-  "versionId": "placeholder-dead-letter-retry-worker"
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "versionId": "synccore-workflow-suite-v1-dead-letter-retry-worker"
 }
