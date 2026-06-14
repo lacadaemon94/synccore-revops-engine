@@ -62,7 +62,7 @@ export default async function OverviewPage() {
       <PageHeader
         eyebrow="Demo control plane"
         title="Event-driven RevOps control plane"
-        description="SyncCore turns billing events, workflow retries, and CRM drift into one operational surface for revenue teams."
+        description="Iter SyncCore turns billing events, workflow retries, and CRM drift into one operational surface for revenue teams."
       >
         <div className="badge-row">
           <Badge tone="info">DEMO_MODE decides source</Badge>
@@ -74,7 +74,7 @@ export default async function OverviewPage() {
       <section className="hero-band">
         <div className="hero-band__copy">
           <p className="hero-band__lead">
-            SyncCore gives SaaS operators one place to inspect incoming events, recover failures, and catch revenue-impacting drift before it leaks into renewals.
+            Iter SyncCore gives SaaS operators one place to inspect incoming events, recover failures, and catch revenue-impacting drift before it leaks into renewals.
           </p>
           <div className="hero-band__stats">
             <div>
@@ -156,7 +156,7 @@ export default async function OverviewPage() {
             ) : (
               <div className="empty-inline">
                 <p className="empty-inline__title">No failed payment alerts yet</p>
-                <p className="empty-inline__description">When a failed invoice arrives, SyncCore will stage the mock response and investor-friendly risk summary here.</p>
+                <p className="empty-inline__description">When a failed invoice arrives, Iter SyncCore will stage the mock response and investor-friendly risk summary here.</p>
               </div>
             )}
           </Panel>
@@ -281,7 +281,7 @@ export default async function OverviewPage() {
               }
             ]}
             emptyTitle="DLQ is clear"
-            emptyDescription="When no retries are pending, SyncCore keeps this queue empty and quiet."
+            emptyDescription="When no retries are pending, Iter SyncCore keeps this queue empty and quiet."
           />
         </div>
       </section>

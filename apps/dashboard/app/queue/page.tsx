@@ -42,7 +42,7 @@ export default async function QueuePage() {
       <PageHeader
         eyebrow="Recovery queue"
         title="Dead-letter queue"
-        description="Retryable workflow failures are isolated here until SyncCore can recover them automatically or an operator intervenes."
+        description="Retryable workflow failures are isolated here until Iter SyncCore can recover them automatically or an operator intervenes."
       >
         <div className="badge-row">
           <Badge tone="warning">Force retry stays in demo mode</Badge>

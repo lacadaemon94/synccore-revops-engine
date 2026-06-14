@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SyncCore RevOps Engine",
-  description: "Event-driven RevOps dashboard for demo-first SaaS infrastructure."
+  title: "Iter SyncCore",
+  description: "Premium RevOps command center for demo-first SaaS event infrastructure."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

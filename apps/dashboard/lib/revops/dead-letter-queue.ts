@@ -104,7 +104,7 @@ export function classifyRetryFailure(error: RetryFailureInput): RetryFailureClas
     return {
       category: "rate_limit",
       retryable: true,
-      message: "Downstream system asked SyncCore to back off and retry."
+      message: "Downstream system asked Iter SyncCore to back off and retry."
     };
   }
 

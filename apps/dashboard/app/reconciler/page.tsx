@@ -21,7 +21,7 @@ export default async function ReconcilerPage() {
       <PageHeader
         eyebrow="Commercial drift detection"
         title="CRM/Billing reconciler"
-        description="SyncCore surfaces mismatches between billing truth and CRM state before they become revenue leakage or GTM confusion."
+        description="Iter SyncCore surfaces mismatches between billing truth and CRM state before they become revenue leakage or GTM confusion."
       />
 
       <section className="metrics-grid metrics-grid--three">

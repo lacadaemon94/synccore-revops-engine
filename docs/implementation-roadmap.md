@@ -34,4 +34,4 @@ Add optional adapters for Stripe test mode, HubSpot CRM, and Slack notifications
 
 ## Phase 6: Public case study polish
 
-Add screenshots, diagrams, sample events, seed data, and a polished write-up for Iterwave and portfolio use.
+Add screenshots, diagrams, sample events, seed data, and a polished write-up for Iter and portfolio use.

@@ -13,7 +13,7 @@ export function DataTable<T>({
   columns,
   getRowKey,
   emptyTitle = "No rows to show",
-  emptyDescription = "Demo data will appear here when SyncCore has activity to display."
+  emptyDescription = "Demo data will appear here when Iter SyncCore has activity to display."
 }: {
   rows: T[];
   columns: Column<T>[];

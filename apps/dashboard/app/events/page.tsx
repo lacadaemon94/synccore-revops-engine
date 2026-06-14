@@ -16,7 +16,7 @@ export default async function EventsPage() {
       <PageHeader
         eyebrow="Operational event log"
         title="Event stream"
-        description="Every inbound webhook and workflow outcome is logged before SyncCore attempts downstream writes."
+        description="Every inbound webhook and workflow outcome is logged before Iter SyncCore attempts downstream writes."
       />
 
       <section className="split-grid split-grid--two">
@@ -24,7 +24,7 @@ export default async function EventsPage() {
           <p className="panel__kicker">Why log first</p>
           <h2 className="panel__title">Event logging before side effects is the control point.</h2>
           <p className="panel__copy">
-            When SyncCore records the event first, retries become deterministic, downstream failures stay recoverable, and revenue operations has an audit trail before anything mutates CRM or notifications.
+            When Iter SyncCore records the event first, retries become deterministic, downstream failures stay recoverable, and revenue operations has an audit trail before anything mutates CRM or notifications.
           </p>
         </Panel>
         <Panel>
@@ -108,7 +108,7 @@ export default async function EventsPage() {
             }
           ]}
           emptyTitle="No events received yet"
-          emptyDescription="As soon as events flow through SyncCore, they will be logged here before any side effects run."
+          emptyDescription="As soon as events flow through Iter SyncCore, they will be logged here before any side effects run."
         />
       </section>
     </AppShell>

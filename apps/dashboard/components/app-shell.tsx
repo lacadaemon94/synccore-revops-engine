@@ -27,9 +27,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="app-shell">
       <aside className="shell-sidebar">
         <div className="shell-brand">
-          <p className="shell-brand__eyebrow">SyncCore</p>
-          <h1 className="shell-brand__title">RevOps Engine</h1>
-          <p className="shell-brand__copy">A demo-first command center for event logging, retries, and revenue drift.</p>
+          <p className="shell-brand__eyebrow">Iter</p>
+          <h1 className="shell-brand__title">SyncCore</h1>
+          <p className="shell-brand__copy">A demo-first command center for event logging, retries, and revenue recovery operations.</p>
         </div>
         <div className="shell-status">
           <p className="shell-status__label">Demo mode</p>
@@ -46,8 +46,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="shell-main">
         <header className="shell-topbar">
           <div>
-            <p className="shell-topbar__eyebrow">RevOps command center</p>
-            <p className="shell-topbar__title">Portfolio-grade demo dashboard</p>
+            <p className="shell-topbar__eyebrow">Iter SyncCore</p>
+            <p className="shell-topbar__title">Revenue operations command center</p>
           </div>
           <p className="shell-topbar__status">DEMO_MODE=true</p>
         </header>

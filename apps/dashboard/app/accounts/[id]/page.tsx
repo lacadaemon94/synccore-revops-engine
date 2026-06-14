@@ -132,7 +132,7 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
           <div className="table-shell">
             <div className="empty-state">
               <p className="empty-state__title">No ops actions for this account</p>
-              <p className="empty-state__description">When SyncCore stages notifications or follow-up work for this account, it will appear here.</p>
+              <p className="empty-state__description">When Iter SyncCore stages notifications or follow-up work for this account, it will appear here.</p>
             </div>
           </div>
         )}
