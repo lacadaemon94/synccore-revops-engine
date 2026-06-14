@@ -10,5 +10,9 @@ const statusToneMap: Record<ActionStatus, "neutral" | "positive" | "warning" | "
 };
 
 export function ActionStatusBadge({ status }: { status: ActionStatus }) {
-  return <Badge tone={statusToneMap[status]}>{status.replaceAll("_", " ")}</Badge>;
+  return (
+    <Badge tone={statusToneMap[status]} className="badge--status" leadingDot>
+      {status.replaceAll("_", " ")}
+    </Badge>
+  );
 }

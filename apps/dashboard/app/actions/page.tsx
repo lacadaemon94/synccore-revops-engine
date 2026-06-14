@@ -47,122 +47,154 @@ export default async function ActionsPage() {
     <AppShell>
       <PageHeader
         eyebrow="Operator action center"
-        title="Ops Actions"
-        description="One place to review mock notifications, churn-defuser guidance, CRM follow-ups, and dead-letter escalations before any real Slack or HubSpot adapter is enabled."
+        title="Action triage for revenue operators"
+        description="One place to review notification outbox rows, churn-defuser guidance, CRM follow-ups, and dead-letter escalations before any real Slack or HubSpot adapter is enabled."
       >
         <div className="badge-row">
-          <Badge tone="danger">{actionCenter.highCriticalCount} high or critical open actions</Badge>
-          <Badge tone="info">{actionCenter.notificationOutboxItems.length} outbox items</Badge>
-          <Badge tone="warning">{actionCenter.dlqEscalations.length} DLQ escalations</Badge>
+          <Badge tone="danger" leadingDot>
+            {actionCenter.highCriticalCount} high or critical open actions
+          </Badge>
+          <Badge tone="info" leadingDot>
+            {actionCenter.notificationOutboxItems.length} outbox items
+          </Badge>
+          <Badge tone="warning" leadingDot>
+            {actionCenter.dlqEscalations.length} DLQ escalations
+          </Badge>
         </div>
       </PageHeader>
 
-      <section className="split-grid">
-        <div className="hero-band">
-          <div>
-            <p className="hero-band__lead">
-              Notification outbox rows act as the mock Slack layer, CRM tasks stay generated but local, and escalated queue items surface the operator work that a real RevOps team would need to pick up.
-            </p>
+      <section className="content-with-rail">
+        <div className="content-main">
+          <section className="hero-band hero-band--compact">
+            <div>
+              <p className="hero-band__eyebrow">Human-in-the-loop operations</p>
+              <h2 className="hero-band__title">Mock Slack signals, CRM tasks, and escalation paths in one triage surface.</h2>
+              <p className="hero-band__lead">
+                Notification outbox rows act as the mock messaging layer, CRM tasks stay generated but local, and escalated queue items surface the work a real RevOps team would need to pick up.
+              </p>
+            </div>
+            <div className="hero-band__aside">
+              <p className="hero-band__aside-title">Severity mix</p>
+              <SeveritySummary actions={actionCenter.openActions} />
+            </div>
+          </section>
+
+          <section>
+            <SectionHeader eyebrow="Priority queue" title="Open ops actions" description="The highest-signal actions that still need operator attention." />
+            {actionCenter.openActions.length ? (
+              <div className="card-grid card-grid--two">
+                {actionCenter.openActions.map((action) => (
+                  <ActionCard key={action.id} action={action} />
+                ))}
+              </div>
+            ) : (
+              <div className="table-shell">
+                <EmptyState title="No open ops actions" description="When actions are resolved or ignored, the action center quiets down automatically." />
+              </div>
+            )}
+          </section>
+
+          <section className="split-grid split-grid--two">
+            <div>
+              <SectionHeader
+                eyebrow="Outbox"
+                title="Notification outbox"
+                description="Mock Slack-style rows that would be delivered to billing or RevOps channels later."
+              />
+              {actionCenter.notificationOutboxItems.length ? (
+                <div className="card-grid">
+                  {actionCenter.notificationOutboxItems.map((item) => (
+                    <ActionCard key={item.id} action={mapNotificationToAction(item)} />
+                  ))}
+                </div>
+              ) : (
+                <div className="table-shell">
+                  <EmptyState title="No outbox items" description="Replay a failed payment to stage mock notification payloads here." />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <SectionHeader
+                eyebrow="Risk alerts"
+                title="Churn-defuser alerts"
+                description="Human-readable summaries of the highest-risk billing failures."
+              />
+              {actionCenter.churnAlerts.length ? (
+                <div className="card-grid">
+                  {actionCenter.churnAlerts.map((action) => (
+                    <ActionCard key={action.id} action={action} />
+                  ))}
+                </div>
+              ) : (
+                <div className="table-shell">
+                  <EmptyState title="No churn alerts" description="High-value failed payments will appear here once the churn-defuser classifies them." />
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="split-grid split-grid--two">
+            <div>
+              <SectionHeader
+                eyebrow="CRM follow-up"
+                title="Mock CRM tasks"
+                description="Suggested follow-up tasks that future HubSpot or CRM adapters could eventually persist."
+              />
+              {actionCenter.mockCrmTasks.length ? (
+                <div className="card-grid">
+                  {actionCenter.mockCrmTasks.map((item) => (
+                    <ActionCard key={item.id} action={mapCrmTaskToAction(item)} />
+                  ))}
+                </div>
+              ) : (
+                <div className="table-shell">
+                  <EmptyState title="No CRM tasks queued" description="Only high and critical recovery paths create mock CRM work recommendations." />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <SectionHeader
+                eyebrow="Escalations"
+                title="DLQ escalation alerts"
+                description="When automatic retries are exhausted, the queue turns into an explicit operator action."
+              />
+              {actionCenter.dlqEscalations.length ? (
+                <div className="card-grid">
+                  {actionCenter.dlqEscalations.map((action) => (
+                    <ActionCard key={action.id} action={action} />
+                  ))}
+                </div>
+              ) : (
+                <div className="table-shell">
+                  <EmptyState title="No escalations" description="The dead-letter queue has not produced any operator escalations in the current snapshot." />
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+
+        <aside className="content-rail">
+          <div className="rail-card">
+            <p className="rail-card__eyebrow">Triage posture</p>
+            <h3 className="rail-card__title">Operator guidance</h3>
+            <div className="rail-card__list">
+              <div className="rail-row">
+                <span className="rail-row__label">Open actions</span>
+                <span className="rail-row__value">{actionCenter.openActions.length}</span>
+              </div>
+              <div className="rail-row">
+                <span className="rail-row__label">Notifications staged</span>
+                <span className="rail-row__value">{actionCenter.notificationOutboxItems.length}</span>
+              </div>
+              <div className="rail-row">
+                <span className="rail-row__label">Human follow-up</span>
+                <span className="rail-row__value">{actionCenter.mockCrmTasks.length}</span>
+              </div>
+            </div>
           </div>
-          <div className="hero-band__aside">
-            <p className="hero-band__aside-title">Severity mix</p>
-            <SeveritySummary actions={actionCenter.openActions} />
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <SectionHeader
-          title="Open ops actions"
-          description="The highest-signal actions that still need operator attention."
-        />
-        {actionCenter.openActions.length ? (
-          <div className="card-grid">
-            {actionCenter.openActions.map((action) => (
-              <ActionCard key={action.id} action={action} />
-            ))}
-          </div>
-        ) : (
-          <div className="table-shell">
-            <EmptyState title="No open ops actions" description="When actions are resolved or ignored, the action center quiets down automatically." />
-          </div>
-        )}
-      </section>
-
-      <section className="split-grid split-grid--two">
-        <div>
-          <SectionHeader
-            title="Notification outbox"
-            description="Mock Slack-style rows that would be delivered to billing or RevOps channels later."
-          />
-          {actionCenter.notificationOutboxItems.length ? (
-            <div className="card-grid">
-              {actionCenter.notificationOutboxItems.map((item) => (
-                <ActionCard key={item.id} action={mapNotificationToAction(item)} />
-              ))}
-            </div>
-          ) : (
-            <div className="table-shell">
-              <EmptyState title="No outbox items" description="Replay a failed payment to stage mock notification payloads here." />
-            </div>
-          )}
-        </div>
-
-        <div>
-          <SectionHeader
-            title="Churn-defuser alerts"
-            description="Human-readable summaries of the highest-risk billing failures."
-          />
-          {actionCenter.churnAlerts.length ? (
-            <div className="card-grid">
-              {actionCenter.churnAlerts.map((action) => (
-                <ActionCard key={action.id} action={action} />
-              ))}
-            </div>
-          ) : (
-            <div className="table-shell">
-              <EmptyState title="No churn alerts" description="High-value failed payments will appear here once the churn-defuser classifies them." />
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="split-grid split-grid--two">
-        <div>
-          <SectionHeader
-            title="Mock CRM tasks"
-            description="Suggested follow-up tasks that future HubSpot or CRM adapters could eventually persist."
-          />
-          {actionCenter.mockCrmTasks.length ? (
-            <div className="card-grid">
-              {actionCenter.mockCrmTasks.map((item) => (
-                <ActionCard key={item.id} action={mapCrmTaskToAction(item)} />
-              ))}
-            </div>
-          ) : (
-            <div className="table-shell">
-              <EmptyState title="No CRM tasks queued" description="Only high and critical recovery paths create mock CRM work recommendations." />
-            </div>
-          )}
-        </div>
-
-        <div>
-          <SectionHeader
-            title="DLQ escalation alerts"
-            description="When automatic retries are exhausted, the queue turns into an explicit operator action."
-          />
-          {actionCenter.dlqEscalations.length ? (
-            <div className="card-grid">
-              {actionCenter.dlqEscalations.map((action) => (
-                <ActionCard key={action.id} action={action} />
-              ))}
-            </div>
-          ) : (
-            <div className="table-shell">
-              <EmptyState title="No escalations" description="The dead-letter queue has not produced any operator escalations in the current snapshot." />
-            </div>
-          )}
-        </div>
+        </aside>
       </section>
     </AppShell>
   );

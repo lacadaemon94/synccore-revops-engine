@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "../../components/app-shell";
+import { Badge } from "../../components/badge";
 import { DataTable } from "../../components/data-table";
 import { PageHeader } from "../../components/page-header";
 import { Panel } from "../../components/panel";
@@ -10,37 +11,51 @@ import { formatCurrency, formatDateTime } from "../../lib/format";
 
 export default async function EventsPage() {
   const events = await getEvents();
+  const failedOrRouted = events.filter((event) => event.status === "failed" || event.status === "routed_to_dlq").length;
+  const workflowEvents = events.filter((event) => event.provider === "n8n").length;
 
   return (
     <AppShell>
       <PageHeader
         eyebrow="Operational event log"
-        title="Event stream"
+        title="Event observability surface"
         description="Every inbound webhook and workflow outcome is logged before Iter SyncCore attempts downstream writes."
-      />
+      >
+        <div className="badge-row">
+          <Badge tone="info" leadingDot>
+            {events.length} logged events
+          </Badge>
+          <Badge tone="warning" leadingDot>
+            {failedOrRouted} blocked or routed outcomes
+          </Badge>
+          <Badge tone="neutral" leadingDot>
+            {workflowEvents} workflow-originated events
+          </Badge>
+        </div>
+      </PageHeader>
 
       <section className="split-grid split-grid--two">
         <Panel>
           <p className="panel__kicker">Why log first</p>
           <h2 className="panel__title">Event logging before side effects is the control point.</h2>
           <p className="panel__copy">
-            When Iter SyncCore records the event first, retries become deterministic, downstream failures stay recoverable, and revenue operations has an audit trail before anything mutates CRM or notifications.
+            When Iter SyncCore records the event first, retries become deterministic, downstream failures stay recoverable, and revenue operations gets an audit trail before anything mutates CRM or notifications.
           </p>
         </Panel>
         <Panel>
-          <p className="panel__kicker">What this protects</p>
-          <div className="list">
-            <div className="list-row">
-              <span className="cell-title">Idempotency</span>
-              <span className="cell-subtle">Duplicate provider events can be recognized before another side effect fires.</span>
+          <p className="panel__kicker">Observability posture</p>
+          <div className="mini-stats">
+            <div className="mini-stat">
+              <p className="mini-stat__label">Provider event IDs</p>
+              <p className="mini-stat__value">Stable idempotency anchors for replay and dedupe.</p>
             </div>
-            <div className="list-row">
-              <span className="cell-title">Replayability</span>
-              <span className="cell-subtle">Failed workflow branches can be retried from a known event record instead of manual guesswork.</span>
+            <div className="mini-stat">
+              <p className="mini-stat__label">Workflow outcomes</p>
+              <p className="mini-stat__value">n8n-originated outcomes stay visible next to billing events.</p>
             </div>
-            <div className="list-row">
-              <span className="cell-title">Operational trust</span>
-              <span className="cell-subtle">Finance, CS, and GTM teams can inspect exactly what changed and when.</span>
+            <div className="mini-stat">
+              <p className="mini-stat__label">Revenue audit trail</p>
+              <p className="mini-stat__value">Operators can inspect causality before downstream systems drift.</p>
             </div>
           </div>
         </Panel>
@@ -48,8 +63,9 @@ export default async function EventsPage() {
 
       <section>
         <SectionHeader
+          eyebrow="Event stream"
           title="Normalized event table"
-          description="Provider events, workflow outcomes, account context, and retry posture in one place."
+          description="Provider events, workflow outcomes, account context, amount, retry posture, and status in one dense view."
         />
         <DataTable
           rows={events}
@@ -57,10 +73,10 @@ export default async function EventsPage() {
           columns={[
             {
               key: "providerEvent",
-              header: "Provider event ID",
+              header: "Provider event",
               render: (row) => (
                 <div className="cell-stack">
-                  <span className="cell-title">{row.providerEventId}</span>
+                  <span className="cell-title cell-title--mono">{row.providerEventId}</span>
                   <span className="cell-subtle">{row.provider}</span>
                 </div>
               )
@@ -92,9 +108,9 @@ export default async function EventsPage() {
             },
             {
               key: "retry",
-              header: "Retry count",
+              header: "Retries",
               align: "right",
-              render: (row) => <span>{row.retryCount}</span>
+              render: (row) => <span className="cell-title">{row.retryCount}</span>
             },
             {
               key: "receivedAt",

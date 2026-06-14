@@ -20,8 +20,8 @@ export default async function ReconcilerPage() {
     <AppShell>
       <PageHeader
         eyebrow="Commercial drift detection"
-        title="CRM/Billing reconciler"
-        description="Iter SyncCore surfaces mismatches between billing truth and CRM state before they become revenue leakage or GTM confusion."
+        title="Revenue data quality and reconciliation"
+        description="Iter SyncCore surfaces mismatches between billing truth and CRM state before they become revenue leakage, bad lifecycle handling, or GTM confusion."
       />
 
       <section className="metrics-grid metrics-grid--three">
@@ -32,33 +32,42 @@ export default async function ReconcilerPage() {
 
       <section className="split-grid split-grid--two">
         <Panel>
-          <p className="panel__kicker">Why this matters</p>
-          <h2 className="panel__title">CRM and billing drift quietly compounds.</h2>
+          <p className="panel__kicker">Why drift matters</p>
+          <h2 className="panel__title">Billing truth and CRM truth diverge quietly.</h2>
           <p className="panel__copy">
-            A status mismatch can create churn false-positives, an MRR gap can understate live revenue, and a tier mismatch can route the wrong coverage model. The reconciler keeps these breaks visible instead of letting them hide in system boundaries.
+            A status mismatch can create churn false positives, an MRR gap can understate live revenue, and a tier mismatch can route the wrong support or renewal motion. The reconciler keeps those breaks visible instead of hiding them in system boundaries.
           </p>
         </Panel>
         <Panel>
-          <p className="panel__kicker">Live examples in this phase</p>
-          <div className="badge-row">
-            <SeverityBadge severity="high" />
-            <span className="cell-subtle">Status mismatches that change lifecycle handling</span>
-          </div>
-          <div className="badge-row">
-            <SeverityBadge severity="medium" />
-            <span className="cell-subtle">MRR mismatches that distort revenue visibility</span>
-          </div>
-          <div className="badge-row">
-            <SeverityBadge severity="low" />
-            <span className="cell-subtle">Tier mismatches that skew coverage and packaging</span>
+          <p className="panel__kicker">Severity hierarchy</p>
+          <div className="list list--compact">
+            <div className="list-row">
+              <div className="badge-row">
+                <SeverityBadge severity="high" />
+              </div>
+              <span className="cell-subtle">Lifecycle or renewal handling could change immediately.</span>
+            </div>
+            <div className="list-row">
+              <div className="badge-row">
+                <SeverityBadge severity="medium" />
+              </div>
+              <span className="cell-subtle">Revenue visibility and attribution can drift from reality.</span>
+            </div>
+            <div className="list-row">
+              <div className="badge-row">
+                <SeverityBadge severity="low" />
+              </div>
+              <span className="cell-subtle">Coverage models, packaging, or entitlements may become inconsistent.</span>
+            </div>
           </div>
         </Panel>
       </section>
 
       <section>
         <SectionHeader
-          title="Active discrepancy table"
-          description="Suggested actions stay close to the mismatch so RevOps can move from diagnosis to cleanup quickly."
+          eyebrow="Discrepancy table"
+          title="Active discrepancies"
+          description="Billing vs CRM comparisons stay close to impact and suggested action so RevOps can move from diagnosis to cleanup quickly."
         />
         <DataTable
           rows={discrepancies}
@@ -84,22 +93,18 @@ export default async function ReconcilerPage() {
               )
             },
             {
-              key: "billing",
-              header: "Billing",
+              key: "comparison",
+              header: "Billing vs CRM",
               render: (row) => (
-                <div className="cell-stack">
-                  <span className="cell-title">{titleCase(row.sourceA)}</span>
-                  <span className="cell-subtle">{row.sourceAValue}</span>
-                </div>
-              )
-            },
-            {
-              key: "crm",
-              header: "CRM",
-              render: (row) => (
-                <div className="cell-stack">
-                  <span className="cell-title">{titleCase(row.sourceB)}</span>
-                  <span className="cell-subtle">{row.sourceBValue}</span>
+                <div className="comparison-stack">
+                  <div className="comparison-chip">
+                    <span className="comparison-chip__label">{titleCase(row.sourceA)}</span>
+                    <span className="comparison-chip__value">{row.sourceAValue}</span>
+                  </div>
+                  <div className="comparison-chip comparison-chip--muted">
+                    <span className="comparison-chip__label">{titleCase(row.sourceB)}</span>
+                    <span className="comparison-chip__value">{row.sourceBValue}</span>
+                  </div>
                 </div>
               )
             },

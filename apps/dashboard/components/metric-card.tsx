@@ -21,11 +21,17 @@ export function MetricCard({ metric }: { metric: Metric }) {
   return (
     <div className="metric-card">
       <div className="metric-card__header">
-        <p className="metric-card__label">{metric.label}</p>
-        <Badge tone={toneBadgeMap[tone]}>{toneLabelMap[tone]}</Badge>
+        <div className="metric-card__copy">
+          <p className="metric-card__label">{metric.label}</p>
+          <p className="metric-card__helper">{metric.helper}</p>
+        </div>
+        <Badge tone={toneBadgeMap[tone]} className="metric-card__badge" leadingDot>
+          {toneLabelMap[tone]}
+        </Badge>
       </div>
-      <p className="metric-card__value">{metric.value}</p>
-      <p className="metric-card__helper">{metric.helper}</p>
+      <div className="metric-card__value-row">
+        <p className="metric-card__value">{metric.value}</p>
+      </div>
     </div>
   );
 }

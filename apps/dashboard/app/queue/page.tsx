@@ -36,36 +36,64 @@ export default async function QueuePage() {
   const sections = buildSections(queueItems);
   const escalationCount = queueItems.filter((item) => item.escalationRecommended).length;
   const activeRetryCount = queueItems.filter((item) => item.status === "pending" || item.status === "retrying").length;
+  const resolvedCount = queueItems.filter((item) => item.status === "resolved").length;
 
   return (
     <AppShell>
       <PageHeader
         eyebrow="Recovery queue"
-        title="Dead-letter queue"
+        title="Dead-letter reliability control surface"
         description="Retryable workflow failures are isolated here until Iter SyncCore can recover them automatically or an operator intervenes."
       >
         <div className="badge-row">
-          <Badge tone="warning">Force retry stays in demo mode</Badge>
-          <Badge tone="info">Retry schedule: 15m, 30m, 60m</Badge>
-          <Badge tone="danger">{escalationCount} escalation candidate{escalationCount === 1 ? "" : "s"}</Badge>
+          <Badge tone="warning" leadingDot>
+            Retry schedule: 15m / 30m / 60m
+          </Badge>
+          <Badge tone="danger" leadingDot>
+            {escalationCount} escalation candidates
+          </Badge>
+          <Badge tone="positive" leadingDot>
+            {resolvedCount} recovered items
+          </Badge>
         </div>
       </PageHeader>
 
+      <section className="hero-band hero-band--compact">
+        <div className="hero-band__stats hero-band__stats--dense">
+          <div>
+            <p className="hero-band__stat-label">Active retry workload</p>
+            <p className="hero-band__stat-value">{activeRetryCount}</p>
+          </div>
+          <div>
+            <p className="hero-band__stat-label">Escalated posture</p>
+            <p className="hero-band__stat-value">{escalationCount}</p>
+          </div>
+          <div>
+            <p className="hero-band__stat-label">Resolved examples</p>
+            <p className="hero-band__stat-value">{resolvedCount}</p>
+          </div>
+        </div>
+        <div className="hero-band__aside">
+          <p className="hero-band__aside-title">Manual replay behavior</p>
+          <p className="hero-band__aside-copy">
+            Force Retry stays inside the demo retry engine. No real Stripe, HubSpot, or Slack integration is called.
+          </p>
+        </div>
+      </section>
+
       <section>
         <SectionHeader
+          eyebrow="Dead-letter queue"
           title="DLQ workload"
-          description="Each item shows the blocked downstream system, retry schedule, escalation posture, and the last observed error."
+          description="Each item shows blocked target system, retry schedule, escalation posture, and the last observed error."
         />
-        <p className="section-note">
-          The manual replay button uses the Phase 4B retry engine, not a real Stripe, HubSpot, or Slack integration. Active retry workload right now: {activeRetryCount}.
-        </p>
         {queueItems.length ? (
           <div className="queue-section-stack">
             {sections.map((section) =>
               section.items.length ? (
                 <div key={section.title} className="queue-section">
-                  <SectionHeader title={section.title} description={section.description} />
-                  <div className="card-grid">
+                  <SectionHeader eyebrow="Queue section" title={section.title} description={section.description} />
+                  <div className="card-grid card-grid--two">
                     {section.items.map((item) => (
                       <QueueRetryCard key={item.id} item={item} />
                     ))}
@@ -76,10 +104,7 @@ export default async function QueuePage() {
           </div>
         ) : (
           <div className="table-shell">
-            <EmptyState
-              title="No blocked retries"
-              description="When the recovery queue is empty, all retryable failures have already been cleared."
-            />
+            <EmptyState title="No blocked retries" description="When the recovery queue is empty, all retryable failures have already been cleared." />
           </div>
         )}
       </section>

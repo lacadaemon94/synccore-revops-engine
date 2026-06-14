@@ -20,24 +20,41 @@ export function QueueRetryCard({ item }: { item: QueueItem }) {
 
   return (
     <div className="queue-card">
+      <div className="queue-card__topline">
+        <Badge tone="neutral" className="badge--source" leadingDot>
+          Dead-letter queue
+        </Badge>
+        <StatusBadge status={currentItem.status} />
+      </div>
       <div className="queue-card__header">
         <div className="cell-stack">
           <p className="queue-card__title">{currentItem.accountName}</p>
-          <p className="cell-subtle">{currentItem.targetSystem}</p>
+          <p className="cell-subtle cell-subtle--mono">{currentItem.targetSystem}</p>
         </div>
-        <StatusBadge status={currentItem.status} />
+        <div className="queue-card__schedule">
+          <span className="queue-card__schedule-count">
+            Retry {currentItem.retryCount} / {currentItem.maxRetries}
+          </span>
+          <span className="queue-card__schedule-label">{renderDate(currentItem.nextRetryAt, "Manual review only")}</span>
+        </div>
       </div>
       <div className="badge-row queue-card__badges">
-        {currentItem.failureClass ? <Badge tone="info">{titleCase(currentItem.failureClass)}</Badge> : null}
-        {currentItem.escalationRecommended ? <Badge tone="danger">Escalation recommended</Badge> : <Badge tone="warning">Auto retry active</Badge>}
+        {currentItem.failureClass ? (
+          <Badge tone="info" className="badge--status" leadingDot>
+            {titleCase(currentItem.failureClass)}
+          </Badge>
+        ) : null}
+        {currentItem.escalationRecommended ? (
+          <Badge tone="danger" className="badge--severity" leadingDot>
+            Escalation recommended
+          </Badge>
+        ) : (
+          <Badge tone="warning" className="badge--status" leadingDot>
+            Auto retry active
+          </Badge>
+        )}
       </div>
       <div className="queue-card__grid">
-        <div className="detail-pair">
-          <span className="detail-pair__label">Retry count</span>
-          <span className="detail-pair__value">
-            {currentItem.retryCount} / {currentItem.maxRetries}
-          </span>
-        </div>
         <div className="detail-pair">
           <span className="detail-pair__label">Next retry</span>
           <span className="detail-pair__value">{renderDate(currentItem.nextRetryAt, "Manual review only")}</span>
