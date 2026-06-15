@@ -47,8 +47,7 @@ export default async function ActionsPage() {
     <AppShell>
       <PageHeader
         eyebrow="Operator action center"
-        title="Action triage for revenue operators"
-        description="One place to review notification outbox rows, churn-defuser guidance, CRM follow-ups, and dead-letter escalations before any real Slack or HubSpot adapter is enabled."
+        title="Ops Actions"
       >
         <div className="badge-row">
           <Badge tone="danger" leadingDot>
@@ -63,15 +62,11 @@ export default async function ActionsPage() {
         </div>
       </PageHeader>
 
-      <section className="content-with-rail">
-        <div className="content-main">
+      <section>
           <section className="hero-band hero-band--compact">
             <div>
               <p className="hero-band__eyebrow">Human-in-the-loop operations</p>
-              <h2 className="hero-band__title">Mock Slack signals, CRM tasks, and escalation paths in one triage surface.</h2>
-              <p className="hero-band__lead">
-                Notification outbox rows act as the mock messaging layer, CRM tasks stay generated but local, and escalated queue items surface the work a real RevOps team would need to pick up.
-              </p>
+              <h2 className="hero-band__title">Triage surface</h2>
             </div>
             <div className="hero-band__aside">
               <p className="hero-band__aside-title">Severity mix</p>
@@ -80,7 +75,7 @@ export default async function ActionsPage() {
           </section>
 
           <section>
-            <SectionHeader eyebrow="Priority queue" title="Open ops actions" description="The highest-signal actions that still need operator attention." />
+            <SectionHeader eyebrow="Priority queue" title="Open ops actions" />
             {actionCenter.openActions.length ? (
               <div className="card-grid card-grid--two">
                 {actionCenter.openActions.map((action) => (
@@ -99,7 +94,6 @@ export default async function ActionsPage() {
               <SectionHeader
                 eyebrow="Outbox"
                 title="Notification outbox"
-                description="Mock Slack-style rows that would be delivered to billing or RevOps channels later."
               />
               {actionCenter.notificationOutboxItems.length ? (
                 <div className="card-grid">
@@ -118,7 +112,6 @@ export default async function ActionsPage() {
               <SectionHeader
                 eyebrow="Risk alerts"
                 title="Churn-defuser alerts"
-                description="Human-readable summaries of the highest-risk billing failures."
               />
               {actionCenter.churnAlerts.length ? (
                 <div className="card-grid">
@@ -139,7 +132,6 @@ export default async function ActionsPage() {
               <SectionHeader
                 eyebrow="CRM follow-up"
                 title="Mock CRM tasks"
-                description="Suggested follow-up tasks that future HubSpot or CRM adapters could eventually persist."
               />
               {actionCenter.mockCrmTasks.length ? (
                 <div className="card-grid">
@@ -158,7 +150,6 @@ export default async function ActionsPage() {
               <SectionHeader
                 eyebrow="Escalations"
                 title="DLQ escalation alerts"
-                description="When automatic retries are exhausted, the queue turns into an explicit operator action."
               />
               {actionCenter.dlqEscalations.length ? (
                 <div className="card-grid">
@@ -173,28 +164,6 @@ export default async function ActionsPage() {
               )}
             </div>
           </section>
-        </div>
-
-        <aside className="content-rail">
-          <div className="rail-card">
-            <p className="rail-card__eyebrow">Triage posture</p>
-            <h3 className="rail-card__title">Operator guidance</h3>
-            <div className="rail-card__list">
-              <div className="rail-row">
-                <span className="rail-row__label">Open actions</span>
-                <span className="rail-row__value">{actionCenter.openActions.length}</span>
-              </div>
-              <div className="rail-row">
-                <span className="rail-row__label">Notifications staged</span>
-                <span className="rail-row__value">{actionCenter.notificationOutboxItems.length}</span>
-              </div>
-              <div className="rail-row">
-                <span className="rail-row__label">Human follow-up</span>
-                <span className="rail-row__value">{actionCenter.mockCrmTasks.length}</span>
-              </div>
-            </div>
-          </div>
-        </aside>
       </section>
     </AppShell>
   );

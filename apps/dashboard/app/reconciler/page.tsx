@@ -3,7 +3,6 @@ import { AppShell } from "../../components/app-shell";
 import { DataTable } from "../../components/data-table";
 import { MetricCard } from "../../components/metric-card";
 import { PageHeader } from "../../components/page-header";
-import { Panel } from "../../components/panel";
 import { SectionHeader } from "../../components/section-header";
 import { SeverityBadge } from "../../components/severity-badge";
 import { StatusBadge } from "../../components/status-badge";
@@ -20,8 +19,7 @@ export default async function ReconcilerPage() {
     <AppShell>
       <PageHeader
         eyebrow="Commercial drift detection"
-        title="Revenue data quality and reconciliation"
-        description="Iter SyncCore surfaces mismatches between billing truth and CRM state before they become revenue leakage, bad lifecycle handling, or GTM confusion."
+        title="Reconciler"
       />
 
       <section className="metrics-grid metrics-grid--three">
@@ -30,44 +28,11 @@ export default async function ReconcilerPage() {
         <MetricCard metric={{ label: "Plan tier drift", value: tierMismatchCount.toString(), helper: "Packaging and support risk", tone: "default" }} />
       </section>
 
-      <section className="split-grid split-grid--two">
-        <Panel>
-          <p className="panel__kicker">Why drift matters</p>
-          <h2 className="panel__title">Billing truth and CRM truth diverge quietly.</h2>
-          <p className="panel__copy">
-            A status mismatch can create churn false positives, an MRR gap can understate live revenue, and a tier mismatch can route the wrong support or renewal motion. The reconciler keeps those breaks visible instead of hiding them in system boundaries.
-          </p>
-        </Panel>
-        <Panel>
-          <p className="panel__kicker">Severity hierarchy</p>
-          <div className="list list--compact">
-            <div className="list-row">
-              <div className="badge-row">
-                <SeverityBadge severity="high" />
-              </div>
-              <span className="cell-subtle">Lifecycle or renewal handling could change immediately.</span>
-            </div>
-            <div className="list-row">
-              <div className="badge-row">
-                <SeverityBadge severity="medium" />
-              </div>
-              <span className="cell-subtle">Revenue visibility and attribution can drift from reality.</span>
-            </div>
-            <div className="list-row">
-              <div className="badge-row">
-                <SeverityBadge severity="low" />
-              </div>
-              <span className="cell-subtle">Coverage models, packaging, or entitlements may become inconsistent.</span>
-            </div>
-          </div>
-        </Panel>
-      </section>
 
       <section>
         <SectionHeader
           eyebrow="Discrepancy table"
           title="Active discrepancies"
-          description="Billing vs CRM comparisons stay close to impact and suggested action so RevOps can move from diagnosis to cleanup quickly."
         />
         <DataTable
           rows={discrepancies}

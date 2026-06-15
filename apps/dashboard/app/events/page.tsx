@@ -3,11 +3,10 @@ import { AppShell } from "../../components/app-shell";
 import { Badge } from "../../components/badge";
 import { DataTable } from "../../components/data-table";
 import { PageHeader } from "../../components/page-header";
-import { Panel } from "../../components/panel";
 import { SectionHeader } from "../../components/section-header";
 import { StatusBadge } from "../../components/status-badge";
 import { getEvents } from "../../lib/data/events";
-import { formatCurrency, formatDateTime } from "../../lib/format";
+import { formatCurrency, formatRelativeTime } from "../../lib/format";
 
 export default async function EventsPage() {
   const events = await getEvents();
@@ -18,8 +17,7 @@ export default async function EventsPage() {
     <AppShell>
       <PageHeader
         eyebrow="Operational event log"
-        title="Event observability surface"
-        description="Every inbound webhook and workflow outcome is logged before Iter SyncCore attempts downstream writes."
+        title="Event Log"
       >
         <div className="badge-row">
           <Badge tone="info" leadingDot>
@@ -34,38 +32,12 @@ export default async function EventsPage() {
         </div>
       </PageHeader>
 
-      <section className="split-grid split-grid--two">
-        <Panel>
-          <p className="panel__kicker">Why log first</p>
-          <h2 className="panel__title">Event logging before side effects is the control point.</h2>
-          <p className="panel__copy">
-            When Iter SyncCore records the event first, retries become deterministic, downstream failures stay recoverable, and revenue operations gets an audit trail before anything mutates CRM or notifications.
-          </p>
-        </Panel>
-        <Panel>
-          <p className="panel__kicker">Observability posture</p>
-          <div className="mini-stats">
-            <div className="mini-stat">
-              <p className="mini-stat__label">Provider event IDs</p>
-              <p className="mini-stat__value">Stable idempotency anchors for replay and dedupe.</p>
-            </div>
-            <div className="mini-stat">
-              <p className="mini-stat__label">Workflow outcomes</p>
-              <p className="mini-stat__value">n8n-originated outcomes stay visible next to billing events.</p>
-            </div>
-            <div className="mini-stat">
-              <p className="mini-stat__label">Revenue audit trail</p>
-              <p className="mini-stat__value">Operators can inspect causality before downstream systems drift.</p>
-            </div>
-          </div>
-        </Panel>
-      </section>
+
 
       <section>
         <SectionHeader
           eyebrow="Event stream"
           title="Normalized event table"
-          description="Provider events, workflow outcomes, account context, amount, retry posture, and status in one dense view."
         />
         <DataTable
           rows={events}
@@ -115,7 +87,7 @@ export default async function EventsPage() {
             {
               key: "receivedAt",
               header: "Received",
-              render: (row) => <span className="cell-subtle">{formatDateTime(row.receivedAt)}</span>
+              render: (row) => <span className="cell-subtle">{formatRelativeTime(row.receivedAt)}</span>
             },
             {
               key: "status",

@@ -17,7 +17,7 @@ const sourceLabelMap: Record<ActionSource, string> = {
 
 export function SourceBadge({ source }: { source: ActionSource }) {
   return (
-    <Badge tone={sourceToneMap[source]} className="badge--source" leadingDot>
+    <Badge tone={sourceToneMap[source]} className="badge--source">
       {sourceLabelMap[source]}
     </Badge>
   );

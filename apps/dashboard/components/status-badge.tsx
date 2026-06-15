@@ -14,8 +14,8 @@ const statusToneMap: Record<EventStatus | QueueStatus, "neutral" | "positive" | 
 
 export function StatusBadge({ status }: { status: EventStatus | QueueStatus }) {
   return (
-    <Badge tone={statusToneMap[status]} className="badge--status" leadingDot>
-      {status.replaceAll("_", " ")}
+    <Badge tone={statusToneMap[status]} className="badge--status">
+      {status}
     </Badge>
   );
 }

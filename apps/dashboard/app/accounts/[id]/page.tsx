@@ -4,6 +4,8 @@ import { ActionCard } from "../../../components/action-card";
 import { AppShell } from "../../../components/app-shell";
 import { Badge } from "../../../components/badge";
 import { DataTable } from "../../../components/data-table";
+import { EmptyState } from "../../../components/empty-state";
+import { MetricCard } from "../../../components/metric-card";
 import { PageHeader } from "../../../components/page-header";
 import { Panel } from "../../../components/panel";
 import { SectionHeader } from "../../../components/section-header";
@@ -13,7 +15,7 @@ import { getAccountById } from "../../../lib/data/accounts";
 import { getAccountOpsActions } from "../../../lib/data/actions";
 import { getDiscrepancies } from "../../../lib/data/discrepancies";
 import { getEvents } from "../../../lib/data/events";
-import { formatCompactCurrency, formatCurrency, formatDate, formatDateTime, formatPercent, titleCase } from "../../../lib/format";
+import { formatCompactCurrency, formatCurrency, formatDate, formatRelativeTime, formatPercent, titleCase } from "../../../lib/format";
 
 export default async function AccountPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -37,90 +39,52 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
       <PageHeader
         eyebrow="Account object view"
         title={account.name}
-        description={`${account.domain} / ${titleCase(account.segment)} / owned by ${account.owner}`}
       >
         <div className="badge-row">
           <Badge tone={account.riskLevel === "urgent" ? "danger" : account.riskLevel === "watch" ? "warning" : "positive"} leadingDot>
             {titleCase(account.riskLevel)} revenue risk
           </Badge>
+          <Badge tone="neutral">{account.owner}</Badge>
           <Badge tone="neutral" leadingDot>
             {titleCase(account.lifecycleStage)}
           </Badge>
+          <Badge tone="info">{account.revenueAtRisk > 0 ? `${formatCurrency(account.revenueAtRisk)} at risk` : "No revenue risk"}</Badge>
         </div>
       </PageHeader>
 
       <section className="hero-band hero-band--compact">
         <div>
           <p className="hero-band__eyebrow">Account summary</p>
-          <h2 className="hero-band__title">A single view of account health, revenue exposure, workflow state, and follow-up work.</h2>
-          <p className="hero-band__lead">
-            This page is where operators inspect account-level impact once billing events, discrepancies, or retries start affecting commercial truth.
-          </p>
+          <h2 className="hero-band__title">Account overview</h2>
         </div>
-        <div className="hero-band__aside">
-          <p className="hero-band__aside-title">Latest event</p>
-          <p className="hero-band__aside-copy">{latestEvent ? latestEvent.eventType : "No recent activity"}</p>
+        <div className="hero-band__stats hero-band__stats--dense">
+          <div>
+            <p className="hero-band__stat-label">Owner</p>
+            <p className="hero-band__stat-value">{account.owner}</p>
+          </div>
+          <div>
+            <p className="hero-band__stat-label">Lifecycle</p>
+            <p className="hero-band__stat-value">{titleCase(account.lifecycleStage)}</p>
+          </div>
+          <div>
+            <p className="hero-band__stat-label">Latest event</p>
+            <p className="hero-band__stat-value">{latestEvent ? latestEvent.eventType : "No recent activity"}</p>
+          </div>
         </div>
       </section>
 
-      <section className="content-with-rail">
-        <div className="content-main">
+      <section>
           <section className="metrics-grid metrics-grid--account">
-            <div className="metric-card">
-              <div className="metric-card__header">
-                <div className="metric-card__copy">
-                  <p className="metric-card__label">MRR</p>
-                  <p className="metric-card__helper">Recurring revenue currently tracked in billing.</p>
-                </div>
-              </div>
-              <div className="metric-card__value-row">
-                <p className="metric-card__value">{formatCurrency(account.mrr)}</p>
-              </div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-card__header">
-                <div className="metric-card__copy">
-                  <p className="metric-card__label">ARR</p>
-                  <p className="metric-card__helper">Annualized value for renewal planning.</p>
-                </div>
-              </div>
-              <div className="metric-card__value-row">
-                <p className="metric-card__value">{formatCompactCurrency(account.arr)}</p>
-              </div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-card__header">
-                <div className="metric-card__copy">
-                  <p className="metric-card__label">LTV</p>
-                  <p className="metric-card__helper">Estimated long-term value from the account profile.</p>
-                </div>
-              </div>
-              <div className="metric-card__value-row">
-                <p className="metric-card__value">{formatCompactCurrency(account.ltv)}</p>
-              </div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-card__header">
-                <div className="metric-card__copy">
-                  <p className="metric-card__label">Health score</p>
-                  <p className="metric-card__helper">Blended usage and operational confidence score.</p>
-                </div>
-              </div>
-              <div className="metric-card__value-row">
-                <p className="metric-card__value">{formatPercent(account.healthScore)}</p>
-              </div>
-            </div>
+            <MetricCard metric={{ label: "Monthly recurring", value: formatCurrency(account.mrr), tone: account.riskLevel === "urgent" ? "danger" : account.riskLevel === "watch" ? "warning" : "positive" }} />
+            <MetricCard metric={{ label: "Annual recurring", value: formatCompactCurrency(account.arr), tone: account.riskLevel === "urgent" ? "danger" : account.riskLevel === "watch" ? "warning" : "positive" }} />
+            <MetricCard metric={{ label: "Lifetime value", value: formatCompactCurrency(account.ltv), tone: "default" }} />
+            <MetricCard metric={{ label: "Health score", value: formatPercent(account.healthScore), tone: account.healthScore >= 80 ? "positive" : account.healthScore >= 50 ? "warning" : "danger" }} />
           </section>
 
           <section className="split-grid split-grid--two">
             <Panel>
               <p className="panel__kicker">Revenue risk summary</p>
-              <h2 className="panel__title">What needs attention for this account</h2>
-              <p className="panel__copy">
-                {account.revenueAtRisk > 0
-                  ? `${account.name} has ${formatCurrency(account.revenueAtRisk)} of revenue exposure in the current data source. Recovery depends on clearing open workflow issues and making sure CRM matches the billing source of truth.`
-                  : `${account.name} has no direct revenue exposure in the current snapshot, but the account still stays visible for lifecycle and discrepancy monitoring.`}
-              </p>
+              <h2 className="panel__title">Revenue risk</h2>
               {scopedDiscrepancies.length ? (
                 <div className="badge-row">
                   {scopedDiscrepancies.map((item) => (
@@ -153,7 +117,6 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
             <SectionHeader
               eyebrow="Recent events"
               title="Account event history"
-              description="The most recent operational changes linked to this account."
             />
             <DataTable
               rows={scopedEvents}
@@ -183,7 +146,7 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
                 {
                   key: "receivedAt",
                   header: "Received",
-                  render: (row) => <span className="cell-subtle">{formatDateTime(row.receivedAt)}</span>
+                  render: (row) => <span className="cell-subtle">{formatRelativeTime(row.receivedAt)}</span>
                 }
               ]}
               emptyTitle="No recent events for this account"
@@ -195,7 +158,6 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
             <SectionHeader
               eyebrow="Discrepancies"
               title="Open discrepancies"
-              description="Commercial mismatches currently attached to this account."
               action={
                 <Link className="text-link" href="/reconciler">
                   Back to reconciler
@@ -236,45 +198,24 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
               emptyDescription="CRM and billing are aligned for this account right now."
             />
           </section>
-        </div>
 
-        <aside className="content-rail">
-          <div className="rail-card">
-            <p className="rail-card__eyebrow">Account metadata</p>
-            <h3 className="rail-card__title">Object details</h3>
-            <div className="rail-card__list">
-              <div className="rail-row">
-                <span className="rail-row__label">Owner</span>
-                <span className="rail-row__value">{account.owner}</span>
-              </div>
-              <div className="rail-row">
-                <span className="rail-row__label">Lifecycle stage</span>
-                <span className="rail-row__value">{titleCase(account.lifecycleStage)}</span>
-              </div>
-              <div className="rail-row">
-                <span className="rail-row__label">Revenue at risk</span>
-                <span className="rail-row__value">{formatCurrency(account.revenueAtRisk)}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="rail-card">
-            <p className="rail-card__eyebrow">Related actions</p>
-            <h3 className="rail-card__title">Operator follow-up</h3>
+          <section>
+            <SectionHeader
+              eyebrow="Triage"
+              title="Related ops actions"
+            />
             {accountActions.length ? (
-              <div className="card-grid">
+              <div className="card-grid card-grid--two">
                 {accountActions.map((action) => (
                   <ActionCard key={action.id} action={action} />
                 ))}
               </div>
             ) : (
-              <div className="empty-inline empty-inline--tight">
-                <p className="empty-inline__title">No ops actions for this account</p>
-                <p className="empty-inline__description">When Iter SyncCore stages notifications or follow-up work for this account, it will appear here.</p>
+              <div className="table-shell">
+                <EmptyState title="No related ops actions" description="There are no active operator actions staging for this account." />
               </div>
             )}
-          </div>
-        </aside>
+          </section>
       </section>
     </AppShell>
   );

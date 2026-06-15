@@ -81,7 +81,8 @@ export type Discrepancy = {
 export type Metric = {
   label: string;
   value: string;
-  helper: string;
+  helper?: string;
+  trend?: number[];
   tone?: "default" | "positive" | "warning" | "danger";
 };
 

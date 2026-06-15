@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatDateTime } from "../lib/format";
+import { formatRelativeTime } from "../lib/format";
 import type { OpsAction } from "../lib/types";
 import { ActionStatusBadge } from "./action-status-badge";
 import { SeverityBadge } from "./severity-badge";
@@ -7,7 +7,7 @@ import { SourceBadge } from "./source-badge";
 
 export function ActionCard({ action }: { action: OpsAction }) {
   return (
-    <article className="action-card">
+    <article className="action-card" data-severity={action.severity}>
       <div className="action-card__topline">
         <SourceBadge source={action.source} />
         <ActionStatusBadge status={action.status} />
@@ -29,7 +29,7 @@ export function ActionCard({ action }: { action: OpsAction }) {
         </div>
         <div className="detail-pair">
           <span className="detail-pair__label">Created</span>
-          <span className="detail-pair__value">{formatDateTime(action.createdAt)}</span>
+          <span className="detail-pair__value">{formatRelativeTime(action.createdAt)}</span>
         </div>
         <div className="detail-pair detail-pair--wide">
           <span className="detail-pair__label">Suggested next step</span>

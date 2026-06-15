@@ -10,7 +10,7 @@ const severityToneMap: Record<ActionSeverity, "neutral" | "positive" | "warning"
 
 export function SeverityBadge({ severity }: { severity: ActionSeverity | DiscrepancySeverity }) {
   return (
-    <Badge tone={severityToneMap[severity]} className="badge--severity" leadingDot>
+    <Badge tone={severityToneMap[severity]} className="badge--severity">
       {severity}
     </Badge>
   );

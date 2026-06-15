@@ -3,13 +3,13 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { forceRetry, type ForceRetryActionResult } from "../actions/force-retry";
-import { formatDateTime, titleCase } from "../lib/format";
+import { formatRelativeTime, titleCase } from "../lib/format";
 import type { QueueItem } from "../lib/types";
 import { Badge } from "./badge";
 import { StatusBadge } from "./status-badge";
 
 function renderDate(value: null | string, fallback: string) {
-  return value ? formatDateTime(value) : fallback;
+  return value ? formatRelativeTime(value) : fallback;
 }
 
 export function QueueRetryCard({ item }: { item: QueueItem }) {

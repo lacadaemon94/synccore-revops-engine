@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AppShell } from "../components/app-shell";
 import { Badge } from "../components/badge";
-import { CollapsibleRailCard } from "../components/collapsible-rail-card";
+
 import { DataTable } from "../components/data-table";
 import { MetricCard } from "../components/metric-card";
 import { PageHeader } from "../components/page-header";
@@ -18,9 +18,7 @@ import { getEvents } from "../lib/data/events";
 import { getOverviewMetrics } from "../lib/data/metrics";
 import { getRecentChurnDefuserActions } from "../lib/data/notifications";
 import { getQueueItems } from "../lib/data/queue";
-import { formatCompactCurrency, formatCurrency, formatDate, formatDateTime, formatPercent, titleCase } from "../lib/format";
-
-type AttentionTone = "danger" | "info" | "warning";
+import { formatCurrency, formatDate, formatRelativeTime, formatPercent, titleCase } from "../lib/format";
 
 function getRiskTone(riskLevel: "critical" | "high" | "low" | "medium") {
   if (riskLevel === "critical") {
@@ -59,36 +57,41 @@ export default async function OverviewPage() {
     churnActions.find((item) => item.riskLevel === "critical" || item.riskLevel === "high") ?? churnActions[0] ?? null;
   const openDiscrepancies = discrepancies.filter((item) => item.status !== "resolved");
   const firstAccount = accounts[0] ?? null;
-  const formatOptionalDateTime = (value: null | string) => (value ? formatDateTime(value) : "Manual review");
+  const formatOptionalDateTime = (value: null | string) => (value ? formatRelativeTime(value) : "Manual review");
   const attentionItems = [
-    ...actionCenter.openActions.slice(0, 3).map((action) => ({
-      description: action.suggestedNextStep,
-      id: action.id,
+    ...actionCenter.openActions.slice(0, 2).map((action) => ({
+      href: `/accounts/${action.accountId}`,
+      label: action.severity,
+      meta: formatRelativeTime(action.createdAt),
       title: action.title,
-      tone: (action.severity === "critical" ? "danger" : action.severity === "high" ? "warning" : "info") as AttentionTone
+      tone: action.severity === "critical" || action.severity === "high" ? "danger" as const : "warning" as const
+    })),
+    ...openDiscrepancies.slice(0, 2).map((item) => ({
+      href: "/reconciler",
+      label: item.severity,
+      meta: item.accountName,
+      title: item.scenario,
+      tone: item.severity === "high" ? "danger" as const : "warning" as const
     })),
     ...queueItems
-      .filter((item) => item.escalationRecommended)
+      .filter((item) => item.status === "failed" || item.status === "escalated" || item.escalationRecommended)
       .slice(0, 2)
       .map((item) => ({
-        description: item.retrySummary,
-        id: item.id,
-        title: `${item.accountName} needs retry review`,
-        tone: "danger" as AttentionTone
+        href: "/queue",
+        label: item.status,
+        meta: item.accountName,
+        title: item.retrySummary ?? item.lastError,
+        tone: "danger" as const
       }))
-  ].slice(0, 4);
+  ].slice(0, 5);
 
   return (
     <AppShell>
       <PageHeader
-        eyebrow="Iter command center"
-        title="Revenue operations command center for retries, risk, and recovery"
-        description="Iter SyncCore gives RevOps teams a serious operating layer for billing events, dead-letter retries, discrepancies, and human-in-the-loop action management."
+        eyebrow="Command center"
+        title="Command Center"
       >
         <div className="badge-row">
-          <Badge tone="info" leadingDot>
-            Demo-first workflow surface
-          </Badge>
           <Badge tone="positive" leadingDot>
             {accounts.length ? "Live dashboard state loaded" : "Waiting on data"}
           </Badge>
@@ -98,85 +101,90 @@ export default async function OverviewPage() {
         </div>
       </PageHeader>
 
-      <section className="content-with-rail">
-        <div className="content-main">
-          <section className="hero-band hero-band--hero">
-            <div className="hero-band__copy">
-              <p className="hero-band__eyebrow">Iter SyncCore / RevOps infrastructure</p>
-              <h2 className="hero-band__title">Revenue-critical events, operator actions, and retry posture with infrastructure-grade clarity.</h2>
-              <p className="hero-band__lead">
-                Follow the event log, inspect the queue, and spot commercial drift before it becomes churn, broken CRM state, or missed renewals.
-              </p>
-            </div>
-            <div className="hero-kpis">
-              <div className="hero-kpi">
-                <p className="hero-band__stat-label">Revenue exposed</p>
-                <p className="hero-band__stat-value">{formatCompactCurrency(atRiskAccounts.reduce((total, account) => total + account.revenueAtRisk, 0))}</p>
-              </div>
-              <div className="hero-kpi">
-                <p className="hero-band__stat-label">Open discrepancies</p>
-                <p className="hero-band__stat-value">{openDiscrepancies.length}</p>
-              </div>
-              <div className="hero-kpi">
-                <p className="hero-band__stat-label">Retry recovery</p>
-                <p className="hero-band__stat-value">{metrics.find((metric) => metric.label === "Retry success rate")?.value ?? formatPercent(100)}</p>
-              </div>
-            </div>
-          </section>
-
-          <section className="metrics-grid metrics-grid--overview">
+      <section className="metrics-grid metrics-grid--overview">
             {metrics.map((metric) => (
               <MetricCard key={metric.label} metric={metric} />
             ))}
           </section>
 
-          <section className="split-grid split-grid--two">
+          <section className="command-pulse">
+            <div className="command-pulse__header">
+              <div>
+                <p className="section-header__eyebrow">Command pulse</p>
+                <h2 className="section-header__title">Live attention feed</h2>
+              </div>
+              <Link className="text-link" href="/actions">
+                Open action center
+              </Link>
+            </div>
+            <div className="command-pulse__grid">
+              {attentionItems.length ? (
+                attentionItems.map((item) => (
+                  <Link key={`${item.href}-${item.title}`} className="command-pulse__item" href={item.href} data-tone={item.tone}>
+                    <Badge tone={item.tone}>{item.label}</Badge>
+                    <span className="command-pulse__title">{item.title}</span>
+                    <span className="command-pulse__meta">{item.meta}</span>
+                  </Link>
+                ))
+              ) : (
+                <div className="command-pulse__empty">
+                  <span className="cell-title">No active attention items</span>
+                  <span className="cell-subtle">The current operating snapshot is quiet.</span>
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="split-grid split-grid--golden">
             <div>
               <SectionHeader
                 eyebrow="Risk signal"
                 title="High-value failed payment alert"
-                description="Churn defuser logic classifies failed payments before any real Slack or CRM integration is needed."
               />
               <Panel>
                 {highestPriorityChurnAction ? (
                   <div className="alert-panel">
                     <div className="alert-panel__header">
-                      <div className="cell-stack">
-                        <p className="panel__kicker">Mock operational response</p>
+                      <div className="alert-panel__headline">
+                        <SeverityBadge severity={highestPriorityChurnAction.riskLevel} />
                         <h3 className="panel__title">{highestPriorityChurnAction.title}</h3>
-                        <p className="panel__copy">{highestPriorityChurnAction.body}</p>
+                        <p className="alert-panel__summary">{highestPriorityChurnAction.body}</p>
                       </div>
-                      <div className="badge-row">
-                        <Badge tone={getRiskTone(highestPriorityChurnAction.riskLevel)} leadingDot>
-                          {highestPriorityChurnAction.riskLevel} risk
-                        </Badge>
-                        <Badge tone={highestPriorityChurnAction.requiresHumanTask ? "warning" : "positive"} leadingDot>
+                      <div className="badge-row alert-panel__badges">
+                        <Badge tone={highestPriorityChurnAction.requiresHumanTask ? "warning" : "positive"}>
                           {highestPriorityChurnAction.requiresHumanTask ? "Human task required" : "Automated recovery"}
                         </Badge>
+                        <Badge tone={getRiskTone(highestPriorityChurnAction.riskLevel)}>
+                          {highestPriorityChurnAction.riskLevel} risk
+                        </Badge>
                       </div>
                     </div>
-                    <div className="mini-stats">
-                      <div className="mini-stat">
-                        <p className="mini-stat__label">Account</p>
-                        <Link className="text-link mini-stat__value" href={`/accounts/${highestPriorityChurnAction.accountId}`}>
-                          {highestPriorityChurnAction.accountName}
-                        </Link>
+                    <dl className="description-list description-list--alert">
+                      <div className="description-list__item">
+                        <dt className="description-list__label">Account</dt>
+                        <dd className="description-list__value">
+                          <Link className="text-link" href={`/accounts/${highestPriorityChurnAction.accountId}`}>
+                            {highestPriorityChurnAction.accountName}
+                          </Link>
+                        </dd>
                       </div>
-                      <div className="mini-stat">
-                        <p className="mini-stat__label">Recommended owner</p>
-                        <p className="mini-stat__value">{highestPriorityChurnAction.recommendedOwner}</p>
+                      <div className="description-list__item">
+                        <dt className="description-list__label">Recommended owner</dt>
+                        <dd className="description-list__value">{highestPriorityChurnAction.recommendedOwner}</dd>
                       </div>
-                      <div className="mini-stat">
-                        <p className="mini-stat__label">Grace window</p>
-                        <p className="mini-stat__value">{highestPriorityChurnAction.gracePeriodRecommendation}</p>
+                      <div className="description-list__item">
+                        <dt className="description-list__label">Grace window</dt>
+                        <dd className="description-list__value">{highestPriorityChurnAction.gracePeriodRecommendation}</dd>
                       </div>
-                    </div>
-                    <div className="alert-panel__footer">
+                    </dl>
+                    <div className="callout-panel">
                       <div>
                         <p className="panel__kicker">Recommended action</p>
                         <p className="panel__copy">{highestPriorityChurnAction.recommendedAction}</p>
                       </div>
-                      <span className="cell-subtle">Logged {formatDateTime(highestPriorityChurnAction.createdAt)}</span>
+                      <span className="cell-subtle cell-nowrap">
+                        Logged {formatRelativeTime(highestPriorityChurnAction.createdAt)}
+                      </span>
                     </div>
                   </div>
                 ) : (
@@ -192,10 +200,9 @@ export default async function OverviewPage() {
               <SectionHeader
                 eyebrow="Triage"
                 title="Open ops actions"
-                description="The highest-priority work the action center is surfacing right now."
                 action={
                   <Link className="text-link" href="/actions">
-                    Open action center
+                    View All &rarr;
                   </Link>
                 }
               />
@@ -203,20 +210,20 @@ export default async function OverviewPage() {
                 {openOpsActions.length ? (
                   <div className="list list--compact">
                     {openOpsActions.map((action) => (
-                      <div key={action.id} className="list-row list-row--stack-mobile">
-                        <div className="cell-stack">
-                          <Link className="text-link cell-title" href={`/accounts/${action.accountId}`}>
-                            {action.accountName}
-                          </Link>
-                          <span className="cell-title">{action.title}</span>
-                          <span className="cell-subtle">{action.suggestedNextStep}</span>
-                        </div>
-                        <div className="list-row__meta">
-                          <div className="badge-row">
+                      <div key={action.id} className="list-row">
+                        <div className="list-row__content">
+                          <div className="list-row__content-line">
                             <SeverityBadge severity={action.severity} />
-                            <SourceBadge source={action.source} />
+                            <Link className="text-link cell-title cell-nowrap" href={`/accounts/${action.accountId}`}>
+                              {action.accountName}
+                            </Link>
+                            <span className="cell-title cell-nowrap">{action.title}</span>
                           </div>
-                          <span className="cell-subtle">{formatDateTime(action.createdAt)}</span>
+                          <div className="list-row__content-line list-row__content-line--secondary">
+                            <span className="cell-subtle list-row__next-step">{action.suggestedNextStep}</span>
+                            <SourceBadge source={action.source} />
+                            <span className="cell-subtle">{formatRelativeTime(action.createdAt)}</span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -236,7 +243,6 @@ export default async function OverviewPage() {
               <SectionHeader
                 eyebrow="Observability"
                 title="Recent event stream preview"
-                description="Normalized events stay visible before any downstream side effects fire."
                 action={
                   <Link className="text-link" href="/events">
                     Open event log
@@ -274,7 +280,7 @@ export default async function OverviewPage() {
                   {
                     key: "receivedAt",
                     header: "Received",
-                    render: (row) => <span className="cell-subtle cell-nowrap">{formatDateTime(row.receivedAt)}</span>
+                    render: (row) => <span className="cell-subtle cell-nowrap">{formatRelativeTime(row.receivedAt)}</span>
                   }
                 ]}
                 emptyTitle="No recent events yet"
@@ -286,7 +292,6 @@ export default async function OverviewPage() {
               <SectionHeader
                 eyebrow="Reliability"
                 title="Queue health preview"
-                description="Blocked downstream work waiting on retry or manual intervention."
                 action={
                   <Link className="text-link" href="/queue">
                     Review queue
@@ -330,7 +335,7 @@ export default async function OverviewPage() {
 
           <section className="split-grid split-grid--two">
             <div>
-              <SectionHeader eyebrow="Exposure" title="Revenue risk panel" description="Accounts currently carrying revenue exposure in the current data source." />
+              <SectionHeader eyebrow="Exposure" title="Revenue risk panel" />
               <Panel>
                 {atRiskAccounts.length ? (
                   <div className="list list--compact">
@@ -364,8 +369,7 @@ export default async function OverviewPage() {
               <SectionHeader
                 eyebrow="Health"
                 title="Account health panel"
-                description="Commercial health, usage density, and mismatch pressure for monitored accounts."
-                action={firstAccount ? <Link className="text-link" href={`/accounts/${firstAccount.id}`}>Inspect an account</Link> : null}
+                action={firstAccount ? <Link className="text-link" href={`/accounts/${firstAccount.id}`}>View accounts &rarr;</Link> : null}
               />
               <Panel>
                 {accounts.length ? (
@@ -409,16 +413,15 @@ export default async function OverviewPage() {
           </section>
 
           <section>
-            <SectionHeader
-              eyebrow="Data quality"
-              title="Discrepancy watchlist"
-              description="Commercial drift that can distort lifecycle status, renewals, and account ownership."
+              <SectionHeader
+                eyebrow="Data quality"
+                title="Discrepancy watchlist"
               action={
                 <Link className="text-link" href="/reconciler">
-                  Open reconciler
+                  View reconciler &rarr;
                 </Link>
               }
-            />
+              />
             <DataTable
               rows={openDiscrepancies}
               getRowKey={(row) => row.id}
@@ -452,73 +455,6 @@ export default async function OverviewPage() {
               emptyDescription="Billing and CRM are currently aligned for the active data source."
             />
           </section>
-        </div>
-
-          <aside className="content-rail">
-          <CollapsibleRailCard eyebrow="Attention rail" title="What needs attention">
-            <div className="attention-list attention-list--rail">
-              {attentionItems.length ? (
-                attentionItems.map((item) => (
-                  <div key={item.id} className="attention-item">
-                    <Badge tone={item.tone} className="badge--severity" leadingDot>
-                      Attention
-                    </Badge>
-                    <div className="attention-item__copy">
-                      <p className="attention-item__title">{item.title}</p>
-                      <p className="attention-item__description">{item.description}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="attention-item attention-item--empty">
-                  <div className="attention-item__copy">
-                    <p className="attention-item__title">No active escalations</p>
-                    <p className="attention-item__description">The queue and action center are quiet in the current snapshot.</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </CollapsibleRailCard>
-
-          <div className="rail-card rail-card--compact">
-            <p className="rail-card__eyebrow">System posture</p>
-            <h3 className="rail-card__title">What the demo proves</h3>
-            <div className="rail-card__list">
-              <div className="rail-row">
-                <span className="rail-row__label">Event logging first</span>
-                <span className="rail-row__value">Stable audit trail</span>
-              </div>
-              <div className="rail-row">
-                <span className="rail-row__label">Dead-letter recovery</span>
-                <span className="rail-row__value">{queueItems.length} queue items</span>
-              </div>
-              <div className="rail-row">
-                <span className="rail-row__label">Human operator work</span>
-                <span className="rail-row__value">{actionCenter.openActions.length} open actions</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="rail-card rail-card--compact">
-            <p className="rail-card__eyebrow">Signal counts</p>
-            <h3 className="rail-card__title">Immediate watchlist</h3>
-            <div className="rail-card__stack">
-              <div className="signal-card">
-                <span className="signal-card__label">High severity actions</span>
-                <span className="signal-card__value">{actionCenter.highCriticalCount}</span>
-              </div>
-              <div className="signal-card">
-                <span className="signal-card__label">Retrying or pending</span>
-                <span className="signal-card__value">{queueItems.filter((item) => item.status === "pending" || item.status === "retrying").length}</span>
-              </div>
-              <div className="signal-card">
-                <span className="signal-card__label">Accounts at risk</span>
-                <span className="signal-card__value">{atRiskAccounts.length}</span>
-              </div>
-            </div>
-          </div>
-        </aside>
-      </section>
     </AppShell>
   );
 }

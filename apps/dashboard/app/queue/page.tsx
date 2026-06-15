@@ -9,22 +9,18 @@ import { getQueueItems } from "../../lib/data/queue";
 function buildSections(queueItems: Awaited<ReturnType<typeof getQueueItems>>) {
   return [
     {
-      description: "Queued items waiting for the next automatic retry window.",
       items: queueItems.filter((item) => item.status === "pending"),
       title: "Pending retry items"
     },
     {
-      description: "Items actively being worked or manually replayed now.",
       items: queueItems.filter((item) => item.status === "retrying"),
       title: "Retrying items"
     },
     {
-      description: "Items that need an operator because retries are exhausted or the failure is non-retryable.",
       items: queueItems.filter((item) => item.status === "failed" || item.status === "escalated"),
       title: "Failed or escalated items"
     },
     {
-      description: "Recovered items stay visible so the demo can show what successful replay looks like.",
       items: queueItems.filter((item) => item.status === "resolved"),
       title: "Resolved items"
     }
@@ -42,8 +38,7 @@ export default async function QueuePage() {
     <AppShell>
       <PageHeader
         eyebrow="Recovery queue"
-        title="Dead-letter reliability control surface"
-        description="Retryable workflow failures are isolated here until Iter SyncCore can recover them automatically or an operator intervenes."
+        title="Recovery Queue"
       >
         <div className="badge-row">
           <Badge tone="warning" leadingDot>
@@ -58,7 +53,7 @@ export default async function QueuePage() {
         </div>
       </PageHeader>
 
-      <section className="hero-band hero-band--compact">
+      <section className="hero-band">
         <div className="hero-band__stats hero-band__stats--dense">
           <div>
             <p className="hero-band__stat-label">Active retry workload</p>
@@ -73,26 +68,19 @@ export default async function QueuePage() {
             <p className="hero-band__stat-value">{resolvedCount}</p>
           </div>
         </div>
-        <div className="hero-band__aside">
-          <p className="hero-band__aside-title">Manual replay behavior</p>
-          <p className="hero-band__aside-copy">
-            Force Retry stays inside the demo retry engine. No real Stripe, HubSpot, or Slack integration is called.
-          </p>
-        </div>
       </section>
 
       <section>
         <SectionHeader
           eyebrow="Dead-letter queue"
           title="DLQ workload"
-          description="Each item shows blocked target system, retry schedule, escalation posture, and the last observed error."
         />
         {queueItems.length ? (
           <div className="queue-section-stack">
             {sections.map((section) =>
               section.items.length ? (
                 <div key={section.title} className="queue-section">
-                  <SectionHeader eyebrow="Queue section" title={section.title} description={section.description} />
+                  <SectionHeader eyebrow="Queue section" title={section.title} />
                   <div className="card-grid card-grid--two">
                     {section.items.map((item) => (
                       <QueueRetryCard key={item.id} item={item} />
