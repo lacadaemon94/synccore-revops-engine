@@ -1,0 +1,218 @@
+.container {
+  display: grid;
+  gap: var(--space-3xl);
+  min-width: 0;
+  align-content: start;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  font-size: var(--font-size-base-dim-plus);
+  color: var(--text-dim);
+}
+
+.breadcrumbButton {
+  background: var(--surface-raise);
+  border: 1px solid var(--border-2);
+  color: var(--fg);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base-dim-plus);
+  cursor: pointer;
+  transition: background var(--transition-normal);
+  white-space: nowrap;
+}
+
+.breadcrumbButton:hover {
+  background: var(--surface-hover);
+}
+
+.breadcrumbPath {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+}
+
+.headerSection {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: var(--space-7xl);
+}
+
+.headerContent {
+  min-width: 0;
+}
+
+.headerTitle {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-3xl);
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+  margin: 0;
+  color: var(--fg-bright);
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.statusBadge {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  background: var(--overlay);
+}
+
+.statusBadge[data-status="churn-risk"] { color: var(--critical); background: var(--critical-bg); }
+.statusBadge[data-status="at-risk"] { color: var(--warn); background: var(--warn-bg); }
+.statusBadge[data-status="healthy"] { color: var(--success); background: var(--success-bg); }
+
+.headerMeta {
+  font-size: var(--font-size-base-plus);
+  color: var(--text-dim);
+  margin: var(--space-xl) 0 0;
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.metaSeparator {
+  color: var(--border-3);
+}
+
+.metaBlock {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+}
+
+.metaSegment {
+  text-transform: capitalize;
+}
+
+.metaPlan {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  text-transform: capitalize;
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.button {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+}
+
+.buttonSecondary {
+  background: var(--surface-raise);
+  color: var(--fg);
+  border: 1px solid var(--border-2);
+}
+
+.buttonSecondary:hover {
+  background: var(--surface-hover);
+}
+
+.buttonPrimary {
+  background: var(--fg);
+  color: var(--bg);
+  border: 1px solid var(--fg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.buttonPrimary:hover {
+  opacity: 0.9;
+}
+
+.kpiSection {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.kpiItem {
+  padding: var(--space-2xl) var(--space-3xl);
+  border-right: 1px solid var(--border);
+}
+
+.kpiItem:last-child {
+  border-right: none;
+}
+
+.kpiLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.kpiValue {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-2xl);
+  letter-spacing: -0.02em;
+  margin-top: var(--space-lg);
+  line-height: 1;
+  color: var(--fg-bright);
+}
+
+.kpiItem[data-health-level="critical"] .kpiValue { color: var(--critical); }
+.kpiItem[data-health-level="critical"] .healthBarFill { background: var(--critical); }
+.kpiItem[data-health-level="warn"] .kpiValue { color: var(--warn); }
+.kpiItem[data-health-level="warn"] .healthBarFill { background: var(--warn); }
+.kpiItem[data-health-level="success"] .kpiValue { color: var(--success); }
+.kpiItem[data-health-level="success"] .healthBarFill { background: var(--success); }
+
+.kpiSubtext {
+  font-size: var(--font-size-base-dim);
+  color: var(--text-dim);
+  margin-top: var(--space-sm);
+}
+
+.kpiSuccessValue {
+  color: var(--success);
+}
+
+.healthBar {
+  height: 5px;
+  background: var(--border);
+  margin-top: var(--space-lg);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.healthBarFill {
+  height: 100%;
+  width: var(--health-percent, 0%);
+}
+
+.gridSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: minmax(0, auto);
+  gap: var(--space-5xl);
+  min-width: 0;
+  align-items: stretch;
+}
+
+.gridSection > * {
+  min-width: 0;
+}

@@ -1,0 +1,149 @@
+/* TOKENS.css - Design System Tokens for SyncCore Revamp */
+
+:root {
+  /* ============================ FONTS ============================ */
+  --font-heading: 'Nunito', system-ui, -apple-system, sans-serif;
+  --font-body: 'Roboto', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+
+  /* ============================ SPACING ============================ */
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 10px;
+  --space-lg: 12px;
+  --space-xl: 14px;
+  --space-2xl: 16px;
+  --space-3xl: 18px;
+  --space-4xl: 20px;
+  --space-5xl: 22px;
+  --space-6xl: 24px;
+  --space-7xl: 28px;
+  --space-8xl: 32px;
+  --space-9xl: 36px;
+  --space-10xl: 40px;
+  --space-layout-pad: 56px;
+
+  /* ============================ BORDER RADIUS ============================ */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 5px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --radius-full: 50%;
+
+  /* ============================ TYPOGRAPHY ============================ */
+  --font-size-xs: 10px;
+  --font-size-sm: 11px;
+  --font-size-sm-plus: 11.5px;
+  --font-size-base-dim: 12px;
+  --font-size-base-dim-plus: 12.5px;
+  --font-size-base: 13px;
+  --font-size-base-plus: 13.5px;
+  --font-size-md: 14px;
+  --font-size-md-plus: 14.5px;
+  --font-size-lg: 15px;
+  --font-size-xl: 17px;
+  --font-size-2xl: 22px;
+  --font-size-3xl: 28px;
+  --font-size-4xl: 30px;
+  --font-size-5xl: 32px;
+  --font-size-display: 68px;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* ============================ MOTION / DURATION ============================ */
+  --transition-fast: 0.14s ease;
+  --transition-normal: 0.18s ease;
+
+  /* ============================ SIDEBAR ============================ */
+  --sidebar-width-expanded: 260px;
+  --sidebar-width-collapsed: 64px;
+  --sidebar-width: var(--sidebar-width-expanded);
+  --shell-header-height: 64px;
+
+  /* ============================ SHADOWS ============================ */
+  --shadow-modal: 0 24px 70px rgba(0, 0, 0, 0.5);
+
+  /* ============================ THEME VARIABLES (DARK DEFAULT) ============================ */
+  --bg: #0C0C0C;
+  --surface: #131210;
+  --surface-sunk: #0E0E0D;
+  --surface-raise: #151311;
+  --surface-hover: var(--surface-raise);
+  --nav-active: #28241E;
+  --nav-active-strong: #2F2A22;
+  --nav-hover: #1A1815;
+  --stage-hover: var(--surface-raise);
+  
+  --border: #1F1D19;
+  --border-2: #2A2722;
+  --border-3: #3A3731;
+  
+  --fg: #EDE7D7;
+  --fg-bright: #F4EFE2;
+  --text-dim: #A8A498;
+  --text-faint: #6E6A5E;
+  
+  --critical: #E76C66;
+  --warn: #E5A04C;
+  --success: #58B96A;
+  --link: #7FB0F0;
+  --info: #6FB5C9;
+
+  --critical-bg: rgba(231, 108, 102, 0.13);
+  --warn-bg: rgba(229, 160, 76, 0.13);
+  --success-bg: rgba(88, 185, 106, 0.13);
+  --link-bg: rgba(127, 176, 240, 0.13);
+  --info-bg: rgba(111, 181, 201, 0.13);
+  --success-glow: rgba(88, 185, 106, 0.18);
+  --shadow-glow: 0 0 0 3px var(--success-glow);
+  --focus-ring: 0 0 0 2px var(--border-3);
+  
+  --overlay: rgba(25, 23, 19, 0.19);
+}
+
+[data-sidebar='collapsed'] {
+  --sidebar-width: var(--sidebar-width-collapsed);
+}
+
+/* ============================ LIGHT MODE OVERRIDES ============================ */
+[data-theme="light"] {
+  --bg: #F2EFE6;
+  --surface: #FFFFFF;
+  --surface-sunk: #ECE8DC;
+  --surface-raise: #F7F4EC;
+  --nav-active: #D8D2C2;
+  --nav-active-strong: #CFC8B5;
+  --nav-hover: #E9E4D6;
+  
+  --border: #E5E0D2;
+  --border-2: #D8D2C2;
+  --border-3: #C4BDA9;
+  
+  --fg: #1A1A1A;
+  --fg-bright: #141414;
+  --text-dim: #5F5A4C;
+  --text-faint: #8A8472;
+  
+  --critical: #C8403D;
+  --warn: #B8862B;
+  --success: #2F7A3A;
+  --link: #2A6FB0;
+  --info: #2C7A8C;
+
+  --critical-bg: rgba(200, 64, 61, 0.10);
+  --warn-bg: rgba(184, 134, 43, 0.12);
+  --success-bg: rgba(47, 122, 58, 0.10);
+  --link-bg: rgba(42, 111, 176, 0.10);
+  --info-bg: rgba(44, 122, 140, 0.10);
+  --success-glow: rgba(47, 122, 58, 0.20);
+  --shadow-glow: 0 0 0 3px var(--success-glow);
+  
+  --overlay: rgba(20, 20, 20, 0.035);
+}

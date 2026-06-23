@@ -1,0 +1,73 @@
+.track {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  gap: 0;
+  background: var(--surface-sunk);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.segment {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  cursor: pointer;
+  isolation: isolate;
+  transition: color var(--transition-fast);
+}
+
+.segment:hover {
+  color: var(--text-dim);
+}
+
+.segment[data-active='true'] {
+  color: var(--fg-bright);
+}
+
+.segment[data-active='true'] svg * {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.segment:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 1px 2px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+[data-theme='light'] .indicator {
+  background: var(--surface);
+  border-color: var(--border-2);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.iconWrap {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

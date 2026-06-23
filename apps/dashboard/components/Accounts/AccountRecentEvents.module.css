@@ -1,0 +1,74 @@
+.section {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--space-xl);
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-xl);
+  letter-spacing: -0.008em;
+  color: var(--fg-bright);
+}
+
+.container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-sm) 0;
+}
+
+.eventItem {
+  display: grid;
+  grid-template-columns: 6px 1fr auto;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-md) var(--space-2xl);
+}
+
+.eventItem[data-kind="invoice"],
+.eventItem[data-kind="action"] { --dot-color: var(--critical); }
+.eventItem[data-kind="drift"] { --dot-color: var(--warn); }
+.eventItem[data-kind="event"] { --dot-color: var(--link); }
+.eventItem[data-kind="recovery"] { --dot-color: var(--success); }
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--dot-color, currentColor);
+  flex-shrink: 0;
+}
+
+.content {
+  font-size: var(--font-size-md);
+  min-width: 0;
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.label {
+  color: var(--fg);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+}
+
+.sub {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+  white-space: nowrap;
+}

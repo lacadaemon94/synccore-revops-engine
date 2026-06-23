@@ -1,0 +1,90 @@
+.laneContainer {
+  background: var(--surface-sunk);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-height: 72vh;
+}
+
+/* Lane Header */
+.laneHeader {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.laneDot {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  border-radius: 50%;
+  background-color: var(--lane-dot-color, var(--text-faint));
+  box-shadow: 0 0 0 3px var(--overlay);
+  flex-shrink: 0;
+}
+
+.laneTitle {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base-plus);
+  color: var(--fg-bright);
+  min-width: 0;
+}
+
+.laneCount {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+  background: var(--overlay);
+  padding: 1px var(--space-sm);
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+
+/* Lane Content */
+.laneContent {
+  padding: var(--space-sm);
+  overflow-y: auto;
+  display: grid;
+  gap: var(--space-sm);
+  align-content: start;
+  flex: 1;
+  min-width: 0;
+}
+
+.cardGrid {
+  display: grid;
+  gap: var(--space-sm);
+  align-content: start;
+}
+
+.emptyState {
+  padding: var(--space-7xl) var(--space-lg);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+}
+
+/* Scrollbar styling */
+.laneContent::-webkit-scrollbar {
+  width: var(--space-sm);
+}
+
+.laneContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.laneContent::-webkit-scrollbar-thumb {
+  background: var(--border-2);
+  border-radius: var(--radius-sm);
+}
+
+.laneContent::-webkit-scrollbar-thumb:hover {
+  background: var(--border);
+}

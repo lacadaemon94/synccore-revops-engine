@@ -1,0 +1,193 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 200;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8vh var(--space-2xl) var(--space-2xl);
+  animation: paletteFade 0.14s ease;
+}
+
+@keyframes paletteFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.palette {
+  width: 100%;
+  max-width: 680px;
+  max-height: 80vh;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: paletteRise 0.16s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes paletteRise {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.searchRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-xl);
+  border-bottom: 1px solid var(--border);
+}
+
+.searchIcon {
+  display: flex;
+  color: var(--text-faint);
+}
+
+.searchInput {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: var(--space-xs) 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  color: var(--fg-bright);
+}
+
+.searchInput::placeholder {
+  color: var(--text-faint);
+}
+
+.escKbd {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-dim);
+  border: 1px solid var(--border-2);
+  background: var(--surface-raise);
+  border-radius: var(--radius-xs);
+  padding: 2px var(--space-sm);
+}
+
+.results {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-sm) 0;
+}
+
+.group {
+  padding: var(--space-sm) 0;
+}
+
+.groupLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: var(--space-xs) var(--space-xl);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 18px auto 1fr auto;
+  align-items: center;
+  gap: var(--space-lg);
+  width: 100%;
+  padding: var(--space-sm) var(--space-xl);
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.row[data-active="true"] {
+  background: var(--nav-active);
+}
+
+.rowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+}
+
+.row[data-active="true"] .rowIcon {
+  color: var(--fg-bright);
+}
+
+.rowLabel {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base-plus);
+  font-weight: var(--font-weight-semibold);
+  color: var(--fg-bright);
+  white-space: nowrap;
+}
+
+.rowSub {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm-plus);
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowTrailing {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm-plus);
+  color: var(--text-faint);
+  display: inline-flex;
+  align-items: center;
+}
+
+.empty {
+  padding: var(--space-7xl) var(--space-xl);
+  text-align: center;
+  color: var(--text-dim);
+  font-size: var(--font-size-base);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-xl);
+  border-top: 1px solid var(--border);
+  background: var(--overlay);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+}
+
+.footerHints {
+  display: flex;
+  gap: var(--space-2xl);
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.kbd {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-dim);
+  border: 1px solid var(--border-2);
+  background: var(--surface-raise);
+  border-radius: var(--radius-xs);
+  padding: 1px var(--space-sm);
+}
+
+.resultCount {
+  color: var(--text-dim);
+}

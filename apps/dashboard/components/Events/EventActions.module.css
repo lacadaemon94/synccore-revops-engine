@@ -1,0 +1,41 @@
+.primaryButton {
+  background: var(--fg);
+  color: var(--bg);
+  border: 1px solid var(--fg);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.primaryButton:hover {
+  background: var(--fg-bright);
+  border-color: var(--fg-bright);
+}
+
+.primaryButton:active {
+  transform: scale(0.98);
+}
+
+.secondaryButton {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border-2);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.secondaryButton:hover {
+  color: var(--fg-bright);
+  border-color: var(--border);
+  background: var(--surface-raise);
+}
+
+.secondaryButton:active {
+  transform: scale(0.98);
+}

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C0C0C; --surface:#131210; --surface-sunk:#0E0E0D; --surface-raise:#151311; --nav-active:#1A1815;
+    --border:#1F1D19; --border-2:#2A2722; --border-3:#3A3731;
+    --fg:#EDE7D7; --fg-bright:#F4EFE2; --text-dim:#A8A498; --text-faint:#6E6A5E;
+    --critical:#E76C66; --warn:#E5A04C; --success:#58B96A; --link:#7FB0F0;
+    --critical-bg:rgba(231,108,102,0.13); --warn-bg:rgba(229,160,76,0.13); --success-glow:rgba(88,185,106,0.18);
+    --link-bg:rgba(127,176,240,0.13); --success-bg:rgba(88,185,106,0.13);
+    --overlay:#19171331;
+  }
+  [data-theme="light"]{
+    --bg:#F2EFE6; --surface:#FFFFFF; --surface-sunk:#ECE8DC; --surface-raise:#F7F4EC; --nav-active:#E9E4D6;
+    --border:#E5E0D2; --border-2:#D8D2C2; --border-3:#C4BDA9;
+    --fg:#1A1A1A; --fg-bright:#141414; --text-dim:#5F5A4C; --text-faint:#8A8472;
+    --critical:#C8403D; --warn:#B8862B; --success:#2F7A3A; --link:#2A6FB0;
+    --critical-bg:rgba(200,64,61,0.10); --warn-bg:rgba(184,134,43,0.12); --success-glow:rgba(47,122,58,0.20);
+    --link-bg:rgba(42,111,176,0.10); --success-bg:rgba(47,122,58,0.10);
+    --overlay:rgba(20,20,20,0.035);
+  }
+  html{ background: var(--bg); transition: background 0.18s ease; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: 'Roboto', system-ui, sans-serif; transition: background 0.18s ease, color 0.18s ease; }
+  *, *::before, *::after { box-sizing: border-box; }
+  *::selection { background: var(--fg); color: var(--bg); }
+  button { font: inherit; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 6px; }
+  @keyframes scBackdrop { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes scPanel { from { opacity: 0; transform: translateY(-8px) scale(0.985); } to { opacity: 1; transform: none; } }
+  @keyframes scPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  @keyframes scCard { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes scSpin { to { transform: rotate(360deg); } }
+</style>
+</helmet>
+
+<div style="display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; background: var(--bg); color: var(--fg);">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside style="border-right: 1px solid var(--border); background: var(--surface-sunk); display: flex; flex-direction: column;">
+    <div style="padding: 22px 20px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border);">
+      <div style="width: 26px; height: 26px; background: var(--fg); color: var(--bg); display: grid; place-items: center; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: -0.02em; border-radius: 4px;">S</div>
+      <div>
+        <div style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14.5px; letter-spacing: -0.005em; line-height: 1;">SyncCore</div>
+        <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint); margin-top: 3px;">acme · prod</div>
+      </div>
+    </div>
+
+    <nav style="padding: 14px 12px; display: grid; gap: 1px;">
+      <a href="Overview v3.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">▤</span>
+        <span>Overview</span>
+        <span></span>
+      </a>
+      <a href="Accounts.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">◰</span>
+        <span>Accounts</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); font-weight: 400;">48</span>
+      </a>
+      <a href="Actions.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">●</span>
+        <span>Actions</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--critical); font-weight: 500;">12</span>
+      </a>
+      <a href="Events.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">≡</span>
+        <span>Events</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); font-weight: 400;">2.5k</span>
+      </a>
+      <a href="Reconciler.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">⇌</span>
+        <span>Reconciler</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--warn); font-weight: 500;">7</span>
+      </a>
+      <a style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; background: var(--nav-active); box-shadow: inset 2px 0 0 var(--fg); font-size: 13.5px; font-weight: 600; color: var(--fg); font-family: 'Nunito', sans-serif;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--fg);">↻</span>
+        <span>Queue</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--warn); font-weight: 500;">{{ activeCount }}</span>
+      </a>
+    </nav>
+
+    <div style="margin: 14px 12px 0; padding: 13px 13px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint);">Workers</div>
+        <span style="display: inline-flex; align-items: center; gap: 5px; font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--success);"><span style="width: 5px; height: 5px; border-radius: 50%; background: var(--success); animation: scPulse 1.4s ease-in-out infinite;"></span>4 up</span>
+      </div>
+      <div style="display: grid; gap: 7px;">
+        <sc-for list="{{ workers }}" as="w" hint-placeholder-count="4">
+          <div style="display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 8px;">
+            <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-dim);">{{ w.name }}</span>
+            <div style="height: 4px; border-radius: 3px; background: var(--border); overflow: hidden;"><div style="{{ w.barStyle }}"></div></div>
+            <span style="font-family: 'Roboto Mono', monospace; font-size: 9.5px; color: var(--text-faint);">{{ w.load }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; padding: 16px 16px 18px; border-top: 1px solid var(--border); display: grid; gap: 4px;">
+      <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint);">Runtime</div>
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-dim);">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px var(--success-glow);"></span>
+        <span>Supabase · live</span>
+      </div>
+      <div style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); margin-top: 6px;">v0.41.2 · us-east-1</div>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <div style="display: grid; grid-template-rows: auto 1fr; min-width: 0;">
+
+    <!-- TOPBAR -->
+    <header style="display: grid; grid-template-columns: 1fr 480px 1fr; align-items: center; gap: 16px; padding: 12px 28px; border-bottom: 1px solid var(--border); background: var(--bg);">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">queue</div>
+      </div>
+      <button onClick="{{ openPalette }}" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--surface-raise); border: 1px solid var(--border-2); border-radius: 6px; width: 100%; text-align: left; color: var(--text-dim); font-size: 13px; font-family: 'Roboto', sans-serif;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--fg);">⌘K</span>
+        <span style="color: var(--border-3);">|</span>
+        <span>find queue item, retry, jump to…</span>
+      </button>
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-dim);">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px var(--success-glow);"></span>
+          <span>drain rate 11 / s</span>
+        </div>
+        <button onClick="{{ toggleTheme }}" aria-label="Toggle black / alabaster theme" title="Toggle theme" style="display: inline-flex; align-items: center; background: var(--surface-raise); border: 1px solid var(--border-2); border-radius: 6px; padding: 2px; gap: 0;">
+          <span style="{{ darkPillStyle }}">●</span>
+          <span style="{{ lightPillStyle }}">○</span>
+        </button>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--fg); color: var(--bg); display: grid; place-items: center; font-family: 'Nunito', sans-serif; font-size: 11.5px; font-weight: 700;">JC</div>
+      </div>
+    </header>
+
+    <!-- PAGE -->
+    <main data-screen-label="Recovery queue" style="padding: 24px 32px 40px; display: grid; gap: 18px; min-width: 0; align-content: start; grid-template-rows: auto auto 1fr;">
+
+      <section style="display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 28px;">
+        <div>
+          <div style="font-family: 'Roboto Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint);">Dead-letter recovery</div>
+          <h1 style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 30px; line-height: 1.1; letter-spacing: -0.018em; margin: 6px 0 0; color: var(--fg-bright);">Recovery Queue</h1>
+          <p style="font-size: 14px; color: var(--text-dim); margin: 8px 0 0;">Retryable failures, replayed on a backoff schedule · <span style="color: var(--fg-bright); font-weight: 500;">{{ activeCount }} active</span> · <span style="color: var(--critical); font-weight: 500;">{{ escalationCount }} need a human</span></p>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span style="display: inline-flex; align-items: center; gap: 7px; font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-dim); border: 1px solid var(--border-2); background: var(--surface-raise); padding: 7px 11px; border-radius: 6px;">backoff <span style="color: var(--warn);">15m</span> → <span style="color: var(--warn);">30m</span> → <span style="color: var(--warn);">60m</span></span>
+          <button onClick="{{ drainAll }}" style="background: var(--fg); color: var(--bg); border: 1px solid var(--fg); padding: 8px 13px; border-radius: 6px; font-size: 13px; font-weight: 600;">Drain retryable</button>
+        </div>
+      </section>
+
+      <!-- KANBAN BOARD -->
+      <section style="display: grid; grid-template-columns: repeat(4, minmax(250px, 1fr)); gap: 14px; align-items: start; overflow-x: auto; padding-bottom: 4px;">
+        <sc-for list="{{ lanes }}" as="lane" hint-placeholder-count="4">
+          <div style="background: var(--surface-sunk); border: 1px solid var(--border); border-radius: 9px; display: flex; flex-direction: column; min-width: 0; max-height: 72vh;">
+            <!-- lane header -->
+            <div style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 9px; padding: 13px 14px; border-bottom: 1px solid var(--border);">
+              <span style="{{ lane.dotStyle }}"></span>
+              <span style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px; color: var(--fg-bright);">{{ lane.title }}</span>
+              <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint); background: var(--overlay); padding: 1px 8px; border-radius: 100px;">{{ lane.count }}</span>
+            </div>
+
+            <!-- cards -->
+            <div style="padding: 11px; display: grid; gap: 11px; overflow-y: auto; align-content: start;">
+              <sc-for list="{{ lane.cards }}" as="c" hint-placeholder-count="3">
+                <div style="{{ c.cardStyle }}">
+                  <!-- head -->
+                  <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px;">
+                    <div style="min-width: 0;">
+                      <div style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px; color: var(--fg-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ c.account }}</div>
+                      <div style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">→ {{ c.target }}</div>
+                    </div>
+                    <span style="{{ c.failChipStyle }}">{{ c.failClass }}</span>
+                  </div>
+
+                  <!-- retry meter -->
+                  <div style="margin-top: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                      <span style="font-family: 'Roboto Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint);">attempts</span>
+                      <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-dim);">{{ c.retryCount }} / {{ c.maxRetries }}</span>
+                    </div>
+                    <div style="display: flex; gap: 4px;">
+                      <sc-for list="{{ c.segments }}" as="seg" hint-placeholder-count="3">
+                        <div style="{{ seg.style }}"></div>
+                      </sc-for>
+                    </div>
+                  </div>
+
+                  <!-- countdown / state row -->
+                  <div style="{{ c.timerRowStyle }}">
+                    <span style="{{ c.timerIconStyle }}">{{ c.timerIcon }}</span>
+                    <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-dim);">{{ c.timerText }}</span>
+                    <span style="{{ c.timerValStyle }}">{{ c.timerVal }}</span>
+                  </div>
+
+                  <!-- last error -->
+                  <div style="margin-top: 10px; font-size: 11.5px; line-height: 1.4; color: var(--text-faint); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ c.lastError }}</div>
+
+                  <!-- feedback -->
+                  <sc-if value="{{ c.hasFeedback }}" hint-placeholder-val="{{ false }}">
+                    <div style="{{ c.feedbackStyle }}">{{ c.feedbackText }}</div>
+                  </sc-if>
+
+                  <!-- action -->
+                  <button onClick="{{ c.forceRetry }}" style="{{ c.btnStyle }}">{{ c.btnLabel }}</button>
+                </div>
+              </sc-for>
+
+              <sc-if value="{{ lane.empty }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 26px 12px; text-align: center; font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">{{ lane.emptyText }}</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============================ COMMAND PALETTE ============================ -->
+  <sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closePalette }}" style="position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(2px); display: grid; place-items: start center; padding-top: 12vh; z-index: 70; animation: scBackdrop 0.12s ease;">
+    <div onClick="{{ stop }}" style="width: 620px; max-width: calc(100vw - 48px); background: var(--surface); border: 1px solid var(--border-2); border-radius: 12px; box-shadow: 0 24px 70px rgba(0,0,0,0.5); overflow: hidden; animation: scPanel 0.14s ease;">
+      <div style="display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--border);">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 13px; color: var(--text-faint);">⌕</span>
+        <input ref="{{ inputRef }}" value="{{ paletteQuery }}" onChange="{{ onPaletteInput }}" placeholder="Search queue, accounts, commands…" style="background: none; border: none; outline: none; color: var(--fg-bright); font-family: 'Roboto', sans-serif; font-size: 15px; width: 100%;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); border: 1px solid var(--border-2); padding: 2px 7px; border-radius: 4px;">esc</span>
+      </div>
+      <div style="max-height: 52vh; overflow-y: auto; padding: 8px;">
+        <sc-for list="{{ paletteGroups }}" as="group" hint-placeholder-count="3">
+          <div style="padding: 10px 10px 5px;">
+            <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint);">{{ group.name }}</div>
+          </div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+            <div onClick="{{ item.run }}" onMouseEnter="{{ item.hover }}" style="{{ item.rowStyle }}">
+              <span style="font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--text-faint);">{{ item.icon }}</span>
+              <span style="display: flex; align-items: baseline; gap: 9px; min-width: 0;">
+                <span style="font-family: 'Nunito', sans-serif; font-weight: 600; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.label }}</span>
+                <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint); white-space: nowrap;">{{ item.sub }}</span>
+              </span>
+              <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint);">{{ item.tag }}</span>
+            </div>
+          </sc-for>
+        </sc-for>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 28px 16px; text-align: center; color: var(--text-dim); font-size: 13px;">No matches for “{{ paletteQuery }}”.</div>
+        </sc-if>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; border-top: 1px solid var(--border); background: var(--overlay); font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">
+        <div style="display: flex; gap: 14px;">
+          <span><span style="color: var(--fg);">↑↓</span> navigate</span>
+          <span><span style="color: var(--fg);">↵</span> open</span>
+          <span><span style="color: var(--fg);">esc</span> close</span>
+        </div>
+        <span>{{ resultCount }} results</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1320, &quot;height&quot;: 880 },
+  &quot;startTheme&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;dark&quot;, &quot;light&quot;], &quot;default&quot;: &quot;dark&quot;, &quot;tsType&quot;: &quot;string&quot; }
+}">
+class Component extends DCLogic {
+  state = {
+    theme: 'dark',
+    runtime: null,
+    now: 0,
+    paletteOpen: false,
+    paletteQuery: '',
+    paletteIndex: 0,
+  };
+
+  inputRef = React.createRef();
+
+  queueData() {
+    return [
+      { id: 'dlq_001', account: 'Northwind Industrial', target: 'mock-crm', status: 'pending', retryCount: 1, maxRetries: 3, failClass: 'availability', hint: 'resolve', etaSec: 142, lastError: 'Simulated CRM 503 — adapter returned Service Unavailable on the company upsert.' },
+      { id: 'dlq_006', account: 'Atlas Photonics', target: 'mock-crm', status: 'pending', retryCount: 1, maxRetries: 3, failClass: 'timeout', hint: 'resolve', etaSec: 74, lastError: 'CRM write timed out after 30s waiting on the contact-sync endpoint.' },
+      { id: 'dlq_010', account: 'Forge Dynamics', target: 'netsuite-sync', status: 'pending', retryCount: 1, maxRetries: 3, failClass: 'unknown', hint: 'retryable_failure', etaSec: 358, lastError: 'Unclassified downstream error (HTTP 500) from the NetSuite sync bridge.' },
+      { id: 'dlq_008', account: 'Pinnacle Foods', target: 'mock-crm', status: 'pending', retryCount: 2, maxRetries: 3, failClass: 'authentication', hint: 'non_retryable_failure', etaSec: 205, lastError: 'OAuth token expired for the mock-crm adapter — refresh required before replay.' },
+      { id: 'dlq_002', account: 'Northwind Industrial', target: 'mock-notifications-outbox', status: 'retrying', retryCount: 2, maxRetries: 3, failClass: 'availability', hint: 'retryable_failure', etaSec: 38, lastError: 'Downstream notifier intentionally failing because simulate_downstream_failure=true.' },
+      { id: 'dlq_007', account: 'Quartz Analytics', target: 'stripe-sync', status: 'retrying', retryCount: 1, maxRetries: 4, failClass: 'rate_limit', hint: 'resolve', etaSec: 47, lastError: 'Stripe API responded 429 Too Many Requests; worker is backing off.' },
+      { id: 'dlq_003', account: 'Acme Manufacturing', target: 'mock-notifications-outbox', status: 'escalated', retryCount: 3, maxRetries: 3, failClass: 'validation', hint: 'non_retryable_failure', etaSec: 0, lastError: 'Payload schema mismatch in the escalation notifier — recipient field missing.' },
+      { id: 'dlq_005', account: 'Halcyon Logistics', target: 'netsuite-sync', status: 'escalated', retryCount: 6, maxRetries: 6, failClass: 'validation', hint: 'non_retryable_failure', etaSec: 0, lastError: 'INVALID_REF on customer_id — stale mapping, auto-retry budget exhausted.' },
+      { id: 'dlq_004', account: 'Halcyon Logistics', target: 'mock-billing-adapter', status: 'resolved', retryCount: 2, maxRetries: 4, failClass: 'rate_limit', hint: 'resolve', etaSec: 0, resolvedAt: '09:20', lastError: 'Recovered after a transient adapter rate limit cleared.' },
+      { id: 'dlq_009', account: 'Meridian Health', target: 'mock-billing-adapter', status: 'resolved', retryCount: 1, maxRetries: 3, failClass: 'availability', hint: 'resolve', etaSec: 0, resolvedAt: 'Jun 14', lastError: 'Adapter 503 cleared on the first scheduled replay.' },
+    ];
+  }
+
+  // ---- color helpers ----
+  failColor(fc) {
+    if (fc === 'validation' || fc === 'authentication') return 'var(--critical)';
+    if (fc === 'rate_limit' || fc === 'timeout') return 'var(--warn)';
+    if (fc === 'availability') return 'var(--link)';
+    return 'var(--text-faint)';
+  }
+  failBg(fc) {
+    if (fc === 'validation' || fc === 'authentication') return 'var(--critical-bg)';
+    if (fc === 'rate_limit' || fc === 'timeout') return 'var(--warn-bg)';
+    if (fc === 'availability') return 'var(--link-bg)';
+    return 'var(--overlay)';
+  }
+  failChip(fc) { return { display: 'inline-block', fontFamily: "'Roboto Mono', monospace", fontSize: '9px', letterSpacing: '0.04em', padding: '2px 6px', borderRadius: '3px', color: this.failColor(fc), background: this.failBg(fc), whiteSpace: 'nowrap' }; }
+  statusColor(s) { return (s === 'failed' || s === 'escalated') ? 'var(--critical)' : s === 'retrying' ? 'var(--link)' : s === 'resolved' ? 'var(--success)' : 'var(--text-faint)'; }
+  laneDot(c) { return { width: '8px', height: '8px', borderRadius: '50%', background: c, boxShadow: '0 0 0 3px var(--overlay)' }; }
+
+  fmtEta(sec) {
+    if (sec <= 0) return '00:00';
+    const m = Math.floor(sec / 60), s = sec % 60;
+    return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+  }
+  backoffSec(n) { const sched = [900, 1800, 3600]; return sched[Math.min(Math.max(n - 1, 0), sched.length - 1)]; }
+
+  pill(active) { return { padding: '3px 9px', borderRadius: '4px', fontFamily: "'Roboto Mono', monospace", fontSize: '10.5px', background: active ? 'var(--border)' : 'transparent', color: active ? 'var(--fg)' : 'var(--text-faint)' }; }
+  paletteRow(active) { return { display: 'grid', gridTemplateColumns: '18px 1fr auto', alignItems: 'center', gap: '12px', padding: '9px 12px', borderRadius: '7px', cursor: 'pointer', background: active ? 'var(--nav-active)' : 'transparent', color: active ? 'var(--fg-bright)' : 'var(--text-dim)' }; }
+
+  applyTheme(t) { try { document.documentElement.setAttribute('data-theme', t); } catch (e) {} }
+  toggle() { const next = this.state.theme === 'dark' ? 'light' : 'dark'; this.applyTheme(next); try { localStorage.setItem('synccore-theme', next); } catch (e) {} this.setState({ theme: next }); }
+
+  getRuntime() {
+    if (this.state.runtime) return this.state.runtime;
+    const rt = {};
+    this.queueData().forEach(d => { rt[d.id] = { status: d.status, retryCount: d.retryCount, etaSec: d.etaSec, resolvedAt: d.resolvedAt || null, feedback: null, processing: false }; });
+    return rt;
+  }
+
+  forceRetry(id) {
+    const base = this.queueData().find(d => d.id === id);
+    const rt = Object.assign({}, this.getRuntime());
+    const cur = Object.assign({}, rt[id]);
+    if (cur.processing) return;
+
+    if (cur.status === 'resolved') {
+      cur.feedback = { ok: true, text: 'Already recovered — replayed for demo validation.' };
+      rt[id] = cur; this.setState({ runtime: rt }); return;
+    }
+
+    // step 1: show retrying
+    cur.processing = true; cur.status = 'retrying'; cur.feedback = { info: true, text: 'Replaying through the demo retry engine…' };
+    rt[id] = cur; this.setState({ runtime: rt });
+
+    setTimeout(() => {
+      try {
+        const rt2 = Object.assign({}, this.getRuntime());
+        const c2 = Object.assign({}, rt2[id]);
+        c2.processing = false;
+        const outcome = base.hint;
+        if (outcome === 'resolve') {
+          c2.status = 'resolved'; c2.etaSec = 0; c2.resolvedAt = 'just now';
+          c2.feedback = { ok: true, text: 'Force retry resolved ' + base.account + ' → ' + base.target + '.' };
+        } else if (outcome === 'non_retryable_failure') {
+          c2.status = 'escalated'; c2.etaSec = 0;
+          c2.feedback = { danger: true, text: 'Non-retryable payload — escalation recommended.' };
+        } else {
+          const nextCount = c2.retryCount + 1;
+          if (nextCount >= base.maxRetries) {
+            c2.status = 'escalated'; c2.retryCount = base.maxRetries; c2.etaSec = 0;
+            c2.feedback = { danger: true, text: 'Exhausted the DLQ policy — escalation recommended.' };
+          } else {
+            c2.status = 'pending'; c2.retryCount = nextCount; c2.etaSec = this.backoffSec(nextCount);
+            c2.feedback = { warn: true, text: 'Re-queued for another scheduled attempt in ' + Math.round(this.backoffSec(nextCount) / 60) + 'm.' };
+          }
+        }
+        rt2[id] = c2; this.setState({ runtime: rt2 });
+      } catch (e) {}
+    }, 800);
+  }
+
+  drainAll() {
+    const rt = Object.assign({}, this.getRuntime());
+    this.queueData().forEach(d => {
+      const c = Object.assign({}, rt[d.id]);
+      if ((c.status === 'pending' || c.status === 'retrying') && d.hint === 'resolve') {
+        c.status = 'resolved'; c.etaSec = 0; c.resolvedAt = 'just now'; c.feedback = { ok: true, text: 'Drained — resolved on replay.' };
+        rt[d.id] = c;
+      }
+    });
+    this.setState({ runtime: rt });
+  }
+
+  openPalette() { this.setState({ paletteOpen: true, paletteQuery: '', paletteIndex: 0 }); }
+  closePalette() { this.setState({ paletteOpen: false }); }
+  onPaletteInput(e) { this.setState({ paletteQuery: e.target.value, paletteIndex: 0 }); }
+  move(d) { const n = this.flat ? this.flat.length : 0; if (!n) return; this.setState(s => ({ paletteIndex: (Math.max(0, Math.min(s.paletteIndex, n - 1)) + d + n) % n })); }
+  onKey(e) {
+    const meta = e.metaKey || e.ctrlKey;
+    if (meta && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); this.setState(s => ({ paletteOpen: !s.paletteOpen, paletteQuery: '', paletteIndex: 0 })); return; }
+    if (!this.state.paletteOpen) return;
+    if (e.key === 'Escape') { e.preventDefault(); this.closePalette(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); this.move(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); this.move(-1); }
+    else if (e.key === 'Enter') { e.preventDefault(); const it = this.flat && this.flat[this.activeIdx]; if (it) it.run(); }
+  }
+
+  tick() {
+    const rt = Object.assign({}, this.getRuntime());
+    let changed = false;
+    Object.keys(rt).forEach(id => {
+      const c = rt[id];
+      if ((c.status === 'pending' || c.status === 'retrying') && c.etaSec > 0 && !c.processing) {
+        rt[id] = Object.assign({}, c, { etaSec: c.etaSec - 1 });
+        changed = true;
+      }
+    });
+    if (changed) this.setState({ runtime: rt });
+  }
+
+  componentDidMount() {
+    let t = 'dark';
+    try { t = localStorage.getItem('synccore-theme') || this.props.startTheme || 'dark'; } catch (e) { t = this.props.startTheme || 'dark'; }
+    if (t !== 'dark' && t !== 'light') t = 'dark';
+    this.applyTheme(t);
+    this._onKey = this.onKey.bind(this);
+    window.addEventListener('keydown', this._onKey);
+    this.setState({ runtime: this.getRuntime() });
+    this._timer = setInterval(() => { try { this.tick(); } catch (e) {} }, 1000);
+    if (t !== this.state.theme) this.setState({ theme: t });
+  }
+  componentWillUnmount() { if (this._onKey) window.removeEventListener('keydown', this._onKey); if (this._timer) clearInterval(this._timer); }
+  componentDidUpdate(pp, ps) { if (this.state.paletteOpen && !ps.paletteOpen && this.inputRef.current) { try { this.inputRef.current.focus(); } catch (e) {} } }
+
+  buildCard(d, c) {
+    const segs = [];
+    for (let i = 0; i < d.maxRetries; i++) {
+      const filled = i < c.retryCount;
+      segs.push({ style: { flex: 1, height: '5px', borderRadius: '3px', background: filled ? this.failColor(d.failClass) : 'var(--border-2)', opacity: filled ? 1 : 0.6 } });
+    }
+    const isActive = c.status === 'pending' || c.status === 'retrying';
+    const isEsc = c.status === 'escalated';
+    const isResolved = c.status === 'resolved';
+
+    let timerText, timerVal, timerIcon, timerValColor, timerIconColor, timerRowBg, timerRowBorder;
+    if (isResolved) {
+      timerIcon = '✓'; timerText = 'recovered'; timerVal = c.resolvedAt || 'done'; timerValColor = 'var(--success)'; timerIconColor = 'var(--success)'; timerRowBg = 'var(--success-bg)'; timerRowBorder = 'transparent';
+    } else if (isEsc) {
+      timerIcon = '▲'; timerText = 'manual review'; timerVal = 'no auto-retry'; timerValColor = 'var(--critical)'; timerIconColor = 'var(--critical)'; timerRowBg = 'var(--critical-bg)'; timerRowBorder = 'transparent';
+    } else {
+      const due = c.etaSec <= 0;
+      timerIcon = c.processing ? '↻' : '⟳';
+      timerText = c.status === 'retrying' ? 'retrying in' : 'next retry';
+      timerVal = due ? 'due now' : this.fmtEta(c.etaSec);
+      timerValColor = due ? 'var(--warn)' : 'var(--fg-bright)';
+      timerIconColor = c.status === 'retrying' ? 'var(--link)' : 'var(--text-faint)';
+      timerRowBg = 'var(--surface-sunk)'; timerRowBorder = 'var(--border)';
+    }
+
+    const fb = c.feedback;
+    const fbColor = fb ? (fb.ok ? 'var(--success)' : fb.danger ? 'var(--critical)' : fb.warn ? 'var(--warn)' : 'var(--link)') : 'var(--text-dim)';
+    const fbBg = fb ? (fb.ok ? 'var(--success-bg)' : fb.danger ? 'var(--critical-bg)' : fb.warn ? 'var(--warn-bg)' : 'var(--link-bg)') : 'var(--overlay)';
+
+    let btnLabel, btnStyle;
+    if (isResolved) { btnLabel = 'Replay'; btnStyle = { width: '100%', marginTop: '11px', background: 'transparent', color: 'var(--text-dim)', border: '1px solid var(--border-2)', padding: '7px', borderRadius: '5px', fontSize: '12px' }; }
+    else if (c.processing) { btnLabel = 'Retrying…'; btnStyle = { width: '100%', marginTop: '11px', background: 'var(--link-bg)', color: 'var(--link)', border: '1px solid var(--border-2)', padding: '7px', borderRadius: '5px', fontSize: '12px', fontWeight: 600 }; }
+    else if (isEsc) { btnLabel = 'Force retry anyway'; btnStyle = { width: '100%', marginTop: '11px', background: 'transparent', color: 'var(--fg)', border: '1px solid var(--border-2)', padding: '7px', borderRadius: '5px', fontSize: '12px' }; }
+    else { btnLabel = 'Force retry'; btnStyle = { width: '100%', marginTop: '11px', background: 'var(--fg)', color: 'var(--bg)', border: '1px solid var(--fg)', padding: '7px', borderRadius: '5px', fontSize: '12px', fontWeight: 600 }; }
+
+    return {
+      id: d.id,
+      account: d.account,
+      target: d.target,
+      failClass: d.failClass,
+      failChipStyle: this.failChip(d.failClass),
+      retryCount: c.retryCount,
+      maxRetries: d.maxRetries,
+      segments: segs,
+      cardStyle: { background: 'var(--surface)', border: '1px solid ' + (isEsc ? 'var(--border-3)' : 'var(--border)'), borderRadius: '8px', padding: '13px 14px', boxShadow: isEsc ? 'inset 3px 0 0 var(--critical)' : 'none' },
+      timerRowStyle: { display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: '8px', marginTop: '11px', padding: '7px 10px', borderRadius: '6px', background: timerRowBg, border: '1px solid ' + timerRowBorder },
+      timerIcon, timerText, timerVal,
+      timerIconStyle: { fontFamily: "'Roboto Mono', monospace", fontSize: '12px', color: timerIconColor, display: 'inline-block', animation: c.processing ? 'scSpin 1s linear infinite' : 'none' },
+      timerValStyle: { fontFamily: "'Roboto Mono', monospace", fontSize: '12px', fontWeight: 500, color: timerValColor },
+      lastError: d.lastError,
+      hasFeedback: !!fb,
+      feedbackText: fb ? fb.text : '',
+      feedbackStyle: { marginTop: '10px', padding: '8px 10px', borderRadius: '6px', background: fbBg, color: fbColor, fontSize: '11.5px', lineHeight: 1.4 },
+      btnLabel, btnStyle,
+      forceRetry: () => this.forceRetry(d.id),
+    };
+  }
+
+  renderVals() {
+    const data = this.queueData();
+    const rt = this.getRuntime();
+    const merged = data.map(d => ({ d, c: rt[d.id] || { status: d.status, retryCount: d.retryCount, etaSec: d.etaSec, resolvedAt: d.resolvedAt || null, feedback: null, processing: false } }));
+
+    const byStatus = preds => merged.filter(m => preds.includes(m.c.status));
+    const pending = byStatus(['pending']);
+    const retrying = byStatus(['retrying']);
+    const failed = byStatus(['failed', 'escalated']);
+    const resolved = byStatus(['resolved']);
+
+    const mkCards = arr => arr.map(m => this.buildCard(m.d, m.c));
+
+    const lanes = [
+      { key: 'pending', title: 'Pending', color: 'var(--text-faint)', cards: mkCards(pending), emptyText: 'queue clear' },
+      { key: 'retrying', title: 'Retrying', color: 'var(--link)', cards: mkCards(retrying), emptyText: 'no active retries' },
+      { key: 'failed', title: 'Failed · Escalated', color: 'var(--critical)', cards: mkCards(failed), emptyText: 'nothing escalated' },
+      { key: 'resolved', title: 'Resolved', color: 'var(--success)', cards: mkCards(resolved), emptyText: 'none yet' },
+    ].map(l => ({ title: l.title, count: l.cards.length, cards: l.cards, dotStyle: this.laneDot(l.color), empty: l.cards.length === 0, emptyText: l.emptyText }));
+
+    const activeCount = pending.length + retrying.length;
+    const escalationCount = failed.length;
+    const resolvedCount = resolved.length;
+
+    const workers = [
+      { name: 'crm-w1', load: '6/s', pct: 62 },
+      { name: 'notif-w1', load: '3/s', pct: 38 },
+      { name: 'billing-w', load: '2/s', pct: 24 },
+      { name: 'ns-sync', load: '0/s', pct: 8 },
+    ].map(w => ({ name: w.name, load: w.load, barStyle: { width: w.pct + '%', height: '100%', background: w.pct > 50 ? 'var(--warn)' : 'var(--success)', borderRadius: '3px' } }));
+
+    // command palette
+    const q = this.state.paletteQuery.trim().toLowerCase();
+    const matches = it => !q || (it.label + ' ' + (it.sub || '') + ' ' + it.group).toLowerCase().includes(q);
+    const cmdItems = [
+      { group: 'Commands', icon: '◐', label: 'Toggle black / alabaster theme', sub: 'appearance', tag: '', action: () => this.toggle() },
+      { group: 'Commands', icon: '↻', label: 'Drain retryable items', sub: 'force-resolve safe retries', tag: '', action: () => this.drainAll() },
+    ];
+    const navItems = [
+      { group: 'Navigate', icon: '▤', label: 'Overview', sub: 'dashboard home', tag: '↗', action: () => { try { window.location.href = 'Overview v3.dc.html'; } catch (e) {} } },
+      { group: 'Navigate', icon: '●', label: 'Actions', sub: '12 open', tag: '↗', action: () => { try { window.location.href = 'Actions.dc.html'; } catch (e) {} } },
+      { group: 'Navigate', icon: '⇌', label: 'Reconciler', sub: 'drift detection', tag: '↗', action: () => { try { window.location.href = 'Reconciler.dc.html'; } catch (e) {} } },
+    ];
+    const qItems = merged.filter(m => m.c.status !== 'resolved').map(m => ({ group: 'Queue', icon: '↻', label: m.d.account, sub: m.d.target + ' · ' + m.d.failClass, tag: m.c.status, action: () => this.forceRetry(m.d.id) }));
+    const defs = [{ name: 'Commands', items: cmdItems }, { name: 'Navigate', items: navItems }, { name: 'Queue', items: qItems }];
+    let idx = 0; const flat = [];
+    const paletteGroups = defs.map(g => ({ name: g.name, items: g.items.filter(matches) })).filter(g => g.items.length);
+    const totalP = paletteGroups.reduce((n, g) => n + g.items.length, 0);
+    const activeIdx = Math.max(0, Math.min(this.state.paletteIndex, Math.max(0, totalP - 1)));
+    this.activeIdx = activeIdx;
+    paletteGroups.forEach(g => g.items.forEach(it => { const my = idx; it.rowStyle = this.paletteRow(my === activeIdx); it.run = () => { this.closePalette(); it.action(); }; it.hover = () => this.setState({ paletteIndex: my }); flat.push(it); idx++; }));
+    this.flat = flat;
+
+    return {
+      theme: this.state.theme,
+      toggleTheme: () => this.toggle(),
+      darkPillStyle: this.pill(this.state.theme === 'dark'),
+      lightPillStyle: this.pill(this.state.theme === 'light'),
+      activeCount, escalationCount, resolvedCount,
+      lanes, workers,
+      drainAll: () => this.drainAll(),
+      openPalette: () => this.openPalette(),
+      closePalette: () => this.closePalette(),
+      stop: (e) => e.stopPropagation(),
+      paletteOpen: this.state.paletteOpen,
+      paletteQuery: this.state.paletteQuery,
+      onPaletteInput: (e) => this.onPaletteInput(e),
+      inputRef: this.inputRef,
+      paletteGroups,
+      resultCount: flat.length,
+      noResults: this.state.paletteOpen && flat.length === 0,
+    };
+  }
+}
+</script>
+</body>
+</html>

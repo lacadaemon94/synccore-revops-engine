@@ -1,0 +1,80 @@
+.panel {
+  margin: var(--space-2xl) var(--space-lg) 0;
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.upBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  color: var(--success);
+}
+
+.upDot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  box-shadow: 0 0 0 3px var(--success-glow);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.name {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-dim);
+}
+
+.barTrack {
+  height: 4px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  width: var(--worker-load, 0%);
+  background: var(--text-dim);
+  border-radius: 3px;
+}
+
+.barFill[data-tone="warn"] { background: var(--warn); }
+.barFill[data-tone="critical"] { background: var(--critical); }
+
+.loadValue {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-faint);
+}

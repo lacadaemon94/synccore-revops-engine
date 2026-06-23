@@ -1,0 +1,160 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: var(--sidebar-width, 260px);
+  border-right: 1px solid var(--border);
+  background: var(--surface-sunk);
+  overflow: hidden;
+  transition: width 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header {
+  padding: 0 var(--space-4xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  height: var(--shell-header-height);
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  min-width: 0;
+  flex: 1;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-extrabold);
+  font-size: var(--font-size-base);
+  letter-spacing: -0.02em;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.branding {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  transition: opacity 180ms ease;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md-plus);
+  letter-spacing: -0.005em;
+  line-height: 1;
+  color: var(--fg-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-faint);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contextSlot {
+  transition: opacity 180ms ease;
+}
+
+.footer {
+  margin-top: auto;
+  padding: var(--space-2xl) var(--space-2xl) var(--space-3xl);
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: var(--space-xs);
+  transition: padding 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footerLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.statusGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  font-size: var(--font-size-base-dim-plus);
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.statusIndicator {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  box-shadow: var(--shadow-glow);
+  flex-shrink: 0;
+}
+
+.statusText {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base-dim-plus);
+  color: var(--text-dim);
+}
+
+.footerVersion {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-faint);
+  margin-top: var(--space-sm);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* ============ Collapsed state ============ */
+
+:global([data-sidebar='collapsed']) .header {
+  padding: 0 var(--space-lg);
+  justify-content: center;
+}
+
+:global([data-sidebar='collapsed']) .brand {
+  display: none;
+}
+
+:global([data-sidebar='collapsed']) .contextSlot {
+  opacity: 0;
+  pointer-events: none;
+  max-height: 0;
+  overflow: hidden;
+}
+
+:global([data-sidebar='collapsed']) .footer {
+  padding: var(--space-2xl) var(--space-sm) var(--space-3xl);
+  justify-items: center;
+}
+
+:global([data-sidebar='collapsed']) .footerLabel,
+:global([data-sidebar='collapsed']) .statusText,
+:global([data-sidebar='collapsed']) .footerVersion {
+  display: none;
+}

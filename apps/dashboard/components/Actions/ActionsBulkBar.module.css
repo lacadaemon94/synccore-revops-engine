@@ -1,0 +1,114 @@
+/* ActionsBulkBar.module.css */
+
+.bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-sm) var(--space-2xl);
+  background: var(--overlay);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-dim);
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--fg);
+  flex-shrink: 0;
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-dim);
+}
+
+.rightSection {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm-plus);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+}
+
+.buttonActive {
+  background: var(--fg);
+  color: var(--bg);
+  border: 1px solid var(--fg);
+}
+
+.buttonActive:hover {
+  background: var(--fg-bright);
+  border-color: var(--fg-bright);
+}
+
+.buttonActive:disabled {
+  background: var(--fg);
+  color: var(--bg);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonInactive {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border-2);
+}
+
+.buttonInactive:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--border-3);
+  color: var(--fg);
+}
+
+.buttonInactive:disabled {
+  color: var(--text-dim);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.buttonSecondary {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border-2);
+}
+
+.buttonSecondary:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--border-3);
+  color: var(--fg);
+}
+
+.buttonSecondary:disabled {
+  color: var(--text-dim);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.shortcut {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  opacity: 0.7;
+}

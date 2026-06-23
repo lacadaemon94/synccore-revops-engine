@@ -1,0 +1,135 @@
+.container {
+  display: grid;
+  gap: var(--space-3xl);
+  min-width: 0;
+  align-content: start;
+  grid-template-rows: auto auto 1fr;
+}
+
+/* Header Section */
+.headerSection {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: var(--space-7xl);
+}
+
+.headerContent {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: var(--space-7xl);
+  width: 100%;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-4xl);
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+  margin: 6px 0 0;
+  color: var(--fg-bright);
+}
+
+.description {
+  font-size: var(--font-size-md);
+  color: var(--text-dim);
+  margin: var(--space-sm) 0 0;
+}
+
+.activeCount {
+  color: var(--fg-bright);
+  font-weight: var(--font-weight-medium);
+}
+
+.escalationCount {
+  color: var(--critical);
+  font-weight: var(--font-weight-medium);
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.backoffBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-dim);
+  border: 1px solid var(--border-2);
+  background: var(--surface-raise);
+  padding: 7px 11px;
+  border-radius: var(--radius-lg);
+}
+
+.backoffValue {
+  color: var(--warn);
+}
+
+.drainButton {
+  background: var(--fg);
+  color: var(--bg);
+  border: 1px solid var(--fg);
+  padding: var(--space-sm) 13px;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: opacity var(--transition-normal);
+}
+
+.drainButton:hover {
+  opacity: 0.9;
+}
+
+.drainButton:active {
+  opacity: 0.8;
+}
+
+/* Kanban Section */
+.kanbanSection {
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+}
+
+.kanbanBoard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(250px, 1fr));
+  gap: var(--space-xl);
+  align-items: start;
+  min-width: min-content;
+}
+
+/* Scrollbar styling for kanban section */
+.kanbanSection::-webkit-scrollbar {
+  height: var(--space-sm);
+}
+
+.kanbanSection::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kanbanSection::-webkit-scrollbar-thumb {
+  background: var(--border-2);
+  border-radius: var(--radius-sm);
+}
+
+.kanbanSection::-webkit-scrollbar-thumb:hover {
+  background: var(--border);
+}

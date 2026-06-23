@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #efeae0; }
+  *::selection { background: #1a1a1a; color: #efeae0; }
+</style>
+</helmet>
+
+<div style="background: #efeae0; color: #1a1a1a; font-family: 'IBM Plex Sans', system-ui, sans-serif; min-height: 100vh; padding: 56px 40px 120px;">
+  <div style="max-width: 1180px; margin: 0 auto;">
+
+    <!-- ========== MASTHEAD ========== -->
+    <header style="display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px; padding-bottom: 18px; border-bottom: 2px solid #1a1a1a;">
+      <div>
+        <div style="display: flex; gap: 14px; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6356;">
+          <span>RevampSyncCore</span>
+          <span style="width: 4px; height: 4px; background: #6b6356; border-radius: 50%; display: inline-block;"></span>
+          <span>Internal teardown memo</span>
+          <span style="width: 4px; height: 4px; background: #6b6356; border-radius: 50%; display: inline-block;"></span>
+          <span>v0 — 14 Jun 2026</span>
+        </div>
+        <h1 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 68px; line-height: 0.98; letter-spacing: -0.02em; margin: 14px 0 0;">
+          The dashboard is<br>
+          <span style="font-style: italic; color: #b8302e;">decorated, not designed.</span>
+        </h1>
+      </div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; line-height: 1.7; color: #6b6356; text-align: right; padding-bottom: 8px;">
+        SCOPE&nbsp;&nbsp;&nbsp;&nbsp;6 pages, 14 components<br>
+        FILES&nbsp;&nbsp;&nbsp;&nbsp;dashboard/app, dashboard/components<br>
+        LOC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~1,900 lines of CSS alone<br>
+        VERDICT&nbsp;<span style="color: #b8302e; font-weight: 600;">Salvageable structure, replace surface</span>
+      </div>
+    </header>
+
+    <!-- ========== TLDR ========== -->
+    <section style="margin-top: 56px;">
+      <div style="display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start;">
+        <div>
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6356; margin: 0;">§ 01</p>
+          <h2 style="font-family: 'IBM Plex Serif', serif; font-weight: 500; font-size: 28px; line-height: 1.1; margin: 6px 0 0;">Diagnosis</h2>
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275; margin: 8px 0 0;">Five root causes.<br>Everything downstream<br>is a symptom.</p>
+        </div>
+
+        <ol style="list-style: none; padding: 0; margin: 0; display: grid; gap: 0;">
+          <li style="padding: 22px 0; border-top: 1px solid #d8d2c8; display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: start;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 500; color: #b8302e; line-height: 1;">01</span>
+            <div>
+              <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.2; margin: 0;">Every section shouts. Nothing speaks.</h3>
+              <p style="font-size: 15.5px; line-height: 1.55; color: #2a2a2a; margin: 8px 0 0; max-width: 780px;">Eyebrow + title + badge row + hero band + sparkline + dot + glow on every block. When everything is "Command Pulse / Live Attention Feed / 12 High-or-Critical Actions", the operator's eye has nowhere to land. There is no quiet space against which an alert can register as alert.</p>
+            </div>
+          </li>
+          <li style="padding: 22px 0; border-top: 1px solid #d8d2c8; display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: start;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 500; color: #b8302e; line-height: 1;">02</span>
+            <div>
+              <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.2; margin: 0;">It's a read-only museum.</h3>
+              <p style="font-size: 15.5px; line-height: 1.55; color: #2a2a2a; margin: 8px 0 0; max-width: 780px;">Across 6 pages, there is <em>one</em> real interaction: the "Force Retry" button on a queue card. No filtering, no sorting, no bulk actions, no resolve/assign/snooze on the action cards, no inline drill-down. An ops dashboard with no ops verbs is a poster.</p>
+            </div>
+          </li>
+          <li style="padding: 22px 0; border-top: 1px solid #d8d2c8; display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: start;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 500; color: #b8302e; line-height: 1;">03</span>
+            <div>
+              <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.2; margin: 0;">The hierarchy lies.</h3>
+              <p style="font-size: 15.5px; line-height: 1.55; color: #2a2a2a; margin: 8px 0 0; max-width: 780px;">Decorative MetricCards (with fake sparklines from a literal <code style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: #1a1a1a; color: #efeae0; padding: 1px 6px; border-radius: 3px;">fallbackTrendMap</code>) are visually heavier than the actual failed-payment alert. Hero bands repeat the page title in slightly different words. Section eyebrows repeat the nav label. The loudest pixels are the least informative.</p>
+            </div>
+          </li>
+          <li style="padding: 22px 0; border-top: 1px solid #d8d2c8; display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: start;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 500; color: #b8302e; line-height: 1;">04</span>
+            <div>
+              <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.2; margin: 0;">Same data, four widgets.</h3>
+              <p style="font-size: 15.5px; line-height: 1.55; color: #2a2a2a; margin: 8px 0 0; max-width: 780px;">The Overview shows accounts as a Revenue Risk list AND an Account Health panel AND a Discrepancy table — all keyed on the same accounts. Recent events appear on Overview <em>and</em> Events. Open ops actions appear on Overview, Actions, <em>and</em> per-account. The user must reconcile near-duplicate views in their head.</p>
+            </div>
+          </li>
+          <li style="padding: 22px 0; border-top: 1px solid #d8d2c8; border-bottom: 1px solid #d8d2c8; display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: start;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 500; color: #b8302e; line-height: 1;">05</span>
+            <div>
+              <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.2; margin: 0;">The product narrative is missing.</h3>
+              <p style="font-size: 15.5px; line-height: 1.55; color: #2a2a2a; margin: 8px 0 0; max-width: 780px;">SyncCore reconciles billing ↔ CRM and recovers failed payments. The UI shows that work as 6 disconnected list pages instead of a flow: <em>event arrives → discrepancy detected → action proposed → operator acts → outcome logged</em>. A pipeline product needs a pipeline view.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========== SYSTEMIC PATTERNS ========== -->
+    <section style="margin-top: 96px;">
+      <div style="display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start;">
+        <div style="position: sticky; top: 32px;">
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6356; margin: 0;">§ 02</p>
+          <h2 style="font-family: 'IBM Plex Serif', serif; font-weight: 500; font-size: 28px; line-height: 1.1; margin: 6px 0 0;">Visual vocabulary</h2>
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275; margin: 8px 0 0;">What the design system<br>currently encodes —<br>and what it should.</p>
+        </div>
+
+        <div>
+          <!-- ANTIPATTERN TABLE -->
+          <div style="border: 1px solid #1a1a1a; background: #fff;">
+            <div style="display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6356; padding: 14px 20px; border-bottom: 1px solid #1a1a1a; background: #f4efe5;">
+              <span>Pattern</span>
+              <span>What's wrong</span>
+              <span>Replace with</span>
+            </div>
+
+            <!-- row -->
+            <div style="display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0; padding: 18px 20px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+              <div>
+                <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 17px; margin: 0;">Eyebrow + title</p>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275;">.section-header__eyebrow</code>
+              </div>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0; padding-right: 24px;">Every section heading has an uppercase kicker ("Command pulse", "Triage", "Observability") repeating or re-naming what the title already says. Adds a second tier of noise to scan past.</p>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0;">One H2 per section. If the section needs a kicker, the section probably needs to be a route, a tab, or merged with its neighbor.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0; padding: 18px 20px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+              <div>
+                <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 17px; margin: 0;">Hero band</p>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275;">.hero-band</code>
+              </div>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0; padding-right: 24px;">A backdrop-blurred, gradient-edged "section opener" that restates the page title and shows 3 stats that are either duplicates of the metric cards (Queue page) or pure padding ("Triage surface"). Pure decoration.</p>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0;">Delete. If a page genuinely needs context, put it in a single line of body text under the H1 — not a 140px-tall glass panel.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0; padding: 18px 20px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+              <div>
+                <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 17px; margin: 0;">Metric cards w/ sparklines</p>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275;">.metric-card</code>
+              </div>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0; padding-right: 24px;">Trends come from a hardcoded <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #1a1a1a; color: #efeae0; padding: 1px 5px; border-radius: 3px;">fallbackTrendMap</code> — they are lies. Tone badges ("ok", "alert", "watch") redundantly label what the color already says. Each card is ~180px tall to hold a fake chart.</p>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0;">Either ship a real time series (with real data + axis + comparison period) or kill the sparkline and use a tight one-line KPI strip. No middle ground.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0; padding: 18px 20px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+              <div>
+                <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 17px; margin: 0;">Badge zoo</p>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275;">badge × 7 variants</code>
+              </div>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0; padding-right: 24px;">SeverityBadge, StatusBadge, SourceBadge, ActionStatusBadge, plain Badge — each pill rounded with a glow shadow and leading dot. The Overview "badge-row" stacks 3 of them under the H1; an Action Card carries 4 at once. Visual noise &gt; information density.</p>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0;">Two badge types only: <strong>severity</strong> (semantic color, no glow) and <strong>tag</strong> (neutral, no color). Status becomes an inline icon + text, not a pill. Remove dot prefixes — they double the visual weight of every label.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0; padding: 18px 20px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+              <div>
+                <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 17px; margin: 0;">Dark glass surfaces</p>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275;">backdrop-filter, glow shadows</code>
+              </div>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0; padding-right: 24px;">Translucent surfaces, radial accent glows on the body, blur(22px), shadow flares per severity on hover. Reads as "designer dashboard demo" not as a tool people work in for 6 hours a day.</p>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0;">Pick one: light-mode operator console (recommended for revops) or flat dark mode with zero glass, zero glow. No radial gradients on the body.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 200px 1fr 1fr; gap: 0; padding: 18px 20px; align-items: start;">
+              <div>
+                <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 17px; margin: 0;">Split-grid everywhere</p>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275;">.split-grid--two, --golden</code>
+              </div>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0; padding-right: 24px;">The Overview is 4 stacked 2-column splits. Each cell is independent — there is no relationship across the seam. The reader's eye zig-zags. Sections that should be primary (the failed-payment alert) sit at 50% width next to a tertiary list.</p>
+              <p style="font-size: 14px; line-height: 1.55; color: #2a2a2a; margin: 0;">A real editorial grid: one full-bleed primary, one 2-up secondary row, the rest as a single long list. Width = importance.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PAGE-BY-PAGE ========== -->
+    <section style="margin-top: 96px;">
+      <div style="display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start;">
+        <div style="position: sticky; top: 32px;">
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6356; margin: 0;">§ 03</p>
+          <h2 style="font-family: 'IBM Plex Serif', serif; font-weight: 500; font-size: 28px; line-height: 1.1; margin: 6px 0 0;">Page audit</h2>
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275; margin: 8px 0 0;">Worst offender first.</p>
+          <ol style="list-style: none; padding: 0; margin: 24px 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 2.1; color: #1a1a1a;">
+            <li><span style="color: #b8302e;">●</span>&nbsp; Overview</li>
+            <li><span style="color: #b8302e;">●</span>&nbsp; Ops Actions</li>
+            <li><span style="color: #b8862e;">●</span>&nbsp; Queue</li>
+            <li><span style="color: #b8862e;">●</span>&nbsp; Account detail</li>
+            <li><span style="color: #b8862e;">●</span>&nbsp; Reconciler</li>
+            <li><span style="color: #2f7a3a;">●</span>&nbsp; Events</li>
+          </ol>
+        </div>
+
+        <div style="display: grid; gap: 32px;">
+          <!-- ========================================== -->
+          <!-- OVERVIEW -->
+          <article style="background: #fff; border: 1px solid #1a1a1a;">
+            <header style="padding: 22px 24px; border-bottom: 1px solid #1a1a1a; background: #f4efe5; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px;">
+              <div>
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #b8302e; margin: 0;">Worst offender</p>
+                <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 30px; line-height: 1.05; margin: 4px 0 0;">Overview / Command Center</h3>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b6356;">app/page.tsx · 461 LOC</code>
+              </div>
+              <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; line-height: 1.7;">
+                7 sections<br>3 hero-strength components<br>8 distinct widget types
+              </div>
+            </header>
+
+            <!-- before/after wireframe -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid #1a1a1a;">
+              <div style="padding: 20px 24px; border-right: 1px solid #d8d2c8; background: #1a1a1a; color: #efeae0;">
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8275; margin: 0 0 12px;">Today</p>
+                <div style="display: grid; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; line-height: 1.35; color: #c8c2b6;">
+                  <div style="padding: 6px 9px; background: #2a2a2a; border-left: 2px solid #60a5fa;">PageHeader · "COMMAND CENTER" · Command Center · 2 badges</div>
+                  <div style="padding: 6px 9px; background: #2a2a2a; border-left: 2px solid #60a5fa;">3× MetricCard w/ fake sparkline + tone badge</div>
+                  <div style="padding: 6px 9px; background: #2a2a2a; border-left: 2px solid #f87171;">Command Pulse · "Live attention feed" · gradient panel · 2–5 cards</div>
+                  <div style="padding: 6px 9px; background: #2a2a2a; border-left: 2px solid #f87171;">Risk Signal (left) ∥ Open Ops Actions (right) · same content</div>
+                  <div style="padding: 6px 9px; background: #2a2a2a; border-left: 2px solid #fbbf24;">Recent Events (left) ∥ Queue Health (right) · table preview</div>
+                  <div style="padding: 6px 9px; background: #2a2a2a; border-left: 2px solid #fbbf24;">Revenue Risk (left) ∥ Account Health (right) · same accounts</div>
+                  <div style="padding: 6px 9px; background: #2a2a2a; border-left: 2px solid #fbbf24;">Discrepancy Watchlist · full width</div>
+                </div>
+                <p style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #a3a3a3; margin: 14px 0 0; line-height: 1.55;">Five sections shouting "this matters" with no internal ranking. Two pairs say almost the same thing twice.</p>
+              </div>
+              <div style="padding: 20px 24px; background: #f4efe5;">
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #2f7a3a; margin: 0 0 12px;">Proposed</p>
+                <div style="display: grid; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; line-height: 1.35; color: #1a1a1a;">
+                  <div style="padding: 6px 9px; background: #fff; border-left: 2px solid #1a1a1a;">H1 · "Good morning, Jordan." · KPI strip inline (3 numbers, no chart)</div>
+                  <div style="padding: 6px 9px; background: #fff; border-left: 2px solid #b8302e; min-height: 36px; display: flex; align-items: center;"><strong style="font-family: 'IBM Plex Sans', sans-serif;">Needs you now</strong> · 1–5 ranked items · resolve/snooze/assign inline</div>
+                  <div style="padding: 6px 9px; background: #fff; border-left: 2px solid #1a1a1a;">Pipeline flow strip · events → discrepancies → actions → queue · live counts</div>
+                  <div style="padding: 6px 9px; background: #fff; border-left: 2px solid #1a1a1a;">Portfolio at a glance · single account table sortable by exposure</div>
+                  <div style="padding: 6px 9px; background: #fff; border-left: 2px solid #1a1a1a;">Activity feed · merged events + actions + reconciler outcomes</div>
+                </div>
+                <p style="font-size: 13px; color: #2a2a2a; margin: 14px 0 0; line-height: 1.55;">One question per band: <em>what's on fire, where does work flow, who's exposed, what changed.</em></p>
+              </div>
+            </div>
+
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8302e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">"Command Center" appears 3 times before the fold</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">Sidebar label · topbar pill · eyebrow · H1. Cognitive cost: zero. Pixel cost: large.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">app/page.tsx:90–96<br>app-shell.tsx:115</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8302e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">"Live attention feed" and "Open ops actions" show the same items</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;"><code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">attentionItems</code> starts with <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">actionCenter.openActions.slice(0, 2)</code> — then we render <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">openOpsActions = actionCenter.openActions.slice(0, 3)</code> 200px lower. Same data, two visual treatments.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">app/page.tsx:63–86</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8302e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">No action verbs anywhere on the most-visited page</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">An operator sees 3 critical actions and… can only click through to a detail page. No resolve, assign, snooze, escalate, or "mark as expected" inline.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">app/page.tsx (whole file)</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">The "Risk signal" panel buries the most important sentence on the page</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">The single highest-priority churn alert sits inside a generic Panel, under an eyebrow, next to an Open Ops list. This should be the entire above-the-fold experience when a critical alert exists.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">app/page.tsx:138–200</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">No empty-state strategy — page is identical when nothing is broken</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">All-quiet should feel like a different page: confirmation, recent recovery stories, what the system did overnight. Not the same 7 sections with "No items yet" copy.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">—</code>
+              </li>
+            </ul>
+          </article>
+
+          <!-- ========================================== -->
+          <!-- OPS ACTIONS -->
+          <article style="background: #fff; border: 1px solid #1a1a1a;">
+            <header style="padding: 22px 24px; border-bottom: 1px solid #1a1a1a; background: #f4efe5; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px;">
+              <div>
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #b8302e; margin: 0;">Critical — wrong shape</p>
+                <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 30px; line-height: 1.05; margin: 4px 0 0;">Ops Actions</h3>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b6356;">app/actions/page.tsx · 171 LOC</code>
+              </div>
+              <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; line-height: 1.7;">
+                4 card grids of the same component<br>~24 cards visible at once
+              </div>
+            </header>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8302e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">A queue page rendered as a Pinterest board</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">Triaging work means sorting, filtering, batch-resolving. Cards in a 2-up grid optimize for browsing, not triage. Compare: Linear, Sentry, PagerDuty — all use dense lists with inline severity, owner, age, and one-key actions.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">action-card.tsx</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8302e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">Four near-identical sections: Open / Outbox / Churn / CRM / DLQ</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">They all map to the same ActionCard. The difference is just <em>source</em> — which belongs as a filter chip, not as a page section.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">actions/page.tsx:84–168</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">Each card carries 4 badges and 6 labeled fields</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">Source · Status · Severity · "Created" + Owner + Next Step + Account + Title + Body. Pure data, no priority. Eye has nowhere to rest.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">action-card.tsx</code>
+              </li>
+            </ul>
+          </article>
+
+          <!-- ========================================== -->
+          <!-- QUEUE -->
+          <article style="background: #fff; border: 1px solid #1a1a1a;">
+            <header style="padding: 22px 24px; border-bottom: 1px solid #1a1a1a; background: #f4efe5; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px;">
+              <div>
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #b8862e; margin: 0;">High — usable but bloated</p>
+                <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 30px; line-height: 1.05; margin: 4px 0 0;">Recovery Queue</h3>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b6356;">app/queue/page.tsx · 102 LOC</code>
+              </div>
+              <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; line-height: 1.7;">
+                Only page w/ a real action (Force Retry)<br>QueueRetryCard ≈ 300px tall × 2 cols
+              </div>
+            </header>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">Hero band on top is 100% duplicate of the page header badges</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">"Active retry workload", "Escalated posture", "Resolved examples" — the same 3 numbers appear in pill form 80px above.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">queue/page.tsx:51–69</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">Cards waste 60% of their area on labels</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">"Next retry", "Last attempt", "Resolved at", "Retry summary", "Last error" each get their own label cell. A table row would carry the same info in 1/4 the height.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">queue-retry-card.tsx</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; align-items: start;">
+                <span style="color: #2f7a3a; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">Good: status-grouped sections (Pending / Retrying / Failed / Resolved)</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">This is the right mental model. Keep — but as filter chips with counts on a single table, not 4 stacked card grids.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">queue/page.tsx:10–28</code>
+              </li>
+            </ul>
+          </article>
+
+          <!-- ========================================== -->
+          <!-- ACCOUNT DETAIL -->
+          <article style="background: #fff; border: 1px solid #1a1a1a;">
+            <header style="padding: 22px 24px; border-bottom: 1px solid #1a1a1a; background: #f4efe5; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px;">
+              <div>
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #b8862e; margin: 0;">High — empty calories</p>
+                <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 30px; line-height: 1.05; margin: 4px 0 0;">Account Detail</h3>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b6356;">app/accounts/[id]/page.tsx · 223 LOC</code>
+              </div>
+              <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; line-height: 1.7;">
+                Hero · 4 KPIs · 2 panels · 3 tables · ActionCard grid
+              </div>
+            </header>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8302e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">"Revenue risk summary" panel has no body</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">Just a kicker, title, and a row of severity badges. No number, no narrative, no recommendation. Pure scaffolding.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">accounts/[id]/page.tsx:88–100</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">No tabs — everything stacks vertically</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">A scrolling list of Events, Discrepancies, Actions for one account. Should be tabs (Activity / Discrepancies / Actions / Billing) or a vertical IDE-style split.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">accounts/[id]/page.tsx</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">"Account overview" hero says nothing the page header didn't</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">Owner, Lifecycle, Latest event — all available in the PageHeader badges and the metric strip below.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">accounts/[id]/page.tsx:57–73</code>
+              </li>
+            </ul>
+          </article>
+
+          <!-- ========================================== -->
+          <!-- RECONCILER -->
+          <article style="background: #fff; border: 1px solid #1a1a1a;">
+            <header style="padding: 22px 24px; border-bottom: 1px solid #1a1a1a; background: #f4efe5; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px;">
+              <div>
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #b8862e; margin: 0;">Medium — close to right</p>
+                <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 30px; line-height: 1.05; margin: 4px 0 0;">Reconciler</h3>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b6356;">app/reconciler/page.tsx · 99 LOC</code>
+              </div>
+            </header>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #2f7a3a; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">The Billing-vs-CRM comparison chip is the best pattern in the app</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">Side-by-side source + value. Keep it. Promote it into a primary "diff cell" pattern reused on Account detail and Events.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">reconciler/page.tsx:62–76</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">No bulk resolve / accept-CRM / accept-billing actions</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">"Suggested action" is a text column. Should be an action button per row plus a "Resolve all MRR mismatches" header action.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">reconciler/page.tsx:84–88</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">Status mapping is doing semantic violence</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;"><code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">open → pending, reviewing → retrying</code> — reusing queue statuses for reconciler. Discrepancies need their own status vocabulary (open, accepted-A, accepted-B, ignored).</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">reconciler/page.tsx:81–82</code>
+              </li>
+            </ul>
+          </article>
+
+          <!-- ========================================== -->
+          <!-- EVENTS -->
+          <article style="background: #fff; border: 1px solid #1a1a1a;">
+            <header style="padding: 22px 24px; border-bottom: 1px solid #1a1a1a; background: #f4efe5; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px;">
+              <div>
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #2f7a3a; margin: 0;">Lowest priority — fine, mostly</p>
+                <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 30px; line-height: 1.05; margin: 4px 0 0;">Event Log</h3>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b6356;">app/events/page.tsx · 105 LOC</code>
+              </div>
+            </header>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; border-bottom: 1px solid #e3ddd0; align-items: start;">
+                <span style="color: #b8862e; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">No filtering, no time range, no pagination</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">An event log without filters by provider, event type, status, account, or time is unusable past ~50 rows.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">events/page.tsx</code>
+              </li>
+              <li style="display: grid; grid-template-columns: 28px 1fr 220px; gap: 16px; padding: 14px 24px; align-items: start;">
+                <span style="color: #2f7a3a; font-size: 18px; line-height: 1.2;">●</span>
+                <div>
+                  <p style="font-weight: 600; margin: 0; font-size: 15px;">Closest thing to "right" in the app</p>
+                  <p style="font-size: 13.5px; color: #555; margin: 4px 0 0; line-height: 1.5;">A table with sensible columns and no decorative hero. This is the baseline to bring the rest of the app down to.</p>
+                </div>
+                <code style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356;">events/page.tsx:36–104</code>
+              </li>
+            </ul>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== NEW PATTERNS ========== -->
+    <section style="margin-top: 96px;">
+      <div style="display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start;">
+        <div style="position: sticky; top: 32px;">
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6356; margin: 0;">§ 04</p>
+          <h2 style="font-family: 'IBM Plex Serif', serif; font-weight: 500; font-size: 28px; line-height: 1.1; margin: 6px 0 0;">Patterns we'll need</h2>
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275; margin: 8px 0 0;">Six new primitives,<br>each pulls weight on<br>multiple pages.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+
+          <article style="border: 1px solid #1a1a1a; background: #fff; padding: 22px;">
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #2d5aa8; margin: 0;">Pattern · 01</p>
+            <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.15; margin: 6px 0 0;">Pipeline strip</h3>
+            <p style="font-size: 14px; color: #555; margin: 8px 0 14px; line-height: 1.55;">A horizontal "what happened to today's events" flow: <strong>Ingested → Normalized → Reconciled → Action proposed → Action taken</strong>. Each node shows count + drift bar. Click drills into the matching page filtered to that bucket.</p>
+            <div style="background: #f4efe5; border: 1px solid #d8d2c8; padding: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #1a1a1a; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; align-items: center;">
+              <div style="text-align: center;"><div style="font-size: 16px; font-weight: 600;">2,481</div><div style="color: #8a8275; margin-top: 2px;">INGESTED</div></div>
+              <div style="text-align: center; color: #6b6356;">→</div>
+              <div style="text-align: center;"><div style="font-size: 16px; font-weight: 600; color: #b8862e;">37</div><div style="color: #8a8275; margin-top: 2px;">DRIFTED</div></div>
+              <div style="text-align: center; color: #6b6356;">→</div>
+              <div style="text-align: center;"><div style="font-size: 16px; font-weight: 600; color: #b8302e;">12</div><div style="color: #8a8275; margin-top: 2px;">ACTION OPEN</div></div>
+            </div>
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; margin: 12px 0 0;">USED ON&nbsp; Overview · Account detail</p>
+          </article>
+
+          <article style="border: 1px solid #1a1a1a; background: #fff; padding: 22px;">
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #2d5aa8; margin: 0;">Pattern · 02</p>
+            <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.15; margin: 6px 0 0;">Triage row</h3>
+            <p style="font-size: 14px; color: #555; margin: 8px 0 14px; line-height: 1.55;">Replaces ActionCard. Dense single-line row: severity stripe · title · account · age · inline ⌘ actions (resolve · snooze · assign · open). Multi-select with checkbox + bulk-action bar at top.</p>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #1a1a1a; background: #f4efe5; border: 1px solid #d8d2c8;">
+              <div style="display: grid; grid-template-columns: 4px 16px 1fr 100px 56px 80px; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid #e3ddd0;">
+                <div style="background: #b8302e; height: 22px;"></div>
+                <div>☐</div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Failed renewal · invoice $48k</div>
+                <div style="color: #6b6356; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Northwind</div>
+                <div style="color: #6b6356;">2h</div>
+                <div style="color: #2d5aa8;">resolve ↩</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 4px 16px 1fr 100px 56px 80px; align-items: center; gap: 10px; padding: 8px 12px;">
+                <div style="background: #b8862e; height: 22px;"></div>
+                <div>☐</div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">CRM tier drift · enterprise → growth</div>
+                <div style="color: #6b6356; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Acme</div>
+                <div style="color: #6b6356;">6h</div>
+                <div style="color: #2d5aa8;">accept ↩</div>
+              </div>
+            </div>
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; margin: 12px 0 0;">USED ON&nbsp; Overview · Ops Actions · Queue · Reconciler</p>
+          </article>
+
+          <article style="border: 1px solid #1a1a1a; background: #fff; padding: 22px;">
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #2d5aa8; margin: 0;">Pattern · 03</p>
+            <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.15; margin: 6px 0 0;">Diff cell</h3>
+            <p style="font-size: 14px; color: #555; margin: 8px 0 14px; line-height: 1.55;">Generalization of the reconciler's comparison chip. Side-by-side <em>billing → CRM</em> with strikethrough delta, a one-click "use this one" action per side, and a "why?" link to the source event.</p>
+            <div style="background: #f4efe5; border: 1px solid #d8d2c8; padding: 14px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center;">
+              <div>
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6b6356; margin: 0; letter-spacing: 0.12em; text-transform: uppercase;">Billing</p>
+                <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 18px; margin: 2px 0 0;">$4,800/mo</p>
+              </div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #b8302e;">≠</div>
+              <div style="text-align: right;">
+                <p style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6b6356; margin: 0; letter-spacing: 0.12em; text-transform: uppercase;">CRM</p>
+                <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 18px; margin: 2px 0 0;">$3,600/mo</p>
+              </div>
+            </div>
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; margin: 12px 0 0;">USED ON&nbsp; Reconciler · Account detail · Action detail</p>
+          </article>
+
+          <article style="border: 1px solid #1a1a1a; background: #fff; padding: 22px;">
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #2d5aa8; margin: 0;">Pattern · 04</p>
+            <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.15; margin: 6px 0 0;">Account row + sparkbar</h3>
+            <p style="font-size: 14px; color: #555; margin: 8px 0 14px; line-height: 1.55;">Replaces the two duplicate Revenue Risk + Health panels. Single row per account with ARR · health bar · open-items chip · exposure $. Sortable by any column.</p>
+            <div style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; background: #f4efe5; border: 1px solid #d8d2c8;">
+              <div style="display: grid; grid-template-columns: 1fr 80px 80px 60px; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid #e3ddd0;">
+                <div><strong>Northwind</strong><div style="color: #6b6356; font-size: 11px;">Enterprise · J. Cole</div></div>
+                <div style="font-family: 'IBM Plex Mono', monospace;">$248k</div>
+                <div style="height: 6px; background: #e3ddd0; position: relative; border-radius: 0;"><div style="position: absolute; inset: 0 60% 0 0; background: #b8302e;"></div></div>
+                <div style="color: #b8302e; font-family: 'IBM Plex Mono', monospace;">3 open</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 80px 80px 60px; align-items: center; gap: 12px; padding: 10px 12px;">
+                <div><strong>Acme</strong><div style="color: #6b6356; font-size: 11px;">Growth · M. Reyes</div></div>
+                <div style="font-family: 'IBM Plex Mono', monospace;">$96k</div>
+                <div style="height: 6px; background: #e3ddd0; position: relative;"><div style="position: absolute; inset: 0 18% 0 0; background: #2f7a3a;"></div></div>
+                <div style="color: #6b6356; font-family: 'IBM Plex Mono', monospace;">0</div>
+              </div>
+            </div>
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; margin: 12px 0 0;">USED ON&nbsp; Overview · Accounts</p>
+          </article>
+
+          <article style="border: 1px solid #1a1a1a; background: #fff; padding: 22px;">
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #2d5aa8; margin: 0;">Pattern · 05</p>
+            <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.15; margin: 6px 0 0;">Activity stream</h3>
+            <p style="font-size: 14px; color: #555; margin: 8px 0 14px; line-height: 1.55;">A unified timeline that merges events, action transitions, reconciler decisions, retries. Group by hour, color by stream. Replaces both the "Event Log" and the per-account history.</p>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: #f4efe5; border: 1px solid #d8d2c8; padding: 12px; color: #1a1a1a;">
+              <div style="color: #6b6356; font-size: 10px; letter-spacing: 0.12em;">14 JUN · 09:00</div>
+              <div style="display: grid; grid-template-columns: 8px 1fr; gap: 10px; padding: 6px 0;">
+                <div style="background: #b8302e; align-self: stretch;"></div>
+                <div>invoice.payment_failed · Northwind · $48k</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 8px 1fr; gap: 10px; padding: 6px 0;">
+                <div style="background: #2d5aa8; align-self: stretch;"></div>
+                <div>action.proposed · churn-defuser · grace 14d</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 8px 1fr; gap: 10px; padding: 6px 0;">
+                <div style="background: #2f7a3a; align-self: stretch;"></div>
+                <div>retry.scheduled · stripe · in 30m</div>
+              </div>
+            </div>
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; margin: 12px 0 0;">USED ON&nbsp; Overview · Events · Account detail</p>
+          </article>
+
+          <article style="border: 1px solid #1a1a1a; background: #fff; padding: 22px;">
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #2d5aa8; margin: 0;">Pattern · 06</p>
+            <h3 style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 22px; line-height: 1.15; margin: 6px 0 0;">Inline command bar</h3>
+            <p style="font-size: 14px; color: #555; margin: 8px 0 14px; line-height: 1.55;">⌘K-style omnibar pinned to the topbar: search account, open action, jump page, run "replay last failed event" as a verb. Replaces decorative "Workflow signal path active" pill.</p>
+            <div style="background: #f4efe5; border: 1px solid #d8d2c8; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b6356; display: flex; gap: 10px; align-items: center;">
+              <span style="color: #1a1a1a;">⌘K</span>
+              <span style="color: #c8c2b6;">|</span>
+              <span>find account, run action, jump…</span>
+            </div>
+            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6b6356; margin: 12px 0 0;">USED ON&nbsp; Global topbar</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ROADMAP ========== -->
+    <section style="margin-top: 96px;">
+      <div style="display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start;">
+        <div style="position: sticky; top: 32px;">
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6b6356; margin: 0;">§ 05</p>
+          <h2 style="font-family: 'IBM Plex Serif', serif; font-weight: 500; font-size: 28px; line-height: 1.1; margin: 6px 0 0;">Rebuild plan</h2>
+          <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a8275; margin: 8px 0 0;">Three waves, scoped<br>to ship value early.</p>
+        </div>
+
+        <div style="display: grid; gap: 0; border: 1px solid #1a1a1a; background: #fff;">
+
+          <div style="display: grid; grid-template-columns: 160px 1fr; gap: 0; border-bottom: 1px solid #1a1a1a;">
+            <div style="background: #1a1a1a; color: #efeae0; padding: 24px 22px;">
+              <p style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin: 0; color: #8a8275;">Wave 01</p>
+              <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 26px; margin: 6px 0 0; line-height: 1.1;">Strip<br>the noise</p>
+              <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #c8c2b6; margin: 12px 0 0;">~3 days · no new patterns</p>
+            </div>
+            <ul style="list-style: none; padding: 18px 24px; margin: 0; display: grid; gap: 8px;">
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Delete all <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">.hero-band</code> instances. Page-headers keep the H1 only.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Remove eyebrow kickers from <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">SectionHeader</code>. Section title = H2, no decoration.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Kill the fake sparklines + tone-label badges on MetricCard.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Collapse the 7 badge variants to 2 (severity + tag). Drop leading dots and glow shadows.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Switch from translucent glass surfaces to flat opaque. Remove body radial gradients.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>De-duplicate Overview: remove "Live attention feed" OR "Open ops actions" — pick one.</span></li>
+            </ul>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 160px 1fr; gap: 0; border-bottom: 1px solid #1a1a1a;">
+            <div style="background: #b8302e; color: #fff; padding: 24px 22px;">
+              <p style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin: 0; color: rgba(255,255,255,0.7);">Wave 02</p>
+              <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 26px; margin: 6px 0 0; line-height: 1.1;">Make it<br>operable</p>
+              <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.8); margin: 12px 0 0;">~1.5 wks · new patterns 02, 03, 04</p>
+            </div>
+            <ul style="list-style: none; padding: 18px 24px; margin: 0; display: grid; gap: 8px;">
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Build <strong>Triage row</strong> (pattern 02). Replace ActionCard grid + queue-card grid + Overview "command pulse".</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Build <strong>Diff cell</strong> (pattern 03). Reuse on Reconciler, Account detail, Action detail.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Build <strong>Account row + sparkbar</strong> (pattern 04). Replaces the two duplicate panels on Overview.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Wire real verbs: resolve, snooze, assign, accept-A/B, force retry. Server actions, optimistic UI.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Filter/sort/search on every list page. Pagination on Events.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Tabs on Account detail: Activity / Discrepancies / Actions / Billing.</span></li>
+            </ul>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 160px 1fr; gap: 0;">
+            <div style="background: #2d5aa8; color: #fff; padding: 24px 22px;">
+              <p style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin: 0; color: rgba(255,255,255,0.7);">Wave 03</p>
+              <p style="font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 26px; margin: 6px 0 0; line-height: 1.1;">Tell the<br>story</p>
+              <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.8); margin: 12px 0 0;">~1 wk · new patterns 01, 05, 06</p>
+            </div>
+            <ul style="list-style: none; padding: 18px 24px; margin: 0; display: grid; gap: 8px;">
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Build <strong>Pipeline strip</strong> (pattern 01) as Overview's top band. Replaces 3 hero/metric sections.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Build <strong>Activity stream</strong> (pattern 05). Becomes the spine of Events + Account detail.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Ship <strong>⌘K command bar</strong> (pattern 06). Replace the "Workflow signal path active" pill.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Quiet-state for Overview: when nothing is critical, show last-24h recovery summary instead of empty grids.</span></li>
+              <li style="display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 14.5px;"><span style="color: #1a1a1a;">·</span><span>Empty-state library: each list page gets a real first-run + a real all-clear state.</span></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer style="margin-top: 88px; padding-top: 22px; border-top: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: baseline; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #6b6356;">
+      <span>RevampSyncCore · UI teardown v0</span>
+      <span>Next: pick a wave, I'll mock the redesign of the worst-offending page.</span>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

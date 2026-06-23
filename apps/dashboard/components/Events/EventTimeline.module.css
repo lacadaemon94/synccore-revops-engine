@@ -1,0 +1,94 @@
+.section {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.header {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: var(--space-xs);
+}
+
+.timeline {
+  display: grid;
+  gap: 0;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: start;
+  gap: var(--space-lg);
+  padding: var(--space-md) 0;
+}
+
+.dotContainer {
+  display: grid;
+  place-items: center;
+  padding-top: var(--space-xs);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.dotCritical {
+  background: var(--critical);
+  box-shadow: 0 0 0 3px var(--critical-bg);
+}
+
+.dotWarn {
+  background: var(--warn);
+  box-shadow: 0 0 0 3px var(--warn-bg);
+}
+
+.dotSuccess {
+  background: var(--success);
+  box-shadow: 0 0 0 3px var(--success-glow);
+}
+
+.dotLink {
+  background: var(--link);
+  box-shadow: 0 0 0 3px var(--link-bg);
+}
+
+.dotDim {
+  background: var(--text-faint);
+  box-shadow: 0 0 0 3px var(--overlay);
+}
+
+.dotDefault {
+  background: var(--border);
+  box-shadow: 0 0 0 3px var(--overlay);
+}
+
+.content {
+  font-size: var(--font-size-base-dim-plus);
+  min-width: 0;
+}
+
+.label {
+  color: var(--fg);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+}
+
+.sub {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-faint);
+  margin-top: var(--space-xs);
+}
+
+.time {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-faint);
+  white-space: nowrap;
+}

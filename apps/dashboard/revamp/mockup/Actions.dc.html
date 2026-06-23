@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C0C0C; --surface:#131210; --surface-sunk:#0E0E0D; --surface-raise:#151311; --nav-active:#1A1815;
+    --border:#1F1D19; --border-2:#2A2722; --border-3:#3A3731;
+    --fg:#EDE7D7; --fg-bright:#F4EFE2; --text-dim:#A8A498; --text-faint:#6E6A5E;
+    --critical:#E76C66; --warn:#E5A04C; --success:#58B96A; --link:#7FB0F0;
+    --critical-bg:rgba(231,108,102,0.13); --warn-bg:rgba(229,160,76,0.13); --success-glow:rgba(88,185,106,0.18);
+    --overlay:#19171331;
+  }
+  [data-theme="light"]{
+    --bg:#F2EFE6; --surface:#FFFFFF; --surface-sunk:#ECE8DC; --surface-raise:#F7F4EC; --nav-active:#E9E4D6;
+    --border:#E5E0D2; --border-2:#D8D2C2; --border-3:#C4BDA9;
+    --fg:#1A1A1A; --fg-bright:#141414; --text-dim:#5F5A4C; --text-faint:#8A8472;
+    --critical:#C8403D; --warn:#B8862B; --success:#2F7A3A; --link:#2A6FB0;
+    --critical-bg:rgba(200,64,61,0.10); --warn-bg:rgba(184,134,43,0.12); --success-glow:rgba(47,122,58,0.20);
+    --overlay:rgba(20,20,20,0.035);
+  }
+  html{ background: var(--bg); transition: background 0.18s ease; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: 'Roboto', system-ui, sans-serif; transition: background 0.18s ease, color 0.18s ease; }
+  *, *::before, *::after { box-sizing: border-box; }
+  *::selection { background: var(--fg); color: var(--bg); }
+  button { font: inherit; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 6px; }
+  @keyframes scBackdrop { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes scPanel { from { opacity: 0; transform: translateY(-8px) scale(0.985); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; background: var(--bg); color: var(--fg);">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside style="border-right: 1px solid var(--border); background: var(--surface-sunk); display: flex; flex-direction: column;">
+    <div style="padding: 22px 20px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border);">
+      <div style="width: 26px; height: 26px; background: var(--fg); color: var(--bg); display: grid; place-items: center; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: -0.02em; border-radius: 4px;">S</div>
+      <div>
+        <div style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14.5px; letter-spacing: -0.005em; line-height: 1;">SyncCore</div>
+        <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint); margin-top: 3px;">acme · prod</div>
+      </div>
+    </div>
+
+    <nav style="padding: 14px 12px; display: grid; gap: 1px;">
+      <a href="Overview v3.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">▤</span>
+        <span>Overview</span>
+        <span></span>
+      </a>
+      <a href="Accounts.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">◰</span>
+        <span>Accounts</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); font-weight: 400;">48</span>
+      </a>
+      <a style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; background: var(--nav-active); box-shadow: inset 2px 0 0 var(--fg); font-size: 13.5px; font-weight: 600; color: var(--fg); font-family: 'Nunito', sans-serif;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-dim);">●</span>
+        <span>Actions</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--critical); font-weight: 500;">{{ openCount }}</span>
+      </a>
+      <a style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">≡</span>
+        <span>Events</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); font-weight: 400;">2.5k</span>
+      </a>
+      <a style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">⇌</span>
+        <span>Reconciler</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--warn); font-weight: 500;">7</span>
+      </a>
+      <a style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">↻</span>
+        <span>Queue</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); font-weight: 400;">23</span>
+      </a>
+    </nav>
+
+    <div style="margin-top: auto; padding: 16px 16px 18px; border-top: 1px solid var(--border); display: grid; gap: 4px;">
+      <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint);">Runtime</div>
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-dim);">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px var(--success-glow);"></span>
+        <span>Supabase · live</span>
+      </div>
+      <div style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); margin-top: 6px;">v0.41.2 · us-east-1</div>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <div style="display: grid; grid-template-rows: auto 1fr; min-width: 0;">
+
+    <!-- TOPBAR -->
+    <header style="display: grid; grid-template-columns: 1fr 480px 1fr; align-items: center; gap: 16px; padding: 12px 28px; border-bottom: 1px solid var(--border); background: var(--bg);">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">actions</div>
+      </div>
+      <button onClick="{{ openPalette }}" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--surface-raise); border: 1px solid var(--border-2); border-radius: 6px; width: 100%; text-align: left; color: var(--text-dim); font-size: 13px; font-family: 'Roboto', sans-serif;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--fg);">⌘K</span>
+        <span style="color: var(--border-3);">|</span>
+        <span>find account, run action, jump to…</span>
+      </button>
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-dim);">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px var(--success-glow);"></span>
+          <span>ingest healthy · 1.2s p95</span>
+        </div>
+        <button onClick="{{ toggleTheme }}" aria-label="Toggle black / alabaster theme" title="Toggle theme" style="display: inline-flex; align-items: center; background: var(--surface-raise); border: 1px solid var(--border-2); border-radius: 6px; padding: 2px; gap: 0;">
+          <span style="{{ darkPillStyle }}">●</span>
+          <span style="{{ lightPillStyle }}">○</span>
+        </button>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--fg); color: var(--bg); display: grid; place-items: center; font-family: 'Nunito', sans-serif; font-size: 11.5px; font-weight: 700;">JC</div>
+      </div>
+    </header>
+
+    <!-- PAGE -->
+    <main data-screen-label="Actions inbox" style="padding: 24px 32px 48px; display: grid; gap: 20px; min-width: 0; align-content: start;">
+
+      <section style="display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 28px;">
+        <div>
+          <h1 style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 30px; line-height: 1.1; letter-spacing: -0.018em; margin: 0; color: var(--fg-bright);">Actions</h1>
+          <p style="font-size: 14px; color: var(--text-dim); margin: 8px 0 0;"><span style="color: var(--fg-bright); font-weight: 500;">{{ openCount }} open</span> · <span style="color: var(--critical); font-weight: 500;">{{ criticalCount }} critical</span> · $248k exposure · ranked by exposure × age</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button style="background: var(--surface-raise); color: var(--fg); border: 1px solid var(--border-2); padding: 8px 13px; border-radius: 6px; font-size: 13px;">Assignee: anyone ▾</button>
+          <button style="background: var(--surface-raise); color: var(--fg); border: 1px solid var(--border-2); padding: 8px 13px; border-radius: 6px; font-size: 13px;">Export</button>
+        </div>
+      </section>
+
+      <!-- filter tabs -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; gap: 22px; align-items: flex-end;">
+          <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="6">
+            <button onClick="{{ tab.onClick }}" style="{{ tab.style }}">{{ tab.label }} <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; opacity: 0.7;">{{ tab.count }}</span></button>
+          </sc-for>
+        </div>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint); padding-bottom: 9px;">{{ resolvedNote }}</span>
+      </div>
+
+      <!-- SPLIT: list | detail -->
+      <section style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 22px; min-width: 0; align-items: start;">
+
+        <!-- LIST -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; min-width: 0;">
+          <!-- bulk bar -->
+          <div style="display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 12px; padding: 9px 14px; background: var(--overlay); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-dim);">
+            <input type="checkbox" checked="{{ allChecked }}" onChange="{{ selectAllVisible }}" style="margin: 0; accent-color: var(--fg);">
+            <span>{{ bulkLabel }}</span>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button onClick="{{ bulkResolve }}" style="{{ bulkResolveStyle }}">Resolve <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; opacity: 0.7;">R</span></button>
+              <button style="background: transparent; color: var(--text-dim); border: 1px solid var(--border-2); padding: 5px 9px; border-radius: 4px; font-size: 11.5px;">Snooze <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; opacity: 0.7;">S</span></button>
+              <button style="background: transparent; color: var(--text-dim); border: 1px solid var(--border-2); padding: 5px 9px; border-radius: 4px; font-size: 11.5px;">Assign <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; opacity: 0.7;">A</span></button>
+            </div>
+          </div>
+
+          <div style="max-height: 64vh; overflow-y: auto;">
+            <sc-for list="{{ rows }}" as="row" hint-placeholder-count="8">
+              <div onClick="{{ row.onSelect }}" style="{{ row.rowStyle }}" style-hover="{{ row.hoverStyle }}">
+                <div style="{{ row.railStyle }}"></div>
+                <div onClick="{{ row.stopToggle }}" style="display: grid; place-items: center;">
+                  <input type="checkbox" checked="{{ row.checked }}" onChange="{{ row.toggle }}" style="margin: 0; accent-color: var(--fg);">
+                </div>
+                <div style="min-width: 0; padding: 2px 0;">
+                  <div style="display: flex; align-items: baseline; gap: 8px; min-width: 0;">
+                    <span style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13.5px; color: var(--fg-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ row.title }}</span>
+                    <span style="{{ row.sevChipStyle }}">{{ row.sevLabel }}</span>
+                  </div>
+                  <div style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ row.account }} · {{ row.owner }} · {{ row.type }}</div>
+                </div>
+                <div style="text-align: right; padding-right: 12px;">
+                  <div style="font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--fg-bright);">{{ row.exposure }}</div>
+                  <div style="{{ row.ageStyle }}">{{ row.age }}</div>
+                </div>
+              </div>
+            </sc-for>
+
+            <sc-if value="{{ emptyList }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 40px 16px; text-align: center; color: var(--text-dim);">
+                <div style="font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--success);">● inbox zero</div>
+                <div style="font-size: 13px; margin-top: 6px;">No actions in this filter.</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <!-- DETAIL PANEL -->
+        <div style="position: sticky; top: 22px; min-width: 0;">
+          <sc-if value="{{ sel.present }}" hint-placeholder-val="{{ true }}">
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 18px 20px; border-bottom: 1px solid var(--border);">
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span style="{{ sel.sevChipStyle }}">{{ sel.sevLabel }}</span>
+                <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">{{ sel.type }}</span>
+              </div>
+              <h2 style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 19px; line-height: 1.2; letter-spacing: -0.01em; margin: 10px 0 0; color: var(--fg-bright);">{{ sel.title }}</h2>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 12.5px; color: var(--text-dim);">
+                <span style="color: var(--fg);">{{ sel.account }}</span><span style="color: var(--border-3);">·</span>
+                <span>{{ sel.owner }}</span><span style="color: var(--border-3);">·</span>
+                <span style="font-family: 'Roboto Mono', monospace;">{{ sel.age }} old</span><span style="color: var(--border-3);">·</span>
+                <span style="font-family: 'Roboto Mono', monospace; color: var(--fg-bright);">{{ sel.exposure }} exposure</span>
+              </div>
+            </div>
+
+            <div style="padding: 18px 20px; display: grid; gap: 18px;">
+              <!-- recommendation -->
+              <div style="background: var(--surface-raise); border: 1px solid var(--border-2); border-radius: 7px; padding: 15px 16px;">
+                <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint);">Recommended</div>
+                <p style="font-size: 13.5px; line-height: 1.5; color: var(--fg); margin: 8px 0 14px;">{{ sel.recommendation }}</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button onClick="{{ sel.resolve }}" style="background: var(--fg); color: var(--bg); border: 1px solid var(--fg); padding: 8px 14px; border-radius: 5px; font-size: 13px; font-weight: 600;">{{ sel.primaryLabel }}</button>
+                  <button style="background: transparent; color: var(--fg); border: 1px solid var(--border-2); padding: 8px 12px; border-radius: 5px; font-size: 13px;">Snooze 1h</button>
+                  <button style="background: transparent; color: var(--text-dim); border: 1px solid var(--border-2); padding: 8px 12px; border-radius: 5px; font-size: 13px;">Reassign</button>
+                </div>
+              </div>
+
+              <!-- payload: diff -->
+              <sc-if value="{{ sel.isDiff }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 9px;">Field drift · stripe → crm</div>
+                  <div style="border: 1px solid var(--border); border-radius: 7px; overflow: hidden;">
+                    <sc-for list="{{ sel.diffRows }}" as="dr" hint-placeholder-count="2">
+                      <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); font-family: 'Roboto Mono', monospace; font-size: 12px;">
+                        <span style="color: var(--text-faint);">{{ dr.label }}</span>
+                        <span style="color: var(--fg-bright);">{{ dr.left }} <span style="color: var(--text-faint);">→</span> <span style="color: var(--warn);">{{ dr.right }}</span></span>
+                        <span></span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- payload: error / metrics -->
+              <sc-if value="{{ sel.isError }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 9px;">{{ sel.payloadLabel }}</div>
+                  <div style="background: var(--surface-sunk); border: 1px solid var(--border); border-radius: 7px; padding: 12px 14px; display: grid; gap: 6px;">
+                    <sc-for list="{{ sel.errorRows }}" as="er" hint-placeholder-count="3">
+                      <div style="display: grid; grid-template-columns: 130px 1fr; gap: 12px; font-family: 'Roboto Mono', monospace; font-size: 12px;">
+                        <span style="color: var(--text-faint);">{{ er.k }}</span>
+                        <span style="{{ er.vStyle }}">{{ er.v }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- why -->
+              <div style="display: grid; grid-template-columns: auto 1fr; gap: 11px; align-items: start;">
+                <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint); padding-top: 1px;">why</span>
+                <span style="font-size: 12.5px; color: var(--text-dim); line-height: 1.5;">{{ sel.why }}</span>
+              </div>
+
+              <!-- activity -->
+              <div>
+                <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px;">Activity</div>
+                <div style="display: grid; gap: 2px;">
+                  <sc-for list="{{ sel.timeline }}" as="ev" hint-placeholder-count="3">
+                    <div style="display: grid; grid-template-columns: 8px 1fr auto; align-items: start; gap: 11px; padding: 7px 0;">
+                      <div style="{{ ev.dotStyle }}"></div>
+                      <div style="font-size: 12.5px; min-width: 0;">
+                        <div style="color: var(--fg);"><strong style="font-family: 'Nunito', sans-serif; font-weight: 700;">{{ ev.label }}</strong></div>
+                        <div style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint);">{{ ev.sub }}</div>
+                      </div>
+                      <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); white-space: nowrap;">{{ ev.time }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ sel.empty }}" hint-placeholder-val="{{ false }}">
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 56px 24px; text-align: center;">
+              <div style="font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--success);">● all clear</div>
+              <div style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 16px; color: var(--fg-bright); margin-top: 10px;">Nothing selected</div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 6px;">Pick an action from the list to see its resolution path.</div>
+            </div>
+          </sc-if>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============================ COMMAND PALETTE ============================ -->
+  <sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closePalette }}" style="position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(2px); display: grid; place-items: start center; padding-top: 12vh; z-index: 60; animation: scBackdrop 0.12s ease;">
+    <div onClick="{{ stop }}" style="width: 620px; max-width: calc(100vw - 48px); background: var(--surface); border: 1px solid var(--border-2); border-radius: 12px; box-shadow: 0 24px 70px rgba(0,0,0,0.5); overflow: hidden; animation: scPanel 0.14s ease;">
+      <div style="display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--border);">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 13px; color: var(--text-faint);">⌕</span>
+        <input ref="{{ inputRef }}" value="{{ paletteQuery }}" onChange="{{ onPaletteInput }}" placeholder="Search actions, accounts, commands…" style="background: none; border: none; outline: none; color: var(--fg-bright); font-family: 'Roboto', sans-serif; font-size: 15px; width: 100%;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); border: 1px solid var(--border-2); padding: 2px 7px; border-radius: 4px;">esc</span>
+      </div>
+      <div style="max-height: 52vh; overflow-y: auto; padding: 8px;">
+        <sc-for list="{{ paletteGroups }}" as="group" hint-placeholder-count="3">
+          <div style="padding: 10px 10px 5px;">
+            <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint);">{{ group.name }}</div>
+          </div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+            <div onClick="{{ item.run }}" onMouseEnter="{{ item.hover }}" style="{{ item.rowStyle }}">
+              <span style="font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--text-faint);">{{ item.icon }}</span>
+              <span style="display: flex; align-items: baseline; gap: 9px; min-width: 0;">
+                <span style="font-family: 'Nunito', sans-serif; font-weight: 600; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.label }}</span>
+                <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint); white-space: nowrap;">{{ item.sub }}</span>
+              </span>
+              <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint);">{{ item.tag }}</span>
+            </div>
+          </sc-for>
+        </sc-for>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 28px 16px; text-align: center; color: var(--text-dim); font-size: 13px;">No matches for “{{ paletteQuery }}”.</div>
+        </sc-if>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; border-top: 1px solid var(--border); background: var(--overlay); font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">
+        <div style="display: flex; gap: 14px;">
+          <span><span style="color: var(--fg);">↑↓</span> navigate</span>
+          <span><span style="color: var(--fg);">↵</span> open</span>
+          <span><span style="color: var(--fg);">esc</span> close</span>
+        </div>
+        <span>{{ resultCount }} results</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1320, &quot;height&quot;: 880 },
+  &quot;startTheme&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;dark&quot;, &quot;light&quot;], &quot;default&quot;: &quot;dark&quot;, &quot;tsType&quot;: &quot;string&quot; }
+}">
+class Component extends DCLogic {
+  state = {
+    theme: 'dark',
+    filter: 'all',
+    selectedId: 'a1',
+    checked: {},
+    resolved: {},
+    paletteOpen: false,
+    paletteQuery: '',
+    paletteIndex: 0,
+  };
+
+  inputRef = React.createRef();
+
+  actionData() {
+    return [
+      { id: 'a1', title: 'Failed renewal · invoice $48,000', sev: 'critical', type: 'stripe.payment_failed', account: 'Northwind Industrial', owner: 'J. Cole', age: '2h 18m', exposure: '$48k',
+        recommendation: 'Apply a 14-day grace period and send a concierge recovery email from J. Cole. Stripe retry is already scheduled (1/3, +30m).', primaryLabel: 'Apply grace + email',
+        payload: 'error', payloadLabel: 'Stripe payload',
+        errorRows: [ { k: 'code', v: 'card_declined', warn: true }, { k: 'decline_code', v: 'do_not_honor', warn: true }, { k: 'amount', v: '$48,000.00' }, { k: 'invoice', v: 'in_3OrLkPa9F' }, { k: 'customer', v: 'cus_NwInd92' } ],
+        why: 'Highest open exposure ($48k), 2h 18m old, and the enterprise renewal lands in 3 days — ranked top of queue.',
+        timeline: [ { kind: 'invoice', label: 'invoice.payment_failed', sub: 'stripe · evt_3OrLkPa9F', time: '09:18' }, { kind: 'action', label: 'action.proposed · churn-defuser', sub: 'auto-assigned J. Cole', time: '09:18' }, { kind: 'recovery', label: 'retry.scheduled · +30m', sub: 'attempt 1/3 · backoff 30/60/240m', time: '09:18' } ] },
+      { id: 'a2', title: 'DLQ escalation · 6 retries exhausted', sev: 'critical', type: 'netsuite.sync_failed', account: 'Halcyon Logistics', owner: 'M. Reyes', age: '4h 02m', exposure: '$24k',
+        recommendation: 'The customer_id mapping is stale. Re-map to NetSuite internalId 4821 and replay the DLQ batch manually — auto-retry is exhausted.', primaryLabel: 'Force retry',
+        payload: 'error', payloadLabel: 'DLQ payload',
+        errorRows: [ { k: 'source', v: 'netsuite.sync' }, { k: 'error', v: 'INVALID_REF', warn: true }, { k: 'field', v: 'customer_id' }, { k: 'attempts', v: '6 / 6', warn: true }, { k: 'queue', v: 'dlq.netsuite' } ],
+        why: 'Auto-retry budget exhausted — only manual replay clears it. Blocks invoice reconciliation for the account.',
+        timeline: [ { kind: 'invoice', label: 'sync.failed · INVALID_REF', sub: 'netsuite · customer_id', time: '08:56' }, { kind: 'invoice', label: 'retries.exhausted · 6/6', sub: 'moved to DLQ', time: '09:02' }, { kind: 'action', label: 'action.escalated', sub: 'priority bumped to critical', time: '09:05' } ] },
+      { id: 'a3', title: 'High-value churn signal · usage –68% w/w', sev: 'critical', type: 'churn_defuser', account: 'Atlas Photonics', owner: 'S. Park', age: '6h 41m', exposure: '$162k',
+        recommendation: 'Trigger exec-sponsor outreach and schedule a value review before the renewal window. Loop in S. Park and the account team.', primaryLabel: 'Assign to S. Park',
+        payload: 'error', payloadLabel: 'Signal metrics',
+        errorRows: [ { k: 'health', v: '32 (–18)', warn: true }, { k: 'usage w/w', v: '–68%', warn: true }, { k: 'admin seat', v: 'inactive 9d' }, { k: 'renews in', v: '11 days' } ],
+        why: 'Large ARR ($162k) with a sharp engagement drop close to renewal — the model flags elevated churn risk.',
+        timeline: [ { kind: 'drift', label: 'health.recomputed · 32', sub: 'usage + engagement model', time: '07:50' }, { kind: 'event', label: 'usage.reported · –68% w/w', sub: 'product telemetry', time: '06:20' }, { kind: 'action', label: 'action.proposed · outreach', sub: 'suggested owner S. Park', time: '07:51' } ] },
+      { id: 'a4', title: 'CRM tier drift · enterprise → growth', sev: 'medium', type: 'reconciler.plan_tier', account: 'Acme Manufacturing', owner: 'M. Reyes', age: '11h 04m', exposure: '$1.2k/mo',
+        recommendation: 'Stripe shows a recent upgrade event (08:34). Accept Stripe as source of truth and push the corrected tier to the CRM.', primaryLabel: 'Accept Stripe',
+        payload: 'diff',
+        diffRows: [ { label: 'plan_tier', left: 'enterprise', right: 'growth' }, { label: 'mrr', left: '$4,800', right: '$3,600' } ],
+        why: 'Billing-vs-CRM mismatch with a clear causal event in Stripe — safe to auto-resolve toward Stripe.',
+        timeline: [ { kind: 'drift', label: 'drift.detected · plan_tier', sub: 'stripe ent ≠ crm growth', time: '09:11' }, { kind: 'event', label: 'customer.updated · upgraded', sub: 'stripe · pre-drift cause', time: '08:34' } ] },
+      { id: 'a5', title: 'Webhook backlog · n8n queue 38m delayed', sev: 'medium', type: 'infra.lag', account: 'Platform · n8n', owner: 'platform-on-call', age: '38m', exposure: '—',
+        recommendation: 'Infra is draining the backlog at 11/s; ETA to clear is ~40m. Snooze and monitor — page platform-on-call only if the delay exceeds 60m.', primaryLabel: 'Snooze & monitor',
+        payload: 'error', payloadLabel: 'Queue state',
+        errorRows: [ { k: 'queue', v: 'n8n.webhooks' }, { k: 'delay', v: '38m', warn: true }, { k: 'backlog', v: '412 events' }, { k: 'drain rate', v: '11 / s' }, { k: 'sla', v: 'crossed 09:14', warn: true } ],
+        why: 'SLA threshold crossed, but the queue is self-healing — low intervention value unless drain stalls.',
+        timeline: [ { kind: 'event', label: 'sla.crossed · webhooks', sub: 'threshold 30m', time: '09:14' }, { kind: 'recovery', label: 'autoscale.triggered', sub: '+2 workers', time: '09:16' } ] },
+      { id: 'a6', title: 'Currency mismatch on invoice', sev: 'medium', type: 'reconciler.fx', account: 'Quartz Analytics', owner: 'J. Cole', age: '2h', exposure: '$11.5k',
+        recommendation: 'NetSuite booked EUR as USD. Re-book with the day-of FX rate (1.087) and reconcile the invoice line items.', primaryLabel: 'Re-book FX',
+        payload: 'diff',
+        diffRows: [ { label: 'currency', left: 'USD', right: 'EUR' }, { label: 'amount', left: '$11,500', right: '€10,580' } ],
+        why: 'FX booking error inflates recognized revenue — needs correction before close.',
+        timeline: [ { kind: 'drift', label: 'drift.detected · fx', sub: 'netsuite EUR ≠ stripe USD', time: '07:10' } ] },
+      { id: 'a7', title: 'Tax region mismatch on line items', sev: 'medium', type: 'reconciler.tax', account: 'Forge Dynamics', owner: 'S. Park', age: '1h', exposure: '$5.5k',
+        recommendation: 'Billing address changed to TX. Apply the TX jurisdiction and reissue the affected line items.', primaryLabel: 'Apply TX',
+        payload: 'diff',
+        diffRows: [ { label: 'tax_region', left: 'US-CA', right: 'US-TX' }, { label: 'rate', left: '8.50%', right: '8.25%' } ],
+        why: 'Tax jurisdiction drift on active invoices — small dollar impact but compliance-sensitive.',
+        timeline: [ { kind: 'drift', label: 'drift.detected · tax_region', sub: 'netsuite vs stripe address', time: '08:05' } ] },
+      { id: 'a8', title: 'PO number missing on 2 invoices', sev: 'low', type: 'reconciler.po_number', account: 'Pinnacle Foods', owner: 'S. Park', age: '5h', exposure: '$7.3k',
+        recommendation: 'Request PO numbers from Pinnacle AP before the next invoice send to avoid payment delays.', primaryLabel: 'Request PO',
+        payload: 'error', payloadLabel: 'Missing fields',
+        errorRows: [ { k: 'invoices', v: '2' }, { k: 'field', v: 'po_number', warn: true }, { k: 'amount', v: '$7,300' } ],
+        why: 'Low urgency — affects future sends, not current recognition.',
+        timeline: [ { kind: 'drift', label: 'drift.detected · po_number', sub: 'auto-queued for reconciler', time: '04:40' } ] },
+      { id: 'a9', title: 'Seat utilization dropped 22%', sev: 'medium', type: 'usage.signal', account: 'Northwind Industrial', owner: 'J. Cole', age: '1d 04h', exposure: '$248k',
+        recommendation: 'A usage dip on a large account can signal expansion risk. Flag to J. Cole for the next QBR.', primaryLabel: 'Flag to owner',
+        payload: 'error', payloadLabel: 'Usage metrics',
+        errorRows: [ { k: 'seats active', v: '112 / 140', warn: true }, { k: 'change', v: '–22% (30d)', warn: true }, { k: 'tier', v: 'enterprise' } ],
+        why: 'Same account as the failed renewal — compounding risk on the largest book of business.',
+        timeline: [ { kind: 'event', label: 'usage.reported · seats –22%', sub: 'product telemetry', time: 'Jun 13' } ] },
+      { id: 'a10', title: 'Admin seat inactive 9 days', sev: 'medium', type: 'engagement', account: 'Atlas Photonics', owner: 'S. Park', age: '9d', exposure: '$162k',
+        recommendation: 'Re-engage the admin with an activation nudge; tie into the churn-defuser playbook already open on this account.', primaryLabel: 'Send nudge',
+        payload: 'error', payloadLabel: 'Engagement',
+        errorRows: [ { k: 'admin seat', v: 'inactive 9d', warn: true }, { k: 'last login', v: 'Jun 05' } ],
+        why: 'Reinforces the churn signal on Atlas — bundle into the same outreach.',
+        timeline: [ { kind: 'event', label: 'login.gap · 9d', sub: 'admin role', time: 'Jun 06' } ] },
+      { id: 'a11', title: 'CRM owner mismatch', sev: 'medium', type: 'crm.owner', account: 'Halcyon Logistics', owner: 'M. Reyes', age: '40m', exposure: '$96k',
+        recommendation: 'CRM owner differs from SyncCore. Confirm M. Reyes as owner of record and sync the field back to the CRM.', primaryLabel: 'Keep M. Reyes',
+        payload: 'diff',
+        diffRows: [ { label: 'owner', left: 'M. Reyes', right: 'A. Lim' } ],
+        why: 'Routing integrity — wrong owner sends future alerts to the wrong rep.',
+        timeline: [ { kind: 'drift', label: 'drift.detected · owner', sub: 'crm ≠ synccore', time: '08:40' } ] },
+      { id: 'a12', title: 'Renewal prep · $204k due Nov', sev: 'low', type: 'playbook.renewal', account: 'Meridian Health', owner: 'J. Cole', age: '2d', exposure: '$204k',
+        recommendation: 'Kick off the renewal playbook 120 days out. No urgent action — schedule the QBR and confirm the champion.', primaryLabel: 'Start playbook',
+        payload: 'error', payloadLabel: 'Renewal',
+        errorRows: [ { k: 'renewal', v: '$204,000' }, { k: 'due', v: '09 Nov' }, { k: 'days out', v: '120' } ],
+        why: 'Healthy account — surfaced for proactive prep, not risk.',
+        timeline: [ { kind: 'event', label: 'playbook.suggested · renewal', sub: '120d trigger', time: 'Jun 13' } ] },
+    ];
+  }
+
+  sevColor(s) { return s === 'critical' || s === 'high' ? 'var(--critical)' : s === 'medium' ? 'var(--warn)' : 'var(--text-faint)'; }
+  sevChip(s) { return { fontFamily: "'Roboto Mono', monospace", fontSize: '9.5px', letterSpacing: '0.06em', fontWeight: 500, padding: '2px 6px', borderRadius: '3px', color: this.sevColor(s), background: s === 'medium' ? 'var(--warn-bg)' : (s === 'critical' || s === 'high') ? 'var(--critical-bg)' : 'var(--overlay)' }; }
+  sevChipLg(s) { return { fontFamily: "'Roboto Mono', monospace", fontSize: '10.5px', letterSpacing: '0.06em', fontWeight: 500, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '4px', color: this.sevColor(s), background: s === 'medium' ? 'var(--warn-bg)' : (s === 'critical' || s === 'high') ? 'var(--critical-bg)' : 'var(--overlay)' }; }
+  eventColor(k) { return k === 'invoice' || k === 'action' ? 'var(--critical)' : k === 'drift' ? 'var(--warn)' : k === 'event' ? 'var(--link)' : 'var(--success)'; }
+  pill(active) { return { padding: '3px 9px', borderRadius: '4px', fontFamily: "'Roboto Mono', monospace", fontSize: '10.5px', background: active ? 'var(--border)' : 'transparent', color: active ? 'var(--fg)' : 'var(--text-faint)' }; }
+  tabStyle(active) { return { background: 'none', border: 'none', padding: '0 0 9px', cursor: 'pointer', fontFamily: "'Roboto', sans-serif", fontSize: '13px', color: active ? 'var(--fg-bright)' : 'var(--text-faint)', fontWeight: active ? 600 : 500, borderBottom: active ? '2px solid var(--fg)' : '2px solid transparent', marginBottom: '-1px', whiteSpace: 'nowrap' }; }
+  paletteRow(active) { return { display: 'grid', gridTemplateColumns: '18px 1fr auto', alignItems: 'center', gap: '12px', padding: '9px 12px', borderRadius: '7px', cursor: 'pointer', background: active ? 'var(--nav-active)' : 'transparent', color: active ? 'var(--fg-bright)' : 'var(--text-dim)' }; }
+
+  applyTheme(t) { try { document.documentElement.setAttribute('data-theme', t); } catch (e) {} }
+  toggle() { const next = this.state.theme === 'dark' ? 'light' : 'dark'; this.applyTheme(next); try { localStorage.setItem('synccore-theme', next); } catch (e) {} this.setState({ theme: next }); }
+
+  setFilter(f) { this.setState({ filter: f }); }
+  select(id) { this.setState({ selectedId: id }); }
+  toggleCheck(id) { this.setState(s => { const c = Object.assign({}, s.checked); if (c[id]) delete c[id]; else c[id] = true; return { checked: c }; }); }
+  resolve(id) {
+    this.setState(s => {
+      const r = Object.assign({}, s.resolved); r[id] = true;
+      const c = Object.assign({}, s.checked); delete c[id];
+      return { resolved: r, checked: c };
+    });
+  }
+
+  openPalette() { this.setState({ paletteOpen: true, paletteQuery: '', paletteIndex: 0 }); }
+  closePalette() { this.setState({ paletteOpen: false }); }
+  onPaletteInput(e) { this.setState({ paletteQuery: e.target.value, paletteIndex: 0 }); }
+  move(d) { const n = this.flat ? this.flat.length : 0; if (!n) return; this.setState(s => ({ paletteIndex: (Math.max(0, Math.min(s.paletteIndex, n - 1)) + d + n) % n })); }
+  onKey(e) {
+    const meta = e.metaKey || e.ctrlKey;
+    if (meta && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); this.setState(s => ({ paletteOpen: !s.paletteOpen, paletteQuery: '', paletteIndex: 0 })); return; }
+    if (!this.state.paletteOpen) return;
+    if (e.key === 'Escape') { e.preventDefault(); this.closePalette(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); this.move(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); this.move(-1); }
+    else if (e.key === 'Enter') { e.preventDefault(); const it = this.flat && this.flat[this.activeIdx]; if (it) it.run(); }
+  }
+
+  componentDidMount() {
+    let t = 'dark';
+    try { t = localStorage.getItem('synccore-theme') || this.props.startTheme || 'dark'; } catch (e) { t = this.props.startTheme || 'dark'; }
+    if (t !== 'dark' && t !== 'light') t = 'dark';
+    this.applyTheme(t);
+    this._onKey = this.onKey.bind(this);
+    window.addEventListener('keydown', this._onKey);
+    if (t !== this.state.theme) this.setState({ theme: t });
+  }
+  componentWillUnmount() { if (this._onKey) window.removeEventListener('keydown', this._onKey); }
+  componentDidUpdate(pp, ps) { if (this.state.paletteOpen && !ps.paletteOpen && this.inputRef.current) { try { this.inputRef.current.focus(); } catch (e) {} } }
+
+  renderVals() {
+    const all = this.actionData();
+    const resolved = this.state.resolved;
+    const open = all.filter(a => !resolved[a.id]);
+    const openCount = open.length;
+    const criticalCount = open.filter(a => a.sev === 'critical').length;
+    const resolvedCount = all.length - openCount;
+
+    const counts = {
+      all: openCount,
+      critical: open.filter(a => a.sev === 'critical').length,
+      high: open.filter(a => a.sev === 'high').length,
+      medium: open.filter(a => a.sev === 'medium').length,
+      low: open.filter(a => a.sev === 'low').length,
+      resolved: resolvedCount,
+    };
+    const f = this.state.filter;
+    const tabDefs = [['all', 'All', counts.all], ['critical', 'Critical', counts.critical], ['medium', 'Medium', counts.medium], ['low', 'Low', counts.low], ['resolved', 'Resolved', counts.resolved]];
+    const tabs = tabDefs.map(([key, label, count]) => ({ key, label, count, onClick: () => this.setFilter(key), style: this.tabStyle(key === f) }));
+
+    let list;
+    if (f === 'resolved') list = all.filter(a => resolved[a.id]);
+    else if (f === 'all') list = open;
+    else list = open.filter(a => a.sev === f);
+
+    const checked = this.state.checked;
+    const checkedVisible = list.filter(a => checked[a.id]).length;
+    const allChecked = list.length > 0 && checkedVisible === list.length;
+
+    const rows = list.map(a => ({
+      id: a.id,
+      title: a.title,
+      sevLabel: a.sev.toUpperCase(),
+      sevChipStyle: this.sevChip(a.sev),
+      account: a.account, owner: a.owner, type: a.type,
+      exposure: a.exposure,
+      age: a.age,
+      ageStyle: { fontFamily: "'Roboto Mono', monospace", fontSize: '10.5px', marginTop: '3px', color: a.sev === 'critical' ? 'var(--critical)' : 'var(--text-faint)' },
+      checked: !!checked[a.id],
+      railStyle: { width: '4px', alignSelf: 'stretch', background: a.id === this.state.selectedId ? this.sevColor(a.sev) : (a.sev === 'critical' ? this.sevColor(a.sev) : 'transparent') },
+      rowStyle: { display: 'grid', gridTemplateColumns: '4px 26px 1fr 92px', alignItems: 'center', gap: '10px', padding: '12px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer', background: a.id === this.state.selectedId ? 'var(--nav-active)' : 'transparent' },
+      hoverStyle: { background: a.id === this.state.selectedId ? 'var(--nav-active)' : 'var(--surface-raise)' },
+      onSelect: () => this.select(a.id),
+      toggle: () => this.toggleCheck(a.id),
+      stopToggle: (e) => e.stopPropagation(),
+    }));
+
+    // selected detail
+    let selSrc = all.find(a => a.id === this.state.selectedId);
+    if (!selSrc || (f !== 'resolved' && resolved[selSrc.id]) || (list.length && !list.find(a => a.id === selSrc.id))) {
+      selSrc = list[0] || null;
+    }
+    let sel;
+    if (selSrc) {
+      sel = {
+        present: true, empty: false,
+        title: selSrc.title, sevLabel: selSrc.sev.toUpperCase(), sevChipStyle: this.sevChipLg(selSrc.sev), type: selSrc.type,
+        account: selSrc.account, owner: selSrc.owner, age: selSrc.age, exposure: selSrc.exposure,
+        recommendation: selSrc.recommendation, primaryLabel: resolved[selSrc.id] ? 'Reopen' : selSrc.primaryLabel,
+        why: selSrc.why,
+        isDiff: selSrc.payload === 'diff',
+        isError: selSrc.payload === 'error',
+        payloadLabel: selSrc.payloadLabel || 'Payload',
+        diffRows: selSrc.diffRows || [],
+        errorRows: (selSrc.errorRows || []).map(r => ({ k: r.k, v: r.v, vStyle: { color: r.warn ? 'var(--warn)' : 'var(--fg-bright)' } })),
+        timeline: selSrc.timeline.map(e => ({ label: e.label, sub: e.sub, time: e.time, dotStyle: { background: this.eventColor(e.kind), height: '13px', width: '8px', marginTop: '3px' } })),
+        resolve: () => this.resolve(selSrc.id),
+      };
+    } else {
+      sel = { present: false, empty: true };
+    }
+
+    const bulkLabel = checkedVisible > 0 ? (checkedVisible + ' selected') : 'select all visible · ⌥A';
+    const bulkResolveStyle = checkedVisible > 0
+      ? { background: 'var(--fg)', color: 'var(--bg)', border: '1px solid var(--fg)', padding: '5px 10px', borderRadius: '4px', fontSize: '11.5px', fontWeight: 600 }
+      : { background: 'transparent', color: 'var(--text-dim)', border: '1px solid var(--border-2)', padding: '5px 9px', borderRadius: '4px', fontSize: '11.5px' };
+
+    // ---- command palette ----
+    const q = this.state.paletteQuery.trim().toLowerCase();
+    const matches = it => !q || (it.label + ' ' + (it.sub || '') + ' ' + it.group).toLowerCase().includes(q);
+    const cmdItems = [
+      { group: 'Commands', icon: '◐', label: 'Toggle black / alabaster theme', sub: 'appearance', tag: '', action: () => this.toggle() },
+      { group: 'Commands', icon: '◆', label: 'Filter: critical only', sub: counts.critical + ' open', tag: '', action: () => this.setFilter('critical') },
+      { group: 'Commands', icon: '◰', label: 'Filter: resolved', sub: counts.resolved + ' done', tag: '', action: () => this.setFilter('resolved') },
+    ];
+    const navItems = [
+      { group: 'Navigate', icon: '▤', label: 'Overview', sub: 'dashboard home', tag: '↗', action: () => { try { window.location.href = 'Overview v3.dc.html'; } catch (e) {} } },
+      { group: 'Navigate', icon: '◰', label: 'Accounts', sub: 'all 48 accounts', tag: '↗', action: () => { try { window.location.href = 'Accounts.dc.html'; } catch (e) {} } },
+    ];
+    const actItems = open.map(a => ({ group: 'Actions', icon: '●', label: a.title, sub: a.account + ' · ' + a.exposure, tag: a.sev, action: () => this.setState({ selectedId: a.id, filter: 'all', paletteOpen: false }) }));
+    const defs = [{ name: 'Commands', items: cmdItems }, { name: 'Navigate', items: navItems }, { name: 'Actions', items: actItems }];
+    let idx = 0; const flat = [];
+    const paletteGroups = defs.map(g => ({ name: g.name, items: g.items.filter(matches) })).filter(g => g.items.length);
+    const total = paletteGroups.reduce((n, g) => n + g.items.length, 0);
+    const activeIdx = Math.max(0, Math.min(this.state.paletteIndex, Math.max(0, total - 1)));
+    this.activeIdx = activeIdx;
+    paletteGroups.forEach(g => g.items.forEach(it => { const my = idx; it.rowStyle = this.paletteRow(my === activeIdx); it.run = () => { this.closePalette(); it.action(); }; it.hover = () => this.setState({ paletteIndex: my }); flat.push(it); idx++; }));
+    this.flat = flat;
+
+    return {
+      theme: this.state.theme,
+      toggleTheme: () => this.toggle(),
+      darkPillStyle: this.pill(this.state.theme === 'dark'),
+      lightPillStyle: this.pill(this.state.theme === 'light'),
+      openCount, criticalCount,
+      resolvedNote: resolvedCount > 0 ? (resolvedCount + ' resolved today') : 'ranked by exposure × age',
+      tabs, rows, sel,
+      emptyList: list.length === 0,
+      allChecked,
+      bulkLabel, bulkResolveStyle,
+      selectAllVisible: () => { this.setState(s => { const c = Object.assign({}, s.checked); const willCheck = !(list.length > 0 && list.every(a => c[a.id])); list.forEach(a => { if (willCheck) c[a.id] = true; else delete c[a.id]; }); return { checked: c }; }); },
+      bulkResolve: () => { const ids = Object.keys(this.state.checked); this.setState(s => { const r = Object.assign({}, s.resolved); ids.forEach(id => { r[id] = true; }); return { resolved: r, checked: {} }; }); },
+      openPalette: () => this.openPalette(),
+      closePalette: () => this.closePalette(),
+      stop: (e) => e.stopPropagation(),
+      paletteOpen: this.state.paletteOpen,
+      paletteQuery: this.state.paletteQuery,
+      onPaletteInput: (e) => this.onPaletteInput(e),
+      inputRef: this.inputRef,
+      paletteGroups,
+      resultCount: flat.length,
+      noResults: this.state.paletteOpen && flat.length === 0,
+    };
+  }
+}
+</script>
+</body>
+</html>

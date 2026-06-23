@@ -1,0 +1,99 @@
+/**
+ * GreetingHeader.module.css
+ * Styling for the greeting header with contextual time and KPI metrics.
+ */
+
+.section {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: var(--space-9xl);
+}
+
+.greetingBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.greeting {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-5xl);
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+  margin: 0;
+  color: var(--fg-bright);
+}
+
+.context {
+  font-size: var(--font-size-base-dim);
+  color: var(--text-dim);
+  margin: var(--space-md) 0 0;
+}
+
+.needsAttention {
+  color: var(--critical);
+  font-weight: var(--font-weight-medium);
+}
+
+.kpiGroup {
+  display: flex;
+  gap: var(--space-8xl);
+  padding-bottom: var(--space-xs);
+}
+
+.kpiItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.kpiLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.kpiValue {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-3xl);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-top: var(--space-sm);
+  color: var(--fg-bright);
+}
+
+.delta {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base-dim-plus);
+  color: var(--critical);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  margin-left: var(--space-sm);
+}
+
+.deltaAccent {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base-dim-plus);
+  color: var(--text-dim);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: 0;
+  margin-left: var(--space-sm);
+}
+
+.deltaRecovered {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base-dim-plus);
+  color: var(--success);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  margin-left: var(--space-sm);
+}
+
+.divider {
+  width: 1px;
+  background: var(--border);
+}

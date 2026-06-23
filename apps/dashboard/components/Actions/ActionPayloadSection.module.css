@@ -1,0 +1,95 @@
+/* ActionPayloadSection.module.css */
+
+.section {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.sectionLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-sm);
+}
+
+/* Field Drift Display */
+
+.diffGrid {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.diffRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-2xl);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+}
+
+.diffRow:last-child {
+  border-bottom: none;
+}
+
+.diffLabel {
+  color: var(--text-faint);
+}
+
+.diffValues {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  justify-self: center;
+}
+
+.left {
+  color: var(--text-dim);
+}
+
+.arrow {
+  color: var(--text-faint);
+}
+
+.right {
+  color: var(--warn);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Error Detail Display */
+
+.errorGrid {
+  background: var(--surface-sunk);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl) var(--space-2xl);
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.errorRow {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: var(--space-2xl);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+}
+
+.errorKey {
+  color: var(--text-faint);
+}
+
+.errorValue {
+  color: var(--fg-bright);
+}
+
+.errorValueWarn {
+  color: var(--warn);
+  font-weight: var(--font-weight-semibold);
+}

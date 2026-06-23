@@ -1,0 +1,225 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.dimFull {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 8, 0.62);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.spotlight {
+  position: absolute;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 9999px rgba(8, 8, 8, 0.62);
+  pointer-events: none;
+}
+
+.pulseRing {
+  position: absolute;
+  inset: -4px;
+  border: 1px solid var(--fg);
+  border-radius: var(--radius-lg);
+  opacity: 0.65;
+  animation: pulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+}
+
+.backdropDismiss {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.card {
+  position: absolute;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  pointer-events: auto;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
+  padding: var(--space-4xl);
+  display: grid;
+  gap: var(--space-md);
+  outline: none;
+}
+
+.card[data-placement='center'] {
+  position: fixed;
+  top: var(--shell-header-height, 0px);
+  left: var(--sidebar-width, 0px);
+  right: 0;
+  bottom: 0;
+  width: 360px;
+  height: max-content;
+  margin: auto;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.tourLabel {
+  color: var(--text-dim);
+}
+
+.stepLabel {
+  color: var(--text-faint);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  letter-spacing: -0.012em;
+  color: var(--fg-bright);
+}
+
+.body {
+  font-size: var(--font-size-base-plus);
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.benefit {
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--fg);
+  margin: 0;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--success-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.progressTrack {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  margin-top: var(--space-xs);
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--fg);
+  border-radius: 999px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-md);
+  gap: var(--space-lg);
+}
+
+.navButtons {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.linkButton {
+  background: transparent;
+  border: none;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-faint);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.linkButton:hover {
+  color: var(--fg);
+}
+
+.secondaryButton,
+.primaryButton {
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.secondaryButton {
+  background: var(--surface-raise);
+  border-color: var(--border-2);
+  color: var(--fg);
+}
+
+.secondaryButton:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-3);
+}
+
+.primaryButton {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.primaryButton:hover {
+  opacity: 0.92;
+}
+
+@media (max-width: 640px) {
+  .card {
+    width: calc(100vw - 24px);
+    left: 12px !important;
+    right: 12px;
+    padding: var(--space-3xl);
+  }
+
+  .card[data-placement='center'] {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: auto;
+    width: auto;
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulseRing {
+    animation: none;
+  }
+}

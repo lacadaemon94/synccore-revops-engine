@@ -1,122 +1,82 @@
-import Link from "next/link";
-import { AppShell } from "../../components/app-shell";
-import { Badge } from "../../components/badge";
-import { DataTable } from "../../components/data-table";
-import { MetricCard } from "../../components/metric-card";
-import { PageHeader } from "../../components/page-header";
-import { Panel } from "../../components/panel";
-import { SectionHeader } from "../../components/section-header";
-import { getAccounts } from "../../lib/data/accounts";
-import { formatCompactCurrency, formatCurrency, formatDate, formatPercent, titleCase } from "../../lib/format";
+import { AccountsFilterTabs } from '@/components/Accounts/AccountsFilterTabs';
+import { AccountsTable } from '@/components/Accounts/AccountsTable';
+import type { AccountTableRow } from '@/components/Accounts/local';
+import { accountRows } from '@/lib/fixtures/accounts';
 
-function getRiskTone(riskLevel: "stable" | "urgent" | "watch") {
-  if (riskLevel === "urgent") {
-    return "danger" as const;
-  }
+import styles from './page.module.css';
 
-  if (riskLevel === "watch") {
-    return "warning" as const;
-  }
+const TOTAL_ACCOUNTS = 48;
 
-  return "positive" as const;
+function isAtRisk(row: AccountTableRow): boolean {
+  return row.healthScore < 75;
 }
 
-export default async function AccountsPage() {
-  const accounts = await getAccounts();
-  const revenueAtRisk = accounts.reduce((total, account) => total + account.revenueAtRisk, 0);
-  const atRiskCount = accounts.filter((account) => account.revenueAtRisk > 0).length;
-  const averageHealth = accounts.length
-    ? Math.round(accounts.reduce((total, account) => total + account.healthScore, 0) / accounts.length)
-    : 0;
-  const totalArr = accounts.reduce((total, account) => total + account.arr, 0);
+function getFilteredRows(rows: AccountTableRow[], filter: string): AccountTableRow[] {
+  if (filter === 'at-risk') {
+    return rows.filter(isAtRisk);
+  }
+  if (filter === 'enterprise') {
+    return rows.filter((row) => row.segment === 'enterprise');
+  }
+  if (filter === 'growth') {
+    return rows.filter((row) => row.segment === 'growth');
+  }
+  if (filter === 'starter') {
+    return rows.filter((row) => row.segment === 'starter');
+  }
+  return rows;
+}
+
+export default async function AccountsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const filter = params.filter || 'all';
+
+  const filteredRows = getFilteredRows(accountRows, filter);
+
+  const atRiskCount = accountRows.filter(isAtRisk).length;
+  const enterpriseCount = accountRows.filter((row) => row.segment === 'enterprise').length;
+  const growthCount = accountRows.filter((row) => row.segment === 'growth').length;
+  const starterCount = accountRows.filter((row) => row.segment === 'starter').length;
+
+  const tabs = [
+    { key: 'all', label: 'All', count: accountRows.length },
+    { key: 'at-risk', label: 'At-risk', count: atRiskCount, tone: 'critical' as const },
+    { key: 'enterprise', label: 'Enterprise', count: enterpriseCount },
+    { key: 'growth', label: 'Growth', count: growthCount },
+    { key: 'starter', label: 'Starter', count: starterCount },
+  ];
+
+  const totalMrr = accountRows.reduce((sum, row) => {
+    const numStr = row.mrr.replace(/[$,]/g, '');
+    return sum + (parseFloat(numStr) || 0);
+  }, 0);
+  const totalArrM = (totalMrr * 12) / 1000000;
 
   return (
-    <AppShell>
-      <PageHeader eyebrow="Accounts" title="Account Portfolio">
-        <div className="badge-row">
-          <Badge tone="info">{accounts.length} accounts</Badge>
-          <Badge tone={atRiskCount ? "warning" : "positive"}>{atRiskCount} at risk</Badge>
-          <Badge tone={revenueAtRisk ? "danger" : "positive"}>{formatCurrency(revenueAtRisk)} exposed</Badge>
+    <div className={styles.container}>
+      <section className={styles.titleSection}>
+        <div className={styles.titleContent}>
+          <h1 className={styles.title}>Accounts</h1>
+          <p className={styles.subtitle}>
+            {TOTAL_ACCOUNTS} accounts ·
+            <span className={styles.atRiskHighlight}>{atRiskCount} at-risk</span> ·
+            ${totalArrM.toFixed(2)}M ARR under management · synced just now
+          </p>
         </div>
-      </PageHeader>
-
-      <section className="metrics-grid metrics-grid--three">
-        <MetricCard metric={{ label: "Portfolio ARR", value: formatCompactCurrency(totalArr), tone: "positive" }} />
-        <MetricCard metric={{ label: "Revenue at risk", value: formatCompactCurrency(revenueAtRisk), tone: revenueAtRisk ? "danger" : "positive" }} />
-        <MetricCard metric={{ label: "Average health", value: formatPercent(averageHealth), tone: averageHealth >= 80 ? "positive" : averageHealth >= 60 ? "warning" : "danger" }} />
-      </section>
-
-      <section className="split-grid split-grid--golden">
-        <div>
-          <SectionHeader eyebrow="Portfolio" title="Account table" />
-          <DataTable
-            rows={accounts}
-            getRowKey={(row) => row.id}
-            columns={[
-              {
-                key: "account",
-                header: "Account",
-                render: (row) => (
-                  <div className="cell-stack">
-                    <Link className="text-link table-link" href={`/accounts/${row.id}`} title={row.name}>
-                      {row.name}
-                    </Link>
-                    <span className="cell-subtle">{row.domain}</span>
-                  </div>
-                )
-              },
-              {
-                key: "owner",
-                header: "Owner",
-                render: (row) => <span className="cell-subtle">{row.owner}</span>
-              },
-              {
-                key: "risk",
-                header: "Risk",
-                render: (row) => <Badge tone={getRiskTone(row.riskLevel)}>{titleCase(row.riskLevel)}</Badge>
-              },
-              {
-                key: "arr",
-                header: "ARR",
-                align: "right",
-                render: (row) => <span className="emphasis-value">{formatCurrency(row.arr)}</span>
-              },
-              {
-                key: "renewal",
-                header: "Renewal",
-                render: (row) => <span className="cell-subtle cell-nowrap">{formatDate(row.nextRenewalAt)}</span>
-              }
-            ]}
-            emptyTitle="No accounts loaded"
-            emptyDescription="Accounts from demo mode or Supabase will appear here."
-          />
-        </div>
-
-        <div>
-          <SectionHeader eyebrow="Health" title="Portfolio health" />
-          <Panel>
-            <div className="list list--compact">
-              {accounts.map((account) => (
-                <Link key={account.id} className="list-row account-health-row" href={`/accounts/${account.id}`}>
-                  <div className="cell-stack">
-                    <span className="cell-title">{account.name}</span>
-                    <span className="cell-subtle">{account.segment} / {account.owner}</span>
-                  </div>
-                  <div className="health-meter">
-                    <div className="health-meter__track">
-                      <div className="health-meter__fill" style={{ width: `${account.healthScore}%` }} />
-                    </div>
-                    <div className="health-meter__meta">
-                      <span>{formatPercent(account.healthScore)}</span>
-                      <span>{formatCompactCurrency(account.revenueAtRisk)} risk</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </Panel>
+        <div className={styles.buttonGroup}>
+          <button type="button" className={styles.buttonSecondary} aria-disabled="true">Export CSV</button>
+          <button type="button" className={styles.buttonPrimary} aria-disabled="true">+ New account</button>
         </div>
       </section>
-    </AppShell>
+
+      <section className={styles.tablesSection}>
+        <AccountsFilterTabs tabs={tabs} />
+        <AccountsTable rows={filteredRows} totalCount={TOTAL_ACCOUNTS} />
+      </section>
+    </div>
   );
 }

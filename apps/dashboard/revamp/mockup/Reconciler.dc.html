@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C0C0C; --surface:#131210; --surface-sunk:#0E0E0D; --surface-raise:#151311; --nav-active:#1A1815;
+    --border:#1F1D19; --border-2:#2A2722; --border-3:#3A3731;
+    --fg:#EDE7D7; --fg-bright:#F4EFE2; --text-dim:#A8A498; --text-faint:#6E6A5E;
+    --critical:#E76C66; --warn:#E5A04C; --success:#58B96A; --link:#7FB0F0;
+    --critical-bg:rgba(231,108,102,0.13); --warn-bg:rgba(229,160,76,0.13); --success-glow:rgba(88,185,106,0.18);
+    --link-bg:rgba(127,176,240,0.13); --success-bg:rgba(88,185,106,0.13);
+    --overlay:#19171331;
+  }
+  [data-theme="light"]{
+    --bg:#F2EFE6; --surface:#FFFFFF; --surface-sunk:#ECE8DC; --surface-raise:#F7F4EC; --nav-active:#E9E4D6;
+    --border:#E5E0D2; --border-2:#D8D2C2; --border-3:#C4BDA9;
+    --fg:#1A1A1A; --fg-bright:#141414; --text-dim:#5F5A4C; --text-faint:#8A8472;
+    --critical:#C8403D; --warn:#B8862B; --success:#2F7A3A; --link:#2A6FB0;
+    --critical-bg:rgba(200,64,61,0.10); --warn-bg:rgba(184,134,43,0.12); --success-glow:rgba(47,122,58,0.20);
+    --link-bg:rgba(42,111,176,0.10); --success-bg:rgba(47,122,58,0.10);
+    --overlay:rgba(20,20,20,0.035);
+  }
+  html{ background: var(--bg); transition: background 0.18s ease; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: 'Roboto', system-ui, sans-serif; transition: background 0.18s ease, color 0.18s ease; }
+  *, *::before, *::after { box-sizing: border-box; }
+  *::selection { background: var(--fg); color: var(--bg); }
+  button { font: inherit; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 6px; }
+  @keyframes scBackdrop { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes scPanel { from { opacity: 0; transform: translateY(-8px) scale(0.985); } to { opacity: 1; transform: none; } }
+  @keyframes scPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @keyframes scResolve { from { opacity: 0.4; transform: scale(0.98); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; background: var(--bg); color: var(--fg);">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside style="border-right: 1px solid var(--border); background: var(--surface-sunk); display: flex; flex-direction: column;">
+    <div style="padding: 22px 20px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border);">
+      <div style="width: 26px; height: 26px; background: var(--fg); color: var(--bg); display: grid; place-items: center; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: -0.02em; border-radius: 4px;">S</div>
+      <div>
+        <div style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14.5px; letter-spacing: -0.005em; line-height: 1;">SyncCore</div>
+        <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint); margin-top: 3px;">acme · prod</div>
+      </div>
+    </div>
+
+    <nav style="padding: 14px 12px; display: grid; gap: 1px;">
+      <a href="Overview v3.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">▤</span>
+        <span>Overview</span>
+        <span></span>
+      </a>
+      <a href="Accounts.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">◰</span>
+        <span>Accounts</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); font-weight: 400;">48</span>
+      </a>
+      <a href="Actions.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">●</span>
+        <span>Actions</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--critical); font-weight: 500;">12</span>
+      </a>
+      <a href="Events.dc.html" style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">≡</span>
+        <span>Events</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); font-weight: 400;">2.5k</span>
+      </a>
+      <a style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; background: var(--nav-active); box-shadow: inset 2px 0 0 var(--fg); font-size: 13.5px; font-weight: 600; color: var(--fg); font-family: 'Nunito', sans-serif;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--fg);">⇌</span>
+        <span>Reconciler</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--warn); font-weight: 500;">{{ openCount }}</span>
+      </a>
+      <a style="display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 5px; font-size: 13.5px; color: var(--text-dim); font-family: 'Nunito', sans-serif; font-weight: 500;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">↻</span>
+        <span>Queue</span>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); font-weight: 400;">23</span>
+      </a>
+    </nav>
+
+    <div style="margin: 14px 12px 0; padding: 13px 13px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface);">
+      <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px;">Sources reconciled</div>
+      <div style="display: grid; gap: 9px;">
+        <sc-for list="{{ sources }}" as="src" hint-placeholder-count="3">
+          <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim);">
+              <span style="{{ src.dotStyle }}"></span>{{ src.label }}
+            </div>
+            <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint);">{{ src.lag }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; padding: 16px 16px 18px; border-top: 1px solid var(--border); display: grid; gap: 4px;">
+      <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint);">Runtime</div>
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-dim);">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px var(--success-glow);"></span>
+        <span>Supabase · live</span>
+      </div>
+      <div style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); margin-top: 6px;">v0.41.2 · us-east-1</div>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <div style="display: grid; grid-template-rows: auto 1fr; min-width: 0;">
+
+    <!-- TOPBAR -->
+    <header style="display: grid; grid-template-columns: 1fr 480px 1fr; align-items: center; gap: 16px; padding: 12px 28px; border-bottom: 1px solid var(--border); background: var(--bg);">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">reconciler</div>
+      </div>
+      <button onClick="{{ openPalette }}" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--surface-raise); border: 1px solid var(--border-2); border-radius: 6px; width: 100%; text-align: left; color: var(--text-dim); font-size: 13px; font-family: 'Roboto', sans-serif;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--fg);">⌘K</span>
+        <span style="color: var(--border-3);">|</span>
+        <span>find drift, account, run sweep…</span>
+      </button>
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-dim);">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px var(--success-glow);"></span>
+          <span>last sweep 4m ago</span>
+        </div>
+        <button onClick="{{ toggleTheme }}" aria-label="Toggle black / alabaster theme" title="Toggle theme" style="display: inline-flex; align-items: center; background: var(--surface-raise); border: 1px solid var(--border-2); border-radius: 6px; padding: 2px; gap: 0;">
+          <span style="{{ darkPillStyle }}">●</span>
+          <span style="{{ lightPillStyle }}">○</span>
+        </button>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--fg); color: var(--bg); display: grid; place-items: center; font-family: 'Nunito', sans-serif; font-size: 11.5px; font-weight: 700;">JC</div>
+      </div>
+    </header>
+
+    <!-- PAGE -->
+    <main data-screen-label="Reconciler" style="padding: 24px 32px 56px; display: grid; gap: 20px; min-width: 0; align-content: start;">
+
+      <section style="display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 28px;">
+        <div>
+          <div style="font-family: 'Roboto Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint);">Commercial drift detection</div>
+          <h1 style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 30px; line-height: 1.1; letter-spacing: -0.018em; margin: 6px 0 0; color: var(--fg-bright);">Reconciler</h1>
+          <p style="font-size: 14px; color: var(--text-dim); margin: 8px 0 0;">Where <span style="color: var(--fg-bright); font-weight: 500;">billing</span> and the <span style="color: var(--fg-bright); font-weight: 500;">CRM</span> disagree · <span style="color: var(--warn); font-weight: 500;">{{ openCount }} open</span> · pick a source of truth to resolve</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button onClick="{{ runSweep }}" style="{{ sweepBtnStyle }}">{{ sweepLabel }}</button>
+          <button style="background: var(--surface-raise); color: var(--fg); border: 1px solid var(--border-2); padding: 8px 13px; border-radius: 6px; font-size: 13px;">Rules ▾</button>
+        </div>
+      </section>
+
+      <!-- SUMMARY STRIP -->
+      <section style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px;">
+            <div style="display: flex; align-items: center; gap: 7px; font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint);">
+              <span style="{{ s.dotStyle }}"></span>{{ s.label }}
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 9px;">
+              <span style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.01em; color: var(--fg-bright);">{{ s.value }}</span>
+              <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">{{ s.sub }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </section>
+
+      <!-- FILTER BAR -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap;">
+        <div style="display: flex; gap: 20px; align-items: flex-end;">
+          <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="5">
+            <button onClick="{{ tab.onClick }}" style="{{ tab.style }}">{{ tab.label }} <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; opacity: 0.7;">{{ tab.count }}</span></button>
+          </sc-for>
+        </div>
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint); padding-bottom: 9px;">{{ resolvedNote }}</span>
+      </div>
+
+      <!-- DISCREPANCY BOARD -->
+      <section style="display: grid; gap: 14px; min-width: 0;">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="6">
+          <div style="{{ c.cardStyle }}">
+            <!-- card head -->
+            <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 16px; padding: 16px 18px 0;">
+              <div style="min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <span style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; color: var(--link); white-space: nowrap;">{{ c.account }}</span>
+                  <span style="{{ c.sevChipStyle }}">{{ c.sevLabel }}</span>
+                  <span style="{{ c.fieldChipStyle }}">{{ c.field }}</span>
+                  <sc-if value="{{ c.auto }}" hint-placeholder-val="{{ false }}">
+                    <span style="display: inline-flex; align-items: center; gap: 4px; font-family: 'Roboto Mono', monospace; font-size: 9.5px; letter-spacing: 0.04em; color: var(--success); background: var(--success-bg); padding: 2px 7px; border-radius: 3px;">◆ auto-safe</span>
+                  </sc-if>
+                </div>
+                <div style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 15.5px; color: var(--fg-bright); margin-top: 9px;">{{ c.scenario }}</div>
+                <div style="font-size: 12.5px; color: var(--text-dim); margin-top: 4px; line-height: 1.45; max-width: 60ch;">{{ c.impact }}</div>
+              </div>
+              <div style="text-align: right; white-space: nowrap;">
+                <span style="{{ c.statusChipStyle }}">{{ c.statusLabel }}</span>
+                <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint); margin-top: 7px;">{{ c.detected }}</div>
+              </div>
+            </div>
+
+            <!-- body: comparison | resolution -->
+            <div style="display: grid; grid-template-columns: minmax(0, 1fr) 1px minmax(300px, 360px); align-items: stretch; margin-top: 14px; border-top: 1px solid var(--border);">
+
+              <!-- comparison -->
+              <div style="padding: 16px 20px 18px;">
+                <div style="display: grid; grid-template-columns: 1fr 52px 1fr; align-items: stretch; gap: 0; max-width: 600px;">
+                  <!-- source A -->
+                  <div style="{{ c.aPanelStyle }}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                      <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint);">{{ c.aLabel }}</span>
+                      <span style="{{ c.aTagStyle }}">{{ c.aTag }}</span>
+                    </div>
+                    <div style="{{ c.aValueStyle }}">{{ c.aValue }}</div>
+                    <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint); margin-top: 6px;">{{ c.aSystem }}</div>
+                  </div>
+                  <!-- center -->
+                  <div style="display: grid; place-items: center;">
+                    <div style="{{ c.symbolStyle }}">{{ c.symbol }}</div>
+                  </div>
+                  <!-- source B -->
+                  <div style="{{ c.bPanelStyle }}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                      <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint);">{{ c.bLabel }}</span>
+                      <span style="{{ c.bTagStyle }}">{{ c.bTag }}</span>
+                    </div>
+                    <div style="{{ c.bValueStyle }}">{{ c.bValue }}</div>
+                    <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint); margin-top: 6px;">{{ c.bSystem }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- divider -->
+              <div style="background: var(--border);"></div>
+
+              <!-- resolution -->
+              <div style="padding: 16px 20px 18px; display: flex; flex-direction: column; justify-content: center; gap: 14px; min-width: 0;">
+                <div>
+                  <div style="font-family: 'Roboto Mono', monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 7px;">{{ c.fixLabel }}</div>
+                  <div style="font-size: 12.5px; color: var(--text-dim); line-height: 1.45;">{{ c.fixText }}</div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                  <sc-if value="{{ c.resolved }}" hint-placeholder-val="{{ false }}">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; font-family: 'Roboto Mono', monospace; font-size: 11.5px; color: var(--success);">✓ {{ c.resolvedText }}</span>
+                    <button onClick="{{ c.undo }}" style="background: transparent; color: var(--text-dim); border: 1px solid var(--border-2); padding: 6px 11px; border-radius: 5px; font-size: 12px;">Undo</button>
+                  </sc-if>
+                  <sc-if value="{{ c.unresolved }}" hint-placeholder-val="{{ true }}">
+                    <button onClick="{{ c.acceptA }}" style="{{ c.acceptAStyle }}">Accept {{ c.aShort }}</button>
+                    <button onClick="{{ c.acceptB }}" style="{{ c.acceptBStyle }}">Accept {{ c.bShort }}</button>
+                    <button style="background: transparent; color: var(--text-faint); border: 1px solid var(--border-2); padding: 7px 11px; border-radius: 5px; font-size: 12.5px; white-space: nowrap;">Dismiss</button>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ emptyBoard }}" hint-placeholder-val="{{ false }}">
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 56px 24px; text-align: center;">
+            <div style="font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--success);">● in agreement</div>
+            <div style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 16px; color: var(--fg-bright); margin-top: 10px;">No drift in this filter</div>
+            <div style="font-size: 13px; color: var(--text-dim); margin-top: 6px;">Billing and CRM agree for every tracked field here.</div>
+          </div>
+        </sc-if>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============================ COMMAND PALETTE ============================ -->
+  <sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closePalette }}" style="position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(2px); display: grid; place-items: start center; padding-top: 12vh; z-index: 70; animation: scBackdrop 0.12s ease;">
+    <div onClick="{{ stop }}" style="width: 620px; max-width: calc(100vw - 48px); background: var(--surface); border: 1px solid var(--border-2); border-radius: 12px; box-shadow: 0 24px 70px rgba(0,0,0,0.5); overflow: hidden; animation: scPanel 0.14s ease;">
+      <div style="display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--border);">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 13px; color: var(--text-faint);">⌕</span>
+        <input ref="{{ inputRef }}" value="{{ paletteQuery }}" onChange="{{ onPaletteInput }}" placeholder="Search drift, accounts, commands…" style="background: none; border: none; outline: none; color: var(--fg-bright); font-family: 'Roboto', sans-serif; font-size: 15px; width: 100%;">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 10.5px; color: var(--text-faint); border: 1px solid var(--border-2); padding: 2px 7px; border-radius: 4px;">esc</span>
+      </div>
+      <div style="max-height: 52vh; overflow-y: auto; padding: 8px;">
+        <sc-for list="{{ paletteGroups }}" as="group" hint-placeholder-count="3">
+          <div style="padding: 10px 10px 5px;">
+            <div style="font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint);">{{ group.name }}</div>
+          </div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+            <div onClick="{{ item.run }}" onMouseEnter="{{ item.hover }}" style="{{ item.rowStyle }}">
+              <span style="font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--text-faint);">{{ item.icon }}</span>
+              <span style="display: flex; align-items: baseline; gap: 9px; min-width: 0;">
+                <span style="font-family: 'Nunito', sans-serif; font-weight: 600; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.label }}</span>
+                <span style="font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint); white-space: nowrap;">{{ item.sub }}</span>
+              </span>
+              <span style="font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--text-faint);">{{ item.tag }}</span>
+            </div>
+          </sc-for>
+        </sc-for>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 28px 16px; text-align: center; color: var(--text-dim); font-size: 13px;">No matches for “{{ paletteQuery }}”.</div>
+        </sc-if>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; border-top: 1px solid var(--border); background: var(--overlay); font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--text-faint);">
+        <div style="display: flex; gap: 14px;">
+          <span><span style="color: var(--fg);">↑↓</span> navigate</span>
+          <span><span style="color: var(--fg);">↵</span> open</span>
+          <span><span style="color: var(--fg);">esc</span> close</span>
+        </div>
+        <span>{{ resultCount }} results</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1320, &quot;height&quot;: 880 },
+  &quot;startTheme&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;dark&quot;, &quot;light&quot;], &quot;default&quot;: &quot;dark&quot;, &quot;tsType&quot;: &quot;string&quot; }
+}">
+class Component extends DCLogic {
+  state = {
+    theme: 'dark',
+    filter: 'all',
+    resolved: { disc_owner: 'A' },
+    sweeping: false,
+    paletteOpen: false,
+    paletteQuery: '',
+    paletteIndex: 0,
+  };
+
+  inputRef = React.createRef();
+
+  discrepancyData() {
+    return [
+      { id: 'disc_sub', account: 'Northwind Industrial', field: 'subscription_status', sev: 'high', status: 'open', auto: false, detected: '2h 18m ago',
+        scenario: 'Stripe active · CRM cancelled',
+        impact: 'A retained customer is being treated as churned — expansion follow-up gets dropped and the renewal motion stalls.',
+        aLabel: 'Billing', aSystem: 'stripe', aValue: 'active', aShort: 'billing',
+        bLabel: 'CRM', bSystem: 'mock-crm', bValue: 'cancelled', bShort: 'CRM',
+        recommend: 'A', fixText: 'Correct CRM lifecycle to active, create an AE task, and replay the account sync.' },
+      { id: 'disc_acme_tier', account: 'Acme Manufacturing', field: 'plan_tier', sev: 'medium', status: 'open', auto: true, detected: '11h 04m ago',
+        scenario: 'Upgrade not reflected in CRM',
+        impact: 'Stripe shows an enterprise upgrade (evt 07:28) that never reached the CRM, so packaging and renewal prep run on a stale tier.',
+        aLabel: 'Billing', aSystem: 'stripe', aValue: 'enterprise', aShort: 'billing',
+        bLabel: 'CRM', bSystem: 'mock-crm', bValue: 'growth', bShort: 'CRM',
+        recommend: 'A', fixText: 'Clear causal event in Stripe — accept billing and push the corrected tier to the CRM.' },
+      { id: 'disc_mrr', account: 'Halcyon Logistics', field: 'mrr', sev: 'medium', status: 'open', auto: true, detected: '40m ago',
+        scenario: 'Billing MRR above CRM MRR',
+        impact: 'Pipeline reviews understate live expansion revenue, skewing RevOps forecasting and attribution.',
+        aLabel: 'Billing', aSystem: 'stripe', aValue: '$4,800', aShort: 'billing',
+        bLabel: 'CRM', bSystem: 'mock-crm', bValue: '$3,600', bShort: 'CRM',
+        recommend: 'A', fixText: 'Push billing MRR to the CRM, backfill the expansion note, and confirm attribution rules.' },
+      { id: 'disc_fx', account: 'Quartz Analytics', field: 'currency', sev: 'medium', status: 'open', auto: false, detected: '2h ago',
+        scenario: 'Stripe EUR · NetSuite booked USD',
+        impact: 'FX booking error inflates recognized revenue and must be corrected before the period close.',
+        aLabel: 'Stripe', aSystem: 'stripe', aValue: 'EUR €10,580', aShort: 'Stripe',
+        bLabel: 'NetSuite', bSystem: 'netsuite', bValue: 'USD $11,500', bShort: 'NetSuite',
+        recommend: 'A', fixText: 'Re-book the invoice with the day-of FX rate (1.087) and reconcile the line items.' },
+      { id: 'disc_tax', account: 'Forge Dynamics', field: 'tax_region', sev: 'medium', status: 'reviewing', auto: false, detected: '1h ago',
+        scenario: 'Billing address moved to TX',
+        impact: 'Tax jurisdiction drift on active invoices — small dollar impact but compliance-sensitive.',
+        aLabel: 'Billing', aSystem: 'stripe', aValue: 'US-TX', aShort: 'billing',
+        bLabel: 'CRM', bSystem: 'mock-crm', bValue: 'US-CA', bShort: 'CRM',
+        recommend: 'A', fixText: 'Apply the TX jurisdiction and reissue the affected line items.' },
+      { id: 'disc_atlas_tier', account: 'Atlas Photonics', field: 'plan_tier', sev: 'low', status: 'reviewing', auto: false, detected: '6h ago',
+        scenario: 'Enterprise in billing · scale in CRM',
+        impact: 'CS routing, support coverage, and renewal prep can drift from the commercial truth.',
+        aLabel: 'Billing', aSystem: 'stripe', aValue: 'enterprise', aShort: 'billing',
+        bLabel: 'CRM', bSystem: 'mock-crm', bValue: 'scale', bShort: 'CRM',
+        recommend: 'A', fixText: 'Review the plan mapping, update the CRM tier, and verify entitlement labels.' },
+      { id: 'disc_po', account: 'Pinnacle Foods', field: 'po_number', sev: 'low', status: 'open', auto: false, detected: '5h ago',
+        scenario: 'PO present in billing · missing in CRM',
+        impact: 'Future invoice sends risk a payment delay without the PO captured on the CRM record.',
+        aLabel: 'Billing', aSystem: 'stripe', aValue: 'PO-44718', aShort: 'billing',
+        bLabel: 'CRM', bSystem: 'mock-crm', bValue: '— missing', bShort: 'CRM',
+        recommend: 'A', fixText: 'Backfill the PO number to the CRM record before the next invoice send.' },
+      { id: 'disc_owner', account: 'Meridian Health', field: 'owner', sev: 'medium', status: 'resolved', auto: false, detected: 'Jun 14',
+        scenario: 'CRM owner differs from SyncCore',
+        impact: 'Routing integrity — a wrong owner sends future alerts and tasks to the wrong rep.',
+        aLabel: 'SyncCore', aSystem: 'synccore', aValue: 'M. Reyes', aShort: 'SyncCore',
+        bLabel: 'CRM', bSystem: 'mock-crm', bValue: 'A. Lim', bShort: 'CRM',
+        recommend: 'A', fixText: 'Confirm the owner of record and sync the field back to the CRM.' },
+    ];
+  }
+
+  sevColor(s) { return s === 'high' ? 'var(--critical)' : s === 'medium' ? 'var(--warn)' : 'var(--text-faint)'; }
+  sevBg(s) { return s === 'high' ? 'var(--critical-bg)' : s === 'medium' ? 'var(--warn-bg)' : 'var(--overlay)'; }
+  sevChip(s) { return { fontFamily: "'Roboto Mono', monospace", fontSize: '9.5px', letterSpacing: '0.06em', fontWeight: 500, textTransform: 'uppercase', padding: '2px 7px', borderRadius: '3px', color: this.sevColor(s), background: this.sevBg(s) }; }
+  fieldChip() { return { fontFamily: "'Roboto Mono', monospace", fontSize: '10px', padding: '2px 7px', borderRadius: '3px', color: 'var(--text-dim)', border: '1px solid var(--border-2)' }; }
+  statusColor(s) { return s === 'resolved' ? 'var(--success)' : s === 'reviewing' ? 'var(--link)' : 'var(--text-faint)'; }
+  statusBg(s) { return s === 'resolved' ? 'var(--success-bg)' : s === 'reviewing' ? 'var(--link-bg)' : 'var(--overlay)'; }
+  statusChip(s) { return { display: 'inline-block', fontFamily: "'Roboto Mono', monospace", fontSize: '10px', letterSpacing: '0.04em', padding: '3px 8px', borderRadius: '3px', color: this.statusColor(s), background: this.statusBg(s) }; }
+
+  // comparison panel — state: 'winner' | 'loser' | 'neutral'
+  panelStyle(side) {
+    const base = { border: '1px solid var(--border-2)', padding: '13px 15px', background: 'var(--surface-sunk)' };
+    if (side === 'winner') return Object.assign({}, base, { borderColor: 'var(--success)', background: 'var(--success-bg)', borderRadius: '7px', animation: 'scResolve 0.25s ease' });
+    if (side === 'loser') return Object.assign({}, base, { opacity: 0.5, borderRadius: '7px' });
+    return Object.assign({}, base, { borderRadius: '7px' });
+  }
+  valueStyle(side) {
+    const base = { fontFamily: "'Roboto Mono', monospace", fontSize: '17px', fontWeight: 500, marginTop: '8px', color: 'var(--fg-bright)' };
+    if (side === 'winner') return Object.assign({}, base, { color: 'var(--success)' });
+    if (side === 'loser') return Object.assign({}, base, { color: 'var(--text-dim)', textDecoration: 'line-through' });
+    return base;
+  }
+  tagStyle(kind) {
+    if (kind === 'truth') return { fontFamily: "'Roboto Mono', monospace", fontSize: '9px', letterSpacing: '0.06em', color: 'var(--success)', background: 'var(--success-bg)', padding: '1px 6px', borderRadius: '3px' };
+    if (kind === 'rec') return { fontFamily: "'Roboto Mono', monospace", fontSize: '9px', letterSpacing: '0.06em', color: 'var(--text-dim)', border: '1px solid var(--border-2)', padding: '1px 6px', borderRadius: '3px' };
+    return { display: 'none' };
+  }
+  pill(active) { return { padding: '3px 9px', borderRadius: '4px', fontFamily: "'Roboto Mono', monospace", fontSize: '10.5px', background: active ? 'var(--border)' : 'transparent', color: active ? 'var(--fg)' : 'var(--text-faint)' }; }
+  tabStyle(active) { return { background: 'none', border: 'none', padding: '0 0 9px', cursor: 'pointer', fontFamily: "'Roboto', sans-serif", fontSize: '13px', color: active ? 'var(--fg-bright)' : 'var(--text-faint)', fontWeight: active ? 600 : 500, borderBottom: active ? '2px solid var(--fg)' : '2px solid transparent', marginBottom: '-1px', whiteSpace: 'nowrap' }; }
+  acceptStyle(primary) {
+    if (primary) return { background: 'var(--fg)', color: 'var(--bg)', border: '1px solid var(--fg)', padding: '7px 13px', borderRadius: '5px', fontSize: '12.5px', fontWeight: 600, whiteSpace: 'nowrap' };
+    return { background: 'transparent', color: 'var(--fg)', border: '1px solid var(--border-2)', padding: '7px 13px', borderRadius: '5px', fontSize: '12.5px', whiteSpace: 'nowrap' };
+  }
+  paletteRow(active) { return { display: 'grid', gridTemplateColumns: '18px 1fr auto', alignItems: 'center', gap: '12px', padding: '9px 12px', borderRadius: '7px', cursor: 'pointer', background: active ? 'var(--nav-active)' : 'transparent', color: active ? 'var(--fg-bright)' : 'var(--text-dim)' }; }
+  dotStyle(c) { return { width: '6px', height: '6px', borderRadius: '50%', background: c, boxShadow: '0 0 0 3px var(--overlay)' }; }
+
+  applyTheme(t) { try { document.documentElement.setAttribute('data-theme', t); } catch (e) {} }
+  toggle() { const next = this.state.theme === 'dark' ? 'light' : 'dark'; this.applyTheme(next); try { localStorage.setItem('synccore-theme', next); } catch (e) {} this.setState({ theme: next }); }
+
+  setFilter(f) { this.setState({ filter: f }); }
+  accept(id, side) { this.setState(s => { const r = Object.assign({}, s.resolved); r[id] = side; return { resolved: r }; }); }
+  undo(id) { this.setState(s => { const r = Object.assign({}, s.resolved); delete r[id]; return { resolved: r }; }); }
+  runSweep() {
+    if (this.state.sweeping) return;
+    this.setState({ sweeping: true });
+    setTimeout(() => { try { this.setState({ sweeping: false }); } catch (e) {} }, 1400);
+  }
+
+  openPalette() { this.setState({ paletteOpen: true, paletteQuery: '', paletteIndex: 0 }); }
+  closePalette() { this.setState({ paletteOpen: false }); }
+  onPaletteInput(e) { this.setState({ paletteQuery: e.target.value, paletteIndex: 0 }); }
+  move(d) { const n = this.flat ? this.flat.length : 0; if (!n) return; this.setState(s => ({ paletteIndex: (Math.max(0, Math.min(s.paletteIndex, n - 1)) + d + n) % n })); }
+  onKey(e) {
+    const meta = e.metaKey || e.ctrlKey;
+    if (meta && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); this.setState(s => ({ paletteOpen: !s.paletteOpen, paletteQuery: '', paletteIndex: 0 })); return; }
+    if (!this.state.paletteOpen) return;
+    if (e.key === 'Escape') { e.preventDefault(); this.closePalette(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); this.move(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); this.move(-1); }
+    else if (e.key === 'Enter') { e.preventDefault(); const it = this.flat && this.flat[this.activeIdx]; if (it) it.run(); }
+  }
+
+  componentDidMount() {
+    let t = 'dark';
+    try { t = localStorage.getItem('synccore-theme') || this.props.startTheme || 'dark'; } catch (e) { t = this.props.startTheme || 'dark'; }
+    if (t !== 'dark' && t !== 'light') t = 'dark';
+    this.applyTheme(t);
+    this._onKey = this.onKey.bind(this);
+    window.addEventListener('keydown', this._onKey);
+    if (t !== this.state.theme) this.setState({ theme: t });
+  }
+  componentWillUnmount() { if (this._onKey) window.removeEventListener('keydown', this._onKey); }
+  componentDidUpdate(pp, ps) { if (this.state.paletteOpen && !ps.paletteOpen && this.inputRef.current) { try { this.inputRef.current.focus(); } catch (e) {} } }
+
+  renderVals() {
+    const all = this.discrepancyData();
+    const resolved = this.state.resolved;
+    const isResolved = d => !!resolved[d.id] || d.status === 'resolved';
+
+    const openCount = all.filter(d => !isResolved(d)).length;
+    const highOpen = all.filter(d => d.sev === 'high' && !isResolved(d)).length;
+    const mrrCount = all.filter(d => d.field === 'mrr').length;
+    const tierCount = all.filter(d => d.field === 'plan_tier').length;
+    const resolvedCount = all.filter(d => isResolved(d)).length;
+
+    const stats = [
+      { label: 'high severity', value: String(highOpen), sub: 'act now', dotStyle: this.dotStyle('var(--critical)') },
+      { label: 'mrr drift', value: String(mrrCount), sub: 'forecast risk', dotStyle: this.dotStyle('var(--warn)') },
+      { label: 'plan-tier drift', value: String(tierCount), sub: 'packaging risk', dotStyle: this.dotStyle('var(--warn)') },
+      { label: 'resolved today', value: String(resolvedCount), sub: 'reconciled', dotStyle: this.dotStyle('var(--success)') },
+    ];
+
+    const f = this.state.filter;
+    const sevCount = k => all.filter(d => {
+      if (k === 'all') return !isResolved(d);
+      if (k === 'resolved') return isResolved(d);
+      return d.sev === k && !isResolved(d);
+    }).length;
+    const tabDefs = [['all', 'Open'], ['high', 'High'], ['medium', 'Medium'], ['low', 'Low'], ['resolved', 'Resolved']];
+    const tabs = tabDefs.map(([key, label]) => ({ key, label, count: sevCount(key), onClick: () => this.setFilter(key), style: this.tabStyle(key === f) }));
+
+    let list;
+    if (f === 'resolved') list = all.filter(d => isResolved(d));
+    else if (f === 'all') list = all.filter(d => !isResolved(d));
+    else list = all.filter(d => d.sev === f && !isResolved(d));
+
+    const cards = list.map(d => {
+      const winner = resolved[d.id] || (d.status === 'resolved' ? d.recommend : null);
+      const done = !!winner;
+      const aSide = done ? (winner === 'A' ? 'winner' : 'loser') : 'neutral';
+      const bSide = done ? (winner === 'B' ? 'winner' : 'loser') : 'neutral';
+      const winnerLabel = winner === 'A' ? d.aLabel : d.bLabel;
+      return {
+        id: d.id,
+        account: d.account,
+        field: d.field,
+        sevLabel: d.sev,
+        sevChipStyle: this.sevChip(d.sev),
+        fieldChipStyle: this.fieldChip(),
+        auto: d.auto && !done,
+        scenario: d.scenario,
+        impact: d.impact,
+        statusLabel: done ? 'resolved' : d.status,
+        statusChipStyle: this.statusChip(done ? 'resolved' : d.status),
+        detected: d.detected,
+        cardStyle: { background: 'var(--surface)', border: '1px solid ' + (done ? 'var(--border)' : d.sev === 'high' ? 'var(--border-3)' : 'var(--border)'), borderRadius: '9px', boxShadow: d.sev === 'high' && !done ? 'inset 3px 0 0 var(--critical)' : 'none' },
+        aLabel: d.aLabel, aSystem: d.aSystem, aValue: d.aValue, aShort: d.aShort,
+        bLabel: d.bLabel, bSystem: d.bSystem, bValue: d.bValue, bShort: d.bShort,
+        aPanelStyle: this.panelStyle(aSide),
+        bPanelStyle: this.panelStyle(bSide),
+        aValueStyle: this.valueStyle(aSide),
+        bValueStyle: this.valueStyle(bSide),
+        aTag: done ? (winner === 'A' ? 'source of truth' : '') : (d.recommend === 'A' ? 'recommended' : ''),
+        bTag: done ? (winner === 'B' ? 'source of truth' : '') : (d.recommend === 'B' ? 'recommended' : ''),
+        aTagStyle: done ? (winner === 'A' ? this.tagStyle('truth') : this.tagStyle('none')) : (d.recommend === 'A' ? this.tagStyle('rec') : this.tagStyle('none')),
+        bTagStyle: done ? (winner === 'B' ? this.tagStyle('truth') : this.tagStyle('none')) : (d.recommend === 'B' ? this.tagStyle('rec') : this.tagStyle('none')),
+        symbol: done ? (winner === 'A' ? '←' : '→') : '≠',
+        symbolStyle: { fontFamily: "'Roboto Mono', monospace", fontSize: '18px', color: done ? 'var(--success)' : 'var(--warn)' },
+        fixLabel: done ? 'Resolution' : 'Suggested fix',
+        fixText: d.fixText,
+        resolved: done,
+        unresolved: !done,
+        resolvedText: 'Accepted ' + winnerLabel + (winner === 'A' ? ' (' + d.aSystem + ')' : ' (' + d.bSystem + ')'),
+        acceptAStyle: this.acceptStyle(d.recommend === 'A'),
+        acceptBStyle: this.acceptStyle(d.recommend === 'B'),
+        acceptA: () => this.accept(d.id, 'A'),
+        acceptB: () => this.accept(d.id, 'B'),
+        undo: () => this.undo(d.id),
+      };
+    });
+
+    const sources = [
+      { label: 'Stripe', lag: '4m', dotStyle: this.dotStyle('var(--success)') },
+      { label: 'NetSuite', lag: '11m', dotStyle: this.dotStyle('var(--success)') },
+      { label: 'Mock CRM', lag: '38m', dotStyle: this.dotStyle('var(--warn)') },
+    ];
+
+    // command palette
+    const q = this.state.paletteQuery.trim().toLowerCase();
+    const matches = it => !q || (it.label + ' ' + (it.sub || '') + ' ' + it.group).toLowerCase().includes(q);
+    const cmdItems = [
+      { group: 'Commands', icon: '◐', label: 'Toggle black / alabaster theme', sub: 'appearance', tag: '', action: () => this.toggle() },
+      { group: 'Commands', icon: '⇌', label: 'Run reconciliation sweep', sub: 'all sources', tag: '', action: () => this.runSweep() },
+      { group: 'Commands', icon: '◆', label: 'Filter: high severity', sub: highOpen + ' open', tag: '', action: () => this.setFilter('high') },
+    ];
+    const navItems = [
+      { group: 'Navigate', icon: '▤', label: 'Overview', sub: 'dashboard home', tag: '↗', action: () => { try { window.location.href = 'Overview v3.dc.html'; } catch (e) {} } },
+      { group: 'Navigate', icon: '●', label: 'Actions', sub: '12 open', tag: '↗', action: () => { try { window.location.href = 'Actions.dc.html'; } catch (e) {} } },
+      { group: 'Navigate', icon: '≡', label: 'Events', sub: 'event log', tag: '↗', action: () => { try { window.location.href = 'Events.dc.html'; } catch (e) {} } },
+    ];
+    const discItems = all.filter(d => !isResolved(d)).map(d => ({ group: 'Drift', icon: '⇌', label: d.scenario, sub: d.account + ' · ' + d.field, tag: d.sev, action: () => this.setFilter('all') }));
+    const defs = [{ name: 'Commands', items: cmdItems }, { name: 'Navigate', items: navItems }, { name: 'Drift', items: discItems }];
+    let idx = 0; const flat = [];
+    const paletteGroups = defs.map(g => ({ name: g.name, items: g.items.filter(matches) })).filter(g => g.items.length);
+    const totalP = paletteGroups.reduce((n, g) => n + g.items.length, 0);
+    const activeIdx = Math.max(0, Math.min(this.state.paletteIndex, Math.max(0, totalP - 1)));
+    this.activeIdx = activeIdx;
+    paletteGroups.forEach(g => g.items.forEach(it => { const my = idx; it.rowStyle = this.paletteRow(my === activeIdx); it.run = () => { this.closePalette(); it.action(); }; it.hover = () => this.setState({ paletteIndex: my }); flat.push(it); idx++; }));
+    this.flat = flat;
+
+    return {
+      theme: this.state.theme,
+      toggleTheme: () => this.toggle(),
+      darkPillStyle: this.pill(this.state.theme === 'dark'),
+      lightPillStyle: this.pill(this.state.theme === 'light'),
+      openCount,
+      sweepLabel: this.state.sweeping ? '⇌ Sweeping…' : '⇌ Run sweep',
+      sweepBtnStyle: this.state.sweeping
+        ? { background: 'var(--link-bg)', color: 'var(--link)', border: '1px solid var(--border-2)', padding: '8px 13px', borderRadius: '6px', fontSize: '13px', fontWeight: 600 }
+        : { background: 'var(--fg)', color: 'var(--bg)', border: '1px solid var(--fg)', padding: '8px 13px', borderRadius: '6px', fontSize: '13px', fontWeight: 600 },
+      runSweep: () => this.runSweep(),
+      stats, tabs, cards, sources,
+      resolvedNote: resolvedCount > 0 ? (resolvedCount + ' reconciled today') : 'sweeps every 5m',
+      emptyBoard: cards.length === 0,
+      openPalette: () => this.openPalette(),
+      closePalette: () => this.closePalette(),
+      stop: (e) => e.stopPropagation(),
+      paletteOpen: this.state.paletteOpen,
+      paletteQuery: this.state.paletteQuery,
+      onPaletteInput: (e) => this.onPaletteInput(e),
+      inputRef: this.inputRef,
+      paletteGroups,
+      resultCount: flat.length,
+      noResults: this.state.paletteOpen && flat.length === 0,
+    };
+  }
+}
+</script>
+</body>
+</html>

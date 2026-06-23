@@ -1,0 +1,171 @@
+.wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1.4fr 110px 80px 168px 56px 86px;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-sm) var(--space-2xl);
+  background: var(--overlay);
+  border-bottom: 1px solid var(--border);
+
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.headerMrr,
+.headerOpen,
+.headerLastActivity {
+  text-align: right;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.4fr 110px 80px 168px 56px 86px;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-md) var(--space-2xl);
+  border-bottom: 1px solid var(--border);
+
+  text-decoration: none;
+  color: inherit;
+  transition: background-color var(--transition-normal);
+}
+
+.row:hover {
+  background-color: var(--surface-hover);
+}
+
+.row[data-health-band="critical"] { --health-color: var(--critical); }
+.row[data-health-band="high"] { --health-color: var(--critical); }
+.row[data-health-band="watch"] { --health-color: var(--warn); }
+.row[data-health-band="stable"] { --health-color: var(--success); }
+
+.nameCell {
+  min-width: 0;
+}
+
+.accountName {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base-plus);
+  color: var(--fg-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subline {
+  display: flex;
+  gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+  margin-top: var(--space-xxs);
+  white-space: nowrap;
+}
+
+.bullet {
+  color: var(--text-faint);
+}
+
+.segmentCell {
+  font-size: var(--font-size-base-dim-plus);
+  color: var(--text-dim);
+  text-transform: capitalize;
+}
+
+.mrrCell {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-plus);
+  text-align: right;
+  color: var(--fg-bright);
+}
+
+.healthCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.healthBar {
+  height: 4px;
+  background-color: var(--border);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+}
+
+.healthBarFill {
+  height: 100%;
+  width: var(--health-percent, 0%);
+  background-color: var(--health-color);
+  border-radius: var(--radius-xs);
+}
+
+.healthMeta {
+  display: flex;
+  gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+}
+
+.healthScore {
+  color: var(--text-dim);
+}
+
+.healthDivider {
+  color: var(--text-faint);
+}
+
+.openCell {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-plus);
+  color: var(--text-faint);
+}
+
+.openCell[data-tone="critical"] {
+  color: var(--critical);
+  font-weight: var(--font-weight-medium);
+}
+
+.lastActivityCell {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm-plus);
+  text-align: right;
+  color: var(--text-dim);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-2xl);
+  background: var(--overlay);
+  border-top: 1px solid var(--border);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-faint);
+}
+
+.kbd {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--fg);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-xs);
+  padding: 1px 5px;
+  background: var(--surface-raise);
+}
+
+.footerHint {
+  font-family: var(--font-mono);
+}

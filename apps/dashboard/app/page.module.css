@@ -1,0 +1,29 @@
+/**
+ * page.module.css
+ * Styling for the Overview Dashboard page.
+ * Layout: Greeting + KPI header, Pipeline strip, Needs You Now section,
+ * then 2-column grid for Portfolio and Activity.
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
+  min-width: 0;
+}
+
+.portfolioActivityGrid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: var(--space-8xl);
+  min-width: 0;
+  align-items: stretch;
+}
+
+/* Responsive: Stack columns on smaller screens */
+@media (max-width: 1200px) {
+  .portfolioActivityGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8xl);
+  }
+}

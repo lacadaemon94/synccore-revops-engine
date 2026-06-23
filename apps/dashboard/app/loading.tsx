@@ -1,15 +1,17 @@
+import styles from './loading.module.css';
+
 export default function Loading() {
   return (
-    <main className="page page--loading" aria-label="Loading dashboard">
-      <div className="loading-shell">
-        <div className="loading-bar loading-bar--short" />
-        <div className="loading-bar loading-bar--title" />
-        <div className="loading-grid">
-          <div className="loading-card" />
-          <div className="loading-card" />
-          <div className="loading-card" />
+    <main className={styles.page} aria-label="Loading dashboard">
+      <div className={styles.shell}>
+        <div className={`${styles.bar} ${styles.barShort}`} />
+        <div className={`${styles.bar} ${styles.barTitle}`} />
+        <div className={styles.grid}>
+          <div className={styles.card} />
+          <div className={styles.card} />
+          <div className={styles.card} />
         </div>
-        <div className="loading-panel" />
+        <div className={styles.panel} />
       </div>
     </main>
   );

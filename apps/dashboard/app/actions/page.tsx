@@ -1,170 +1,89 @@
-import { AppShell } from "../../components/app-shell";
-import { ActionCard } from "../../components/action-card";
-import { Badge } from "../../components/badge";
-import { EmptyState } from "../../components/empty-state";
-import { PageHeader } from "../../components/page-header";
-import { SectionHeader } from "../../components/section-header";
-import { SeveritySummary } from "../../components/severity-summary";
-import { getActionCenterData } from "../../lib/data/actions";
-import type { MockCrmTask, NotificationOutboxItem, OpsAction } from "../../lib/types";
+import { ActionsList } from '@/components/Actions/ActionsList';
+import { ActionsSeverityTabs } from '@/components/Actions/ActionsSeverityTabs';
+import { ActionDetailHost } from './ActionDetailHost';
+import {
+  actionSummaries,
+  actionDetails,
+  actionAssignees,
+} from '@/lib/fixtures/actions';
+import type { ActionDetail, ActionSeverity } from '@/components/Actions/local';
 
-function mapNotificationToAction(item: NotificationOutboxItem): OpsAction {
-  return {
-    id: `ops_notify_${item.id}`,
-    accountId: item.accountId,
-    accountName: item.accountName,
-    title: item.title,
-    body: item.body,
-    source: "notification_outbox",
-    severity: item.severity,
-    status: item.status,
-    recommendedOwner: item.recommendedOwner,
-    suggestedNextStep: item.suggestedNextStep,
-    createdAt: item.createdAt
+import styles from './page.module.css';
+
+export default async function ActionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[]>>;
+}) {
+  const params = await searchParams;
+  const selectedId = typeof params.id === 'string' ? params.id : params.id?.[0];
+  const severityParam = typeof params.severity === 'string' ? params.severity : params.severity?.[0];
+
+  const filteredSummaries =
+    severityParam && severityParam !== 'all'
+      ? actionSummaries.filter((a) => a.severity === severityParam)
+      : actionSummaries;
+
+  const firstId = filteredSummaries[0]?.id;
+  const resolvedId = selectedId && actionDetails[selectedId] ? selectedId : firstId;
+
+  const summary = resolvedId ? actionSummaries.find((s) => s.id === resolvedId) : null;
+  const detail = resolvedId ? actionDetails[resolvedId] : null;
+  const mergedAction: ActionDetail | null = summary && detail ? { ...summary, ...detail } : null;
+
+  const totalOpen = actionSummaries.length;
+  const criticalCount = actionSummaries.filter((a) => a.severity === 'critical').length;
+
+  const counts: Record<ActionSeverity | 'all' | 'resolved', number> = {
+    all: actionSummaries.length,
+    critical: criticalCount,
+    high: actionSummaries.filter((a) => a.severity === 'high').length,
+    medium: actionSummaries.filter((a) => a.severity === 'medium').length,
+    low: actionSummaries.filter((a) => a.severity === 'low').length,
+    resolved: actionSummaries.filter((a) => a.status === 'resolved').length,
   };
-}
 
-function mapCrmTaskToAction(item: MockCrmTask): OpsAction {
-  return {
-    id: `ops_crm_${item.id}`,
-    accountId: item.accountId,
-    accountName: item.accountName,
-    title: item.title,
-    description: item.description,
-    source: "mock_crm_task",
-    severity: item.severity,
-    status: item.status,
-    recommendedOwner: item.recommendedOwner,
-    suggestedNextStep: item.suggestedNextStep,
-    createdAt: item.createdAt
-  };
-}
-
-export default async function ActionsPage() {
-  const actionCenter = await getActionCenterData();
+  const tabs = [
+    { key: 'all', label: 'All', count: counts.all },
+    { key: 'critical', label: 'Critical', count: counts.critical, tone: 'critical' as const },
+    { key: 'medium', label: 'Medium', count: counts.medium, tone: 'warn' as const },
+    { key: 'low', label: 'Low', count: counts.low },
+    { key: 'resolved', label: 'Resolved', count: counts.resolved },
+  ];
 
   return (
-    <AppShell>
-      <PageHeader
-        eyebrow="Operator action center"
-        title="Ops Actions"
-      >
-        <div className="badge-row">
-          <Badge tone="danger" leadingDot>
-            {actionCenter.highCriticalCount} high or critical open actions
-          </Badge>
-          <Badge tone="info" leadingDot>
-            {actionCenter.notificationOutboxItems.length} outbox items
-          </Badge>
-          <Badge tone="warning" leadingDot>
-            {actionCenter.dlqEscalations.length} DLQ escalations
-          </Badge>
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div>
+          <h1 className={styles.title}>Actions</h1>
+          <p className={styles.subtitle}>
+            <span className={styles.count}>{totalOpen} open</span>
+            {' · '}
+            <span className={styles.critical}>{criticalCount} critical</span>
+            {' · $248k exposure · ranked by exposure × age'}
+          </p>
         </div>
-      </PageHeader>
+        <div className={styles.headerActions}>
+          <button type="button" className={styles.headerButton} aria-disabled="true">
+            Assignee: anyone <span className={styles.caret}>▾</span>
+          </button>
+          <button type="button" className={styles.headerButton} aria-disabled="true">
+            Export
+          </button>
+        </div>
+      </header>
 
-      <section>
-          <section className="hero-band hero-band--compact">
-            <div>
-              <p className="hero-band__eyebrow">Human-in-the-loop operations</p>
-              <h2 className="hero-band__title">Triage surface</h2>
-            </div>
-            <div className="hero-band__aside">
-              <p className="hero-band__aside-title">Severity mix</p>
-              <SeveritySummary actions={actionCenter.openActions} />
-            </div>
-          </section>
+      <ActionsSeverityTabs tabs={tabs} />
 
-          <section>
-            <SectionHeader eyebrow="Priority queue" title="Open ops actions" />
-            {actionCenter.openActions.length ? (
-              <div className="card-grid card-grid--two">
-                {actionCenter.openActions.map((action) => (
-                  <ActionCard key={action.id} action={action} />
-                ))}
-              </div>
-            ) : (
-              <div className="table-shell">
-                <EmptyState title="No open ops actions" description="When actions are resolved or ignored, the action center quiets down automatically." />
-              </div>
-            )}
-          </section>
+      <div className={styles.container}>
+        <div className={styles.listPanel}>
+          <ActionsList actions={filteredSummaries} />
+        </div>
 
-          <section className="split-grid split-grid--two">
-            <div>
-              <SectionHeader
-                eyebrow="Outbox"
-                title="Notification outbox"
-              />
-              {actionCenter.notificationOutboxItems.length ? (
-                <div className="card-grid">
-                  {actionCenter.notificationOutboxItems.map((item) => (
-                    <ActionCard key={item.id} action={mapNotificationToAction(item)} />
-                  ))}
-                </div>
-              ) : (
-                <div className="table-shell">
-                  <EmptyState title="No outbox items" description="Replay a failed payment to stage mock notification payloads here." />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <SectionHeader
-                eyebrow="Risk alerts"
-                title="Churn-defuser alerts"
-              />
-              {actionCenter.churnAlerts.length ? (
-                <div className="card-grid">
-                  {actionCenter.churnAlerts.map((action) => (
-                    <ActionCard key={action.id} action={action} />
-                  ))}
-                </div>
-              ) : (
-                <div className="table-shell">
-                  <EmptyState title="No churn alerts" description="High-value failed payments will appear here once the churn-defuser classifies them." />
-                </div>
-              )}
-            </div>
-          </section>
-
-          <section className="split-grid split-grid--two">
-            <div>
-              <SectionHeader
-                eyebrow="CRM follow-up"
-                title="Mock CRM tasks"
-              />
-              {actionCenter.mockCrmTasks.length ? (
-                <div className="card-grid">
-                  {actionCenter.mockCrmTasks.map((item) => (
-                    <ActionCard key={item.id} action={mapCrmTaskToAction(item)} />
-                  ))}
-                </div>
-              ) : (
-                <div className="table-shell">
-                  <EmptyState title="No CRM tasks queued" description="Only high and critical recovery paths create mock CRM work recommendations." />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <SectionHeader
-                eyebrow="Escalations"
-                title="DLQ escalation alerts"
-              />
-              {actionCenter.dlqEscalations.length ? (
-                <div className="card-grid">
-                  {actionCenter.dlqEscalations.map((action) => (
-                    <ActionCard key={action.id} action={action} />
-                  ))}
-                </div>
-              ) : (
-                <div className="table-shell">
-                  <EmptyState title="No escalations" description="The dead-letter queue has not produced any operator escalations in the current snapshot." />
-                </div>
-              )}
-            </div>
-          </section>
-      </section>
-    </AppShell>
+        <div className={styles.detailPanel}>
+          <ActionDetailHost action={mergedAction} assigneeOptions={actionAssignees} />
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,0 +1,86 @@
+import type { PortfolioAccount } from '@/components/Dashboard/local';
+
+/**
+ * Portfolio account fixtures for the "Portfolio · exposure" panel.
+ * Includes enterprise and growth segment accounts with health scores and open action counts.
+ */
+
+export const portfolioAccounts: PortfolioAccount[] = [
+  {
+    id: 'northwind',
+    name: 'Northwind Industrial',
+    segment: 'enterprise',
+    owner: 'J. Cole',
+    renewDate: '26 Jun',
+    arr: '$248k',
+    health: 32,
+    healthLabel: 'critical',
+    openCount: 3,
+  },
+  {
+    id: 'atlas',
+    name: 'Atlas Photonics',
+    segment: 'enterprise',
+    owner: 'S. Park',
+    renewDate: '25 Jun',
+    arr: '$162k',
+    health: 38,
+    healthLabel: 'high',
+    openCount: 2,
+  },
+  {
+    id: 'halcyon',
+    name: 'Halcyon Logistics',
+    segment: 'growth',
+    owner: 'M. Reyes',
+    renewDate: '18 Sep',
+    arr: '$96k',
+    health: 58,
+    healthLabel: 'watch',
+    openCount: 2,
+  },
+  {
+    id: 'acme',
+    name: 'Acme Manufacturing',
+    segment: 'growth',
+    owner: 'M. Reyes',
+    renewDate: '03 Aug',
+    arr: '$72k',
+    health: 67,
+    healthLabel: 'watch',
+    openCount: 1,
+  },
+  {
+    id: 'quartz',
+    name: 'Quartz Analytics',
+    segment: 'growth',
+    owner: 'J. Cole',
+    renewDate: '12 Oct',
+    arr: '$33k',
+    health: 70,
+    healthLabel: 'watch',
+    openCount: 1,
+  },
+  {
+    id: 'meridian',
+    name: 'Meridian Health',
+    segment: 'enterprise',
+    owner: 'J. Cole',
+    renewDate: '09 Nov',
+    arr: '$204k',
+    health: 74,
+    healthLabel: 'stable',
+    openCount: 0,
+  },
+  {
+    id: 'vector',
+    name: 'Vector Robotics',
+    segment: 'growth',
+    owner: 'A. Lim',
+    renewDate: '14 Jul',
+    arr: '$54k',
+    health: 81,
+    healthLabel: 'stable',
+    openCount: 0,
+  },
+];

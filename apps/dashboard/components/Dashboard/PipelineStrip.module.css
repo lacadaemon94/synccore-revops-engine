@@ -1,0 +1,148 @@
+/**
+ * PipelineStrip.module.css
+ * Styling for the 5-stage data pipeline visualization.
+ */
+
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: var(--space-lg) var(--space-2xl) var(--space-sm);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md-plus);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  color: var(--fg-bright);
+}
+
+.subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+}
+
+.stagesGrid {
+  display: grid;
+  grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr 28px 1fr;
+  align-items: stretch;
+  padding: var(--space-xs) var(--space-4xl) var(--space-4xl);
+  gap: 0;
+}
+
+.stageRow {
+  display: contents;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  color: var(--border-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-plus);
+}
+
+.stageCard {
+  display: block;
+  text-align: left;
+  padding: var(--space-lg) var(--space-md);
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-normal);
+}
+
+.stageCard:hover {
+  background: var(--surface-raise);
+}
+
+.stageLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.stageCount {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  margin-top: var(--space-sm);
+  line-height: 1;
+  color: var(--fg-bright);
+}
+
+/* Subtitle after count (percentage or label) */
+.stageCount .subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-dim);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: 0;
+  margin-left: var(--space-sm);
+}
+
+.stageDetails {
+  font-size: var(--font-size-base-dim);
+  color: var(--text-dim);
+  margin-top: var(--space-sm);
+}
+
+.progressBar {
+  display: flex;
+  gap: var(--space-xxs);
+  margin-top: var(--space-lg);
+  height: var(--space-xs);
+}
+
+.progressSegment {
+  flex: 1;
+  background: currentColor;
+  border-radius: var(--radius-xs);
+  opacity: var(--bar-opacity, 1);
+}
+
+/* Color segments based on stage */
+.stageCard[data-border='fg'] .progressSegment {
+  color: var(--fg);
+}
+
+.stageCard[data-border='warn'] .progressSegment {
+  color: var(--warn);
+}
+
+.stageCard[data-border='critical'] .progressSegment {
+  color: var(--critical);
+}
+
+.stageCard[data-border='success'] .progressSegment {
+  color: var(--success);
+}
+
+/* Low-opacity segments show border-2 when in sections without primary color */
+.progressSegment[data-color='fg'] {
+  background: var(--fg);
+}
+
+.progressSegment[data-color='warn'] {
+  background: var(--warn);
+}
+
+.progressSegment[data-color='critical'] {
+  background: var(--critical);
+}
+
+.progressSegment[data-color='success'] {
+  background: var(--success);
+}

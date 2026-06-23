@@ -1,0 +1,239 @@
+/**
+ * PortfolioPanel.module.css
+ * Styling for the portfolio account list with tabs and health visualization.
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-lg);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  letter-spacing: -0.008em;
+  color: var(--fg-bright);
+}
+
+.tabBar {
+  display: inline-flex;
+  gap: var(--space-xxs);
+  padding: var(--space-xxs);
+  background: var(--surface-raise);
+  border: 1px solid var(--border-2);
+  border-radius: 7px;
+}
+
+.tab {
+  padding: 3px var(--space-md);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  background: transparent;
+  color: var(--text-faint);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.tab[data-active='true'] {
+  background: var(--border);
+  color: var(--fg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tab:hover:not([data-active='true']) {
+  color: var(--text-dim);
+}
+
+.content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.columnHeader {
+  display: grid;
+  grid-template-columns: 1fr 92px 130px 80px;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-md) var(--space-2xl);
+  background: var(--overlay);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.colAccount {
+  grid-column: 1;
+}
+
+.colArr {
+  grid-column: 2;
+  text-align: right;
+}
+
+.colHealth {
+  grid-column: 3;
+}
+
+.colOpen {
+  grid-column: 4;
+  text-align: right;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 92px 130px 80px;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-lg) var(--space-2xl);
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--transition-normal);
+}
+
+.row:hover {
+  background: var(--surface-raise);
+}
+
+.accountNameColumn {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.accountName {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base-plus);
+  color: var(--fg-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.accountMeta {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arr {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-plus);
+  text-align: right;
+  color: var(--fg-bright);
+  white-space: nowrap;
+}
+
+.health {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.healthBar {
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.healthFill {
+  height: 100%;
+  width: var(--health-percent, 0%);
+  border-radius: 3px;
+  transition: width var(--transition-normal);
+  background: var(--success);
+}
+
+.healthFill[data-level='critical'] {
+  background: var(--critical);
+}
+
+.healthFill[data-level='warn'] {
+  background: var(--warn);
+}
+
+.healthFill[data-level='success'] {
+  background: var(--success);
+}
+
+.healthLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-dim);
+}
+
+.open {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  white-space: nowrap;
+  font-weight: var(--font-weight-normal);
+  color: var(--text-faint);
+}
+
+.open[data-level='critical'] {
+  color: var(--critical);
+  font-weight: var(--font-weight-medium);
+}
+
+.open[data-level='warn'] {
+  color: var(--warn);
+  font-weight: var(--font-weight-medium);
+}
+
+.footer {
+  padding: var(--space-2xl);
+  border-top: 1px solid var(--border);
+  background: var(--overlay);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.footerLink {
+  color: var(--link);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  transition: color var(--transition-normal);
+}
+
+.footerLink:hover {
+  color: var(--fg-bright);
+}

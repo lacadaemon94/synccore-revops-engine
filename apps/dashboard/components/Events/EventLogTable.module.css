@@ -1,0 +1,198 @@
+.container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 230px 1fr 150px 92px 64px 92px;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-sm) var(--space-2xl);
+  background: var(--overlay);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 230px 1fr 150px 92px 64px 92px;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-md) var(--space-2xl);
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--transition-normal);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: var(--surface-raise);
+}
+
+.eventColumn {
+  min-width: 0;
+}
+
+.eventId {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  color: var(--fg-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chipRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.providerChip {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+  background: var(--surface-raise);
+  border: 1px solid var(--border-2);
+  padding: 1px var(--space-sm);
+  border-radius: var(--radius-xs);
+}
+
+.statusChip {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  padding: 1px var(--space-sm);
+  border-radius: var(--radius-xs);
+}
+
+.statusCritical { color: var(--critical); background: var(--critical-bg); }
+.statusWarn { color: var(--warn); background: var(--warn-bg); }
+.statusPending { color: var(--link); background: var(--link-bg); }
+.statusSuccess { color: var(--success); background: var(--success-bg); }
+.statusDim { color: var(--text-faint); background: var(--overlay); }
+
+.typeColumn {
+  min-width: 0;
+  padding-right: var(--space-sm);
+}
+
+.type {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summary {
+  font-size: var(--font-size-sm-plus);
+  color: var(--text-faint);
+  margin-top: var(--space-xxs);
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.accountColumn {
+  min-width: 0;
+  display: grid;
+  gap: var(--space-xxs);
+}
+
+.accountName {
+  font-size: var(--font-size-base-dim-plus);
+  color: var(--link);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.owner {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-faint);
+}
+
+.amountColumn {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  color: var(--fg-bright);
+}
+
+.retriesColumn {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+}
+
+.retriesActive { color: var(--critical); }
+.retriesIdle { color: var(--text-faint); }
+
+.receivedColumn {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+}
+
+.relTime {
+  color: var(--text-dim);
+}
+
+.clockTime {
+  margin-top: var(--space-xxs);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-2xl);
+  border-top: 1px solid var(--border);
+  background: var(--overlay);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-faint);
+}
+
+.empty {
+  padding: var(--space-9xl) var(--space-2xl);
+  text-align: center;
+  color: var(--text-dim);
+}
+
+.emptyHeading {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base-dim);
+  color: var(--text-faint);
+}
+
+.emptyDetail {
+  font-size: var(--font-size-base);
+  margin-top: var(--space-sm);
+}
