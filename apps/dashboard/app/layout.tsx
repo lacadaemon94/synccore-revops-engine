@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito, Roboto, Roboto_Mono } from "next/font/google";
 
+import { MobileSidebarBackdrop } from "@/components/AppShell/MobileSidebarBackdrop";
 import { Sidebar } from "@/components/AppShell/Sidebar";
 import { Topbar } from "@/components/AppShell/Topbar";
 import { OnboardingProvider } from "@/components/Onboarding/OnboardingProvider";
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <OnboardingProvider>
           <div className={styles.shell}>
+            <MobileSidebarBackdrop />
             <Sidebar />
             <div className={styles.main}>
               <Topbar />

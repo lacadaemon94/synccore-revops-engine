@@ -112,3 +112,17 @@
   font-size: var(--font-size-xs);
   opacity: 0.7;
 }
+
+@media (max-width: 900px) {
+  .bar {
+    grid-template-columns: 1fr;
+    padding: var(--space-sm) var(--space-lg);
+  }
+  .rightSection {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .shortcut {
+    display: none;
+  }
+}

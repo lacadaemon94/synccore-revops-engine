@@ -191,3 +191,23 @@
 .resultCount {
   color: var(--text-dim);
 }
+
+@media (max-width: 640px) {
+  .backdrop {
+    padding: 4vh var(--space-md) var(--space-md);
+  }
+  .palette {
+    max-height: 92vh;
+  }
+  .row {
+    grid-template-columns: 18px 1fr auto;
+    gap: var(--space-md);
+  }
+  .rowSub {
+    display: none;
+  }
+  .footerHints {
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+}

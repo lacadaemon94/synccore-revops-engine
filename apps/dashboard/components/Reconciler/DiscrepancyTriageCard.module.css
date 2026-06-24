@@ -387,3 +387,41 @@
     transform: none;
   }
 }
+
+@media (max-width: 1100px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+  .divider {
+    display: none;
+  }
+  .resolution {
+    border-top: 1px solid var(--border);
+    padding: var(--space-3xl);
+  }
+}
+
+@media (max-width: 720px) {
+  .head {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    padding: var(--space-2xl) var(--space-2xl) 0;
+  }
+  .headRight {
+    text-align: left;
+  }
+  .comparison {
+    padding: var(--space-2xl);
+  }
+  .comparisonGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+  .symbolContainer {
+    justify-content: center;
+  }
+  .actionBar .actionButton {
+    flex: 1;
+    min-width: 0;
+  }
+}

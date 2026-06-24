@@ -25,3 +25,19 @@
   min-width: 0;
   padding: var(--space-7xl);
 }
+
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    transition: none;
+  }
+  .content {
+    padding: var(--space-4xl) var(--space-2xl);
+  }
+}
+
+@media (max-width: 560px) {
+  .content {
+    padding: var(--space-3xl) var(--space-lg);
+  }
+}

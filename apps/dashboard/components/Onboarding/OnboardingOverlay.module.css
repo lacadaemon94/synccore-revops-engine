@@ -79,6 +79,14 @@
   margin: auto;
 }
 
+@media (max-width: 900px) {
+  .card[data-placement='center'] {
+    left: 0;
+    right: 0;
+    width: min(360px, calc(100vw - 24px));
+  }
+}
+
 .cardHead {
   display: flex;
   align-items: center;

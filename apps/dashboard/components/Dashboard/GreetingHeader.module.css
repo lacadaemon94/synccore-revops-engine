@@ -97,3 +97,30 @@
   width: 1px;
   background: var(--border);
 }
+
+@media (max-width: 900px) {
+  .section {
+    grid-template-columns: 1fr;
+    gap: var(--space-4xl);
+    align-items: start;
+  }
+  .greeting {
+    font-size: var(--font-size-3xl);
+  }
+  .kpiGroup {
+    gap: var(--space-4xl);
+    flex-wrap: wrap;
+  }
+  .kpiValue {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+@media (max-width: 560px) {
+  .greeting {
+    font-size: var(--font-size-2xl);
+  }
+  .kpiGroup {
+    gap: var(--space-3xl);
+  }
+}

@@ -102,3 +102,50 @@
   font-size: var(--font-size-base-dim);
   font-weight: var(--font-weight-bold);
 }
+
+/* ============ Responsive ============ */
+@media (max-width: 1100px) {
+  .container {
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-lg);
+  }
+  .searchText {
+    display: none;
+  }
+  .healthText {
+    display: none;
+  }
+  .right {
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: auto 1fr auto;
+    padding: 0 var(--space-2xl);
+    gap: var(--space-md);
+  }
+  .pageLabel {
+    display: none;
+  }
+  .searchButton {
+    padding: var(--space-xs) var(--space-md);
+  }
+  .searchDivider {
+    display: none;
+  }
+  .healthPill {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .searchButton {
+    width: auto;
+    min-width: 0;
+  }
+  .searchHint {
+    font-size: var(--font-size-xs);
+  }
+}

@@ -64,3 +64,24 @@
   color: var(--text-faint);
   padding-bottom: var(--space-lg);
 }
+
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+  .tabGroup {
+    gap: var(--space-3xl);
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: var(--space-xs);
+    scrollbar-width: none;
+  }
+  .tabGroup::-webkit-scrollbar {
+    display: none;
+  }
+  .sortNote {
+    padding-bottom: var(--space-md);
+  }
+}

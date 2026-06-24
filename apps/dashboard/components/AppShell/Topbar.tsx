@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { TourButton } from '@/components/Onboarding/TourButton';
 
 import { CommandPalette } from './CommandPalette';
+import { MobileMenuButton } from './MobileMenuButton';
 import { ThemeToggle } from './ThemeToggle';
 
 import styles from './Topbar.module.css';
@@ -64,6 +65,7 @@ export function Topbar({
     <>
       <header className={styles.container}>
         <div className={styles.left}>
+          <MobileMenuButton />
           <span className={styles.pageLabel}>{pageLabel}</span>
         </div>
 

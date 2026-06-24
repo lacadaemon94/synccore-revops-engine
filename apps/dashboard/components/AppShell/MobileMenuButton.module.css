@@ -1,0 +1,26 @@
+.button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-md);
+  color: var(--fg);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.button:hover {
+  background: var(--surface-raise);
+  border-color: var(--border-3);
+}
+
+@media (max-width: 900px) {
+  .button {
+    display: inline-flex;
+  }
+}

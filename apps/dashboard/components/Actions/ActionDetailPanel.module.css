@@ -339,3 +339,24 @@
   font-size: 13px;
   color: var(--text-dim);
 }
+
+@media (max-width: 640px) {
+  .header,
+  .content {
+    padding: var(--space-lg) var(--space-2xl);
+  }
+  .title {
+    font-size: 17px;
+  }
+  .whySection {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+  .timelineEntry {
+    grid-template-columns: 8px 1fr;
+  }
+  .timelineTime {
+    grid-column: 2;
+    padding-top: var(--space-xxs);
+  }
+}

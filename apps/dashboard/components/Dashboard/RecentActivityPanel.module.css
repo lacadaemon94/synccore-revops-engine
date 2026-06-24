@@ -172,3 +172,17 @@
 .footerLink:hover {
   color: var(--fg);
 }
+
+@media (max-width: 900px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .row {
+    padding: var(--space-sm) var(--space-lg);
+  }
+  .footer {
+    padding: var(--space-md) var(--space-lg);
+  }
+}

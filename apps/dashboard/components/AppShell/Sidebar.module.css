@@ -158,3 +158,49 @@
 :global([data-sidebar='collapsed']) .footerVersion {
   display: none;
 }
+
+/* ============ Mobile drawer ============ */
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    width: var(--sidebar-width-expanded);
+    min-height: 100vh;
+    height: 100dvh;
+    transform: translateX(-100%);
+    transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  /* On mobile, always render expanded; collapsed state irrelevant */
+  :global([data-sidebar-mobile='open']) .sidebar {
+    transform: translateX(0);
+  }
+
+  /* Override collapsed state visuals so drawer is fully usable */
+  :global([data-sidebar='collapsed']) .header {
+    padding: 0 var(--space-4xl);
+    justify-content: space-between;
+  }
+  :global([data-sidebar='collapsed']) .brand {
+    display: flex;
+  }
+  :global([data-sidebar='collapsed']) .contextSlot {
+    opacity: 1;
+    pointer-events: auto;
+    max-height: none;
+    overflow: visible;
+  }
+  :global([data-sidebar='collapsed']) .footer {
+    padding: var(--space-2xl) var(--space-2xl) var(--space-3xl);
+    justify-items: stretch;
+  }
+  :global([data-sidebar='collapsed']) .footerLabel,
+  :global([data-sidebar='collapsed']) .statusText,
+  :global([data-sidebar='collapsed']) .footerVersion {
+    display: block;
+  }
+}

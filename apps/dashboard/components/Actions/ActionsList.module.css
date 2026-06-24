@@ -169,3 +169,18 @@
   font-size: var(--font-size-base);
   color: var(--text-dim);
 }
+
+@media (max-width: 900px) {
+  .row {
+    grid-template-columns: 22px 1fr;
+    padding: var(--space-md) var(--space-lg);
+  }
+  .rightColumn {
+    grid-column: 1 / -1;
+    text-align: left;
+    display: flex;
+    gap: var(--space-md);
+    align-items: baseline;
+    padding-left: 32px;
+  }
+}

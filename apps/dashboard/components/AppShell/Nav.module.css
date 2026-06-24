@@ -151,3 +151,22 @@
 :global([data-sidebar='collapsed']) .livePulse {
   display: none;
 }
+
+/* ============ Mobile drawer: force expanded layout ============ */
+@media (max-width: 900px) {
+  :global([data-sidebar='collapsed']) .nav {
+    padding: var(--space-2xl) var(--space-lg);
+  }
+  :global([data-sidebar='collapsed']) .link {
+    grid-template-columns: 16px 1fr auto;
+    grid-template-rows: auto;
+    justify-items: stretch;
+    height: auto;
+    padding: var(--space-sm) var(--space-md);
+  }
+  :global([data-sidebar='collapsed']) .label,
+  :global([data-sidebar='collapsed']) .badge,
+  :global([data-sidebar='collapsed']) .livePulse {
+    display: revert;
+  }
+}

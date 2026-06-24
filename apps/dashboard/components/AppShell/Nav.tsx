@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
+import { setMobileSidebarOpen } from './sidebarStore';
 import styles from './Nav.module.css';
 
 interface NavItem {
@@ -72,6 +73,7 @@ export function Nav({
               aria-current={active ? 'page' : undefined}
               onMouseEnter={() => setHoveredHref(item.href)}
               onFocus={() => setHoveredHref(item.href)}
+              onClick={() => setMobileSidebarOpen(false)}
             >
               {hovered && !active && (
                 <motion.span

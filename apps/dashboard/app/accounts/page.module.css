@@ -88,3 +88,23 @@
   gap: 0;
   min-width: 0;
 }
+
+@media (max-width: 900px) {
+  .titleSection {
+    grid-template-columns: 1fr;
+    gap: var(--space-3xl);
+    align-items: start;
+  }
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+  .buttonGroup {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+}

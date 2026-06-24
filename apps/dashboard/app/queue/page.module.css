@@ -133,3 +133,31 @@
 .kanbanSection::-webkit-scrollbar-thumb:hover {
   background: var(--border);
 }
+
+@media (max-width: 900px) {
+  .headerSection,
+  .headerContent {
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+  .headerActions {
+    flex-wrap: wrap;
+  }
+  .kanbanBoard {
+    grid-template-columns: repeat(4, 80vw);
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 560px) {
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+  .kanbanBoard {
+    grid-template-columns: repeat(4, 86vw);
+  }
+}

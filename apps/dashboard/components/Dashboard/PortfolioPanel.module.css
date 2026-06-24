@@ -237,3 +237,33 @@
 .footerLink:hover {
   color: var(--fg-bright);
 }
+
+@media (max-width: 900px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .columnHeader,
+  .row {
+    grid-template-columns: 1fr auto;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+  }
+  .colHealth,
+  .colArr,
+  .colOpen {
+    display: none;
+  }
+  .arr,
+  .health {
+    grid-column: 2;
+    text-align: right;
+  }
+  .health {
+    grid-column: 1 / -1;
+  }
+  .open {
+    display: none;
+  }
+}

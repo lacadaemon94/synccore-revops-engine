@@ -96,3 +96,33 @@
   top: var(--space-5xl);
   min-width: 0;
 }
+
+@media (max-width: 1100px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: var(--space-3xl);
+  }
+  .detailPanel {
+    position: static;
+  }
+}
+
+@media (max-width: 900px) {
+  .header {
+    grid-template-columns: 1fr;
+    gap: var(--space-3xl);
+    align-items: start;
+  }
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+  .headerActions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+}
